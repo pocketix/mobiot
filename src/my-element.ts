@@ -1,6 +1,7 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import './vp-editor-element.ts';
+import './text-editor-element.ts'
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -10,10 +11,10 @@ export class MyElement extends LitElement {
 
   @property()
   blocks = [
-    {name: "If", condition: true, simple: false},
-    {name: "Else", condition: false, simple: false},
-    {name: "Send notification", condition: false, simple: true},
-    {name: "End of block", condition: false, simple: true}
+    {name: "If", condition: true, simple: false, code: "if("},
+    {name: "Else", condition: false, simple: false, code: "else{\n"},
+    {name: "Send notification", condition: false, simple: true, code: "fun send_notif()\n"},
+    {name: "End of block", condition: false, simple: true, code: "}\n"}
   ];
 
   @property()
@@ -23,9 +24,9 @@ export class MyElement extends LitElement {
 
   @property()
   program=[
-    {name: "If", simple: false, condition: 'x==5'},
-    {name: "Else", simple: false, condition: ''},
-    {name: "send notification", simple: true, condition: ''},
+    {name: "If", simple: false, condition: 'x==5', code: "if("},
+    {name: "Else", simple: false, condition: '', code: "else{\n"},
+    {name: "send notification", simple: true, condition: '', code: "fun send_notif()\n"},
   ];
   render() {
     const listCode: TemplateResult[]=[];
@@ -40,22 +41,25 @@ export class MyElement extends LitElement {
   }
 
     return html`
-      <p>Here is your program: ${this.program}</p>
+      <p>Here is your program:</p>
+      <div class="wrapper">
+        <text-editor-element class="editor" .program=${this.program}></text-editor-element>
+        <vp-editor-element class="editor" .program=${this.program}></vp-editor-element>
+      </div>
       <ul>
         ${listCode}
       </ul>
-      <vp-editor-element .program=${this.program}></vp-editor-element>
       <p class="read-the-docs">${this.docsHint}</p>
     `
   }
 
-  private _addToProgram(input: { name: string; condition: boolean; simple: boolean; }) {
+  private _addToProgram(input: { name: string; condition: boolean; simple: boolean; code: string}) {
     let conditionText='';
     if(input.condition){
       conditionText="add condition";
       this.menuCondition=true;
     }
-    this.program=[...this.program, {name: input.name, simple: input.simple, condition: conditionText}]
+    this.program=[...this.program, {name: input.name, simple: input.simple, condition: conditionText, code: input.code}]
   }
 
   private _addCondition(text: string) {
@@ -73,6 +77,15 @@ export class MyElement extends LitElement {
       margin: 0 auto;
       padding: 2rem;
       text-align: center;
+    }
+    .wrapper {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .editor{
+      flex: 1;
     }
 
     .card {
