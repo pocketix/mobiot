@@ -1,7 +1,16 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import './vp-editor-element.ts';
-import './text-editor-element.ts'
+import './text-editor-element.ts';
+import './var-list-element.ts'
+
+type TypeOption = 'num' | 'str' | 'bool' | 'expr';
+
+interface VarObject {
+    type: TypeOption | null;
+    name: string;
+    value: string;
+}
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -28,6 +37,15 @@ export class MyElement extends LitElement {
     {name: "Else", simple: false, condition: '', code: "else{\n"},
     {name: "send notification", simple: true, condition: '', code: "fun send_notif()\n"},
   ];
+
+  @property()
+    varList: VarObject[] = [
+            { type: 'str', name: 'name', value: 'John' },
+            { type: 'num', name: 'age', value: '40' },
+            { type: 'bool', name: 'isAdmin', value: 'true' },
+            { type: 'expr', name: 'fee', value: 'age *4 + 100' }
+            ];;
+
   render() {
     const listCode: TemplateResult[]=[];
     if(!this.menuCondition){
@@ -41,6 +59,7 @@ export class MyElement extends LitElement {
   }
 
     return html`
+      <var-list-element .table=${this.varList} @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}></var-list-element>
       <p>Here is your program:</p>
       <div class="wrapper">
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>
@@ -70,6 +89,10 @@ export class MyElement extends LitElement {
       this.program=[...this.program, block];
     }
   }
+
+  private _varList(newVar: VarObject[]) {
+    this.varList = [ ...newVar] ;
+}
 
   static styles = css`
     :host {
