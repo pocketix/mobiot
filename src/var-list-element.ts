@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
+import './var-edit-element.ts'
 
 type TypeOption = 'num' | 'str' | 'bool' | 'expr';
 
@@ -12,20 +13,25 @@ interface VarObject {
 @customElement('var-list-element')
 export class VarListElement extends LitElement {
 
-        @state()
-        private isOpen: boolean = false;
+    @state()
+    private isOpen: boolean = false;
 
-        @property()
-        table: VarObject[] = []
+    @property()
+    table: VarObject[] = []
 
-        @state()
-        private varEdit: VarObject={
-            type: null,
-            name: '',
-            value: ''
-        }
+    @state()
+    private varEdit: VarObject={
+        type: null,
+        name: '',
+        value: ''
+    }
 
-        static styles = css`
+    @state()
+    private selectedRow: VarObject | null = null;
+
+    private longPressTimeout: any = null;
+
+    static styles = css`
         
         button {
                 padding: 8px 16px;
@@ -71,7 +77,7 @@ export class VarListElement extends LitElement {
           <button @click=${this._openCloseModal}>List of variable</button>
     
           ${this.isOpen ? html`
-            <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
+            <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.varEdit)}>
                 <table>
                     <thead>
                     <tr>
@@ -82,19 +88,29 @@ export class VarListElement extends LitElement {
                     </thead>
                     <tbody>
                     ${this.table.map(item => html`
-                        <tr>
+                        <tr @contextmenu=${(e: Event) => this._handleRowClick(e, item)}
+                            @pointerdown=${() => this._handleLongPress(item)}
+                            @pointerup=${() => this._cancelLongPress()}>
                         <td>${item.type}</td>
                         <td>${item.name}</td>
                         <td>${item.value}</td>
-                        <var-edit-element .var=${item} @var-saved=${(e: CustomEvent) => this._updateVar(e.detail.value, item)}></var-edit-element>
-                        <button @click=${() => this._deleteVar(item)}>Delete</button>
+                        <div>
+                        ${this.selectedRow === item ? html`
+                            <var-edit-element 
+                                @click=${(e: Event) => e.stopPropagation()} 
+                                .var=${item} 
+                                @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value, item)}>
+                            </var-edit-element>
+                            <button @click=${(e: Event) => this._deleteVar(e, item)}>Delete</button>
+                        ` : ''}
+                        </div>
                         </tr>
                     `)}
                     </tbody>
                 </table>
                 <div>
                     <button @click=${this._saveChanges}>Back</button>
-                    <var-edit-element .var=${this.varEdit} @var-saved=${(e: CustomEvent) => this._newVar(e.detail.value)}></var-edit-element>
+                    <var-edit-element .var=${this.varEdit} @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value)}></var-edit-element>
                 </div>
             </div>
           ` : ''}
@@ -105,15 +121,7 @@ export class VarListElement extends LitElement {
         this.isOpen = !this.isOpen;
       }
 
-    private _newVar(newVar: VarObject) {//TODO clean code
-        this.varEdit = { ...newVar };
-        if(this.varEdit.name!=''){
-            this.table.push(this.varEdit)
-        }
-        this.varEdit={type: null, name: '', value: ''}
-    }
-
-    private _updateVar(updatedVar: VarObject, originalVar: VarObject) {
+    private _addVar(updatedVar: VarObject, originalVar: VarObject=this.varEdit) {
         this.table=this.table.filter(item => item != originalVar)
         this.varEdit = { ...updatedVar };
         if(this.varEdit.name!=''){
@@ -122,7 +130,8 @@ export class VarListElement extends LitElement {
         this.varEdit={type: null, name: '', value: ''}
     }
 
-    private _deleteVar(deletedVar: VarObject) {
+    private _deleteVar(event: Event, deletedVar: VarObject) {
+        event.stopPropagation();
         this.table=this.table.filter(item => item != deletedVar)
     }
 
@@ -133,7 +142,21 @@ export class VarListElement extends LitElement {
             composed: true
         }));
         this._openCloseModal()
+    }
 
+    private _handleRowClick(event: Event, item: VarObject) {
+        event.preventDefault();
+        this.selectedRow = this.selectedRow === item ? null : item;
+    }
+
+    private _handleLongPress(item: VarObject) {
+        this.longPressTimeout = setTimeout(() => {
+            this.selectedRow = item;
+        }, 500);
+    }
+
+    private _cancelLongPress() {
+        clearTimeout(this.longPressTimeout);
     }
 
 }

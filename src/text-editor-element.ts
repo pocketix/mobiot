@@ -12,19 +12,14 @@ interface ProgramBlock {
 @customElement('text-editor-element')
 export class TextEditorElement extends LitElement {
 
-  private _blockEnd(): void {
-    this.deepCounter--;
-    for(let i=0;i<this.deepCounter;i++){
-      this.value=this.value+'\t';
-    }
-    this.value=this.value+'}\n'
-  }
+  @state()
+  private stack: string[] = [];
   
   @property({ type: String })
   value: string = '';
 
   @state()//TODO repair state
-  private deepCounter: number = 0;
+  private deepCounter: number = 1;
 
   @property()
     program: ProgramBlock[] = [];
@@ -41,31 +36,42 @@ export class TextEditorElement extends LitElement {
   `;
 
   render() {
-    this.value=''
+    this.value='[\n'
     this.program.forEach((item)=>{
+      let tabs: string=''
       if(item.name==="End of block"){
-        this._blockEnd()
+        this.value = this.value + this.stack.pop();
+        this.deepCounter-=2
       }else{
         for(let i=0;i<this.deepCounter;i++){
-          this.value=this.value+'\t';
+          tabs=tabs+'  ';
         }
+        this.value=this.value + tabs + '{\n'
+        // tabs=tabs + '  '
+        this.value=this.value + tabs + '  "id": "' + item.name + '",\n'
+
+        let blockEnd: string=''
+        blockEnd=tabs + '  "arguments": []\n'//TODO add arguments, commas
+        blockEnd=blockEnd + tabs + '}\n'
+
+
         if(!item.simple){
-          this.deepCounter++
+          this.value=this.value + tabs + '  "block": [\n'
+          blockEnd=tabs + '  ],\n' + blockEnd
+          this.stack.push(blockEnd)
+          this.deepCounter+=2
         }
-        this.value=this.value+item.code
-        if(item.condition!=''){
-          if(item.condition==='add condition'){
-            this.value=this.value + '){\n'
-          }
-          else{
-            this.value=this.value+item.condition+'){\n'
-          }
+        else{
+          this.value=this.value + blockEnd
         }
       }
-    })
-    while(this.deepCounter>0){
-      this._blockEnd()
     }
+  )
+    while(this.stack.length>=1){
+      this.value = this.value + this.stack.pop();
+    }
+    this.value=this.value + ']'
+    this.deepCounter=1
     return html`
       <textarea 
         type="text" 
