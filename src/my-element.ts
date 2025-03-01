@@ -1,9 +1,10 @@
-import { LitElement, TemplateResult, css, html } from 'lit'
+import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { VarObject, OptionBlock, Argument, ProgramBlock} from './interfaces'
+import { VarObject, Argument, ProgramBlock} from './interfaces'
 import './vp-editor-element.ts';
 import './text-editor-element.ts';
-import './var-list-element.ts'
+import './var-list-element.ts';
+import './options-element.ts'
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -12,21 +13,11 @@ export class MyElement extends LitElement {
   docsHint = 'Click on the Vite and Lit logos to learn more'
 
   @property()
-  blocks: OptionBlock[] = [
-    {block: {name: "If", simple: false, id: "if"}, arguments: true},
-    {block: {name: "Else", simple: false, id: "else"}, arguments: false},
-    {block: {name: "Send notification", simple: true, id: "alert"}, arguments: false},
-    {block: {name: "End of block", simple: true, id: "end"}, arguments: false}
-  ];
-
-  @property()
   conditions: Argument[] = [
     {type: 'boolean_expression', value: 'x+5==8'},
     {type: 'boolean_expression', value: 'a*b!=25'},
     {type: 'boolean_expression', value: 'x AND y'}
   ];
-
-  @property()menuCondition=false;
 
   @property()
   program: ProgramBlock[]=[
@@ -44,17 +35,6 @@ export class MyElement extends LitElement {
             ];;
 
   render() {
-    const listCode: TemplateResult[]=[];
-    if(!this.menuCondition){
-      this.blocks.forEach((block)=>{
-        listCode.push(html`<li><button @click=${() => this._addToProgram(block)}>${block.block.name}</button></li>`);
-    });
-    }else{
-      this.conditions.forEach((condition)=>{
-        listCode.push(html`<li><button @click=${() => this._addCondition(condition)}>${condition.value}</button></li>`);
-    });
-  }
-
     return html`
       <var-list-element .table=${this.varList} @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}></var-list-element>
       <p>Here is your program:</p>
@@ -62,33 +42,17 @@ export class MyElement extends LitElement {
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>
         <vp-editor-element class="editor" .program=${this.program}></vp-editor-element>
       </div>
-      <ul>
-        ${listCode}
-      </ul>
+      <options-element .conditions=${this.conditions} .program=${this.program} @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></options-element>
       <p class="read-the-docs">${this.docsHint}</p>
     `
   }
 
-  private _addToProgram(input: OptionBlock) {
-    let condition: Argument[]=[];
-    if(input.arguments){
-      condition=[{type: 'note', value: 'Add condition'}];
-      this.menuCondition=true;
-    }
-    this.program=[...this.program, {block: input.block, arguments: condition}]
-  }
-
-  private _addCondition(condition: Argument) {
-    let block=this.program.pop();
-    if(block){
-      block.arguments=[condition];
-      this.menuCondition=false;
-      this.program=[...this.program, block];
-    }
-  }
-
   private _varList(newVar: VarObject[]) {
     this.varList = [ ...newVar] ;
+}
+
+private _updateProgram(updatedProgram: ProgramBlock[]) {
+  this.program = [ ...updatedProgram ];
 }
 
   static styles = css`
