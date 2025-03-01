@@ -1,16 +1,9 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import { VarObject, OptionBlock, Argument, ProgramBlock} from './interfaces'
 import './vp-editor-element.ts';
 import './text-editor-element.ts';
 import './var-list-element.ts'
-
-type TypeOption = 'num' | 'str' | 'bool' | 'expr';
-
-interface VarObject {
-    type: TypeOption | null;
-    name: string;
-    value: string;
-}
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -19,23 +12,27 @@ export class MyElement extends LitElement {
   docsHint = 'Click on the Vite and Lit logos to learn more'
 
   @property()
-  blocks = [
-    {name: "If", condition: true, simple: false, code: "if("},
-    {name: "Else", condition: false, simple: false, code: "else{\n"},
-    {name: "Send notification", condition: false, simple: true, code: "fun send_notif()\n"},
-    {name: "End of block", condition: false, simple: true, code: "}\n"}
+  blocks: OptionBlock[] = [
+    {block: {name: "If", simple: false, id: "if"}, arguments: true},
+    {block: {name: "Else", simple: false, id: "else"}, arguments: false},
+    {block: {name: "Send notification", simple: true, id: "alert"}, arguments: false},
+    {block: {name: "End of block", simple: true, id: "end"}, arguments: false}
   ];
 
   @property()
-  conditions = ['x+5==8','a*b!=25','x AND y'];
+  conditions: Argument[] = [
+    {type: 'boolean_expression', value: 'x+5==8'},
+    {type: 'boolean_expression', value: 'a*b!=25'},
+    {type: 'boolean_expression', value: 'x AND y'}
+  ];
 
   @property()menuCondition=false;
 
   @property()
-  program=[
-    {name: "If", simple: false, condition: 'x==5', code: "if("},
-    {name: "Else", simple: false, condition: '', code: "else{\n"},
-    {name: "send notification", simple: true, condition: '', code: "fun send_notif()\n"},
+  program: ProgramBlock[]=[
+    {block: {name: "If", simple: false, id: "if"}, arguments: [{type: 'boolean_expression', value: 'x==5'}]},
+    {block: {name: "Else", simple: false, id: 'else'}, arguments: []},
+    {block: {name: "Send notification", simple: true, id: 'alert'}, arguments: []},
   ];
 
   @property()
@@ -50,11 +47,11 @@ export class MyElement extends LitElement {
     const listCode: TemplateResult[]=[];
     if(!this.menuCondition){
       this.blocks.forEach((block)=>{
-        listCode.push(html`<li><button @click=${() => this._addToProgram(block)}>${block.name}</button></li>`);
+        listCode.push(html`<li><button @click=${() => this._addToProgram(block)}>${block.block.name}</button></li>`);
     });
     }else{
       this.conditions.forEach((condition)=>{
-        listCode.push(html`<li><button @click=${() => this._addCondition(condition)}>${condition}</button></li>`);
+        listCode.push(html`<li><button @click=${() => this._addCondition(condition)}>${condition.value}</button></li>`);
     });
   }
 
@@ -72,19 +69,19 @@ export class MyElement extends LitElement {
     `
   }
 
-  private _addToProgram(input: { name: string; condition: boolean; simple: boolean; code: string}) {
-    let conditionText='';
-    if(input.condition){
-      conditionText="add condition";
+  private _addToProgram(input: OptionBlock) {
+    let condition: Argument[]=[];
+    if(input.arguments){
+      condition=[{type: 'note', value: 'Add condition'}];
       this.menuCondition=true;
     }
-    this.program=[...this.program, {name: input.name, simple: input.simple, condition: conditionText, code: input.code}]
+    this.program=[...this.program, {block: input.block, arguments: condition}]
   }
 
-  private _addCondition(text: string) {
+  private _addCondition(condition: Argument) {
     let block=this.program.pop();
     if(block){
-      block.condition=text;
+      block.arguments=[condition];
       this.menuCondition=false;
       this.program=[...this.program, block];
     }

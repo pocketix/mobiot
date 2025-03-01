@@ -1,18 +1,12 @@
 import { LitElement, TemplateResult, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import { ProgramBlock} from './interfaces'
 import './block-element.ts';
 
 const BREAKPOINT = html`<!-- BREAKPOINT -->`;
 
 let stack_complex_name: ProgramBlock[] = [];
 let stack_program_body: TemplateResult[]=[];//TODO rewrite to one stack? 
-
-interface ProgramBlock {
-  name: string;
-  simple: boolean;
-  condition: string;
-  code: string;
-}
 
 @customElement('vp-editor-element')
 export class VPEditorElement extends LitElement {
@@ -26,7 +20,7 @@ export class VPEditorElement extends LitElement {
         program = stack_program_body.pop();
     }
     let item=stack_complex_name.pop();//TODO repair undefined in stack
-    return html`<block-element title=${item?.name} condition=${item?.condition}>${programVP}</block-element>`;
+    return html`<block-element .block=${item}>${programVP}</block-element>`;//TODO repair for all args
   }
 
   @property()
@@ -34,11 +28,11 @@ export class VPEditorElement extends LitElement {
 
   render() {
     this.program.forEach((item)=>{
-      if(item.name=="End of block"){
+      if(item.block.id=="end"){
         stack_program_body.push(this._createBlockElement())
       }
-      else if(item.simple==true){
-        stack_program_body.push(html`<block-element title=${item.name}></block-element>`);
+      else if(item.block.simple==true){
+        stack_program_body.push(html`<block-element .block=${item}></block-element>`);
       }
       else{
         stack_complex_name.push(item);

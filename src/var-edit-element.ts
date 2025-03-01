@@ -1,13 +1,6 @@
 import { LitElement, html, css} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-
-type TypeOption = 'num' | 'str' | 'bool' | 'expr';
-
-interface VarObject {
-    type: TypeOption | null;
-    name: string;
-    value: string;
-}
+import { TypeOption, VarObject} from './interfaces'
 
 @customElement('var-edit-element')
 export class VarEditElement extends LitElement {

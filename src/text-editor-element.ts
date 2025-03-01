@@ -1,13 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state} from 'lit/decorators.js';
-
-//TODO clean code
-interface ProgramBlock {
-  name: string;
-  simple: boolean;
-  condition: string;
-  code: string;
-}
+import { ProgramBlock} from './interfaces'
 
 @customElement('text-editor-element')
 export class TextEditorElement extends LitElement {
@@ -39,7 +32,7 @@ export class TextEditorElement extends LitElement {
     this.value='[\n'
     this.program.forEach((item)=>{
       let tabs: string=''
-      if(item.name==="End of block"){
+      if(item.block.id==="end"){
         this.value = this.value + this.stack.pop();
         this.deepCounter-=2
       }else{
@@ -48,14 +41,14 @@ export class TextEditorElement extends LitElement {
         }
         this.value=this.value + tabs + '{\n'
         // tabs=tabs + '  '
-        this.value=this.value + tabs + '  "id": "' + item.name + '",\n'
+        this.value=this.value + tabs + '  "id": "' + item.block.id + '",\n'
 
         let blockEnd: string=''
         blockEnd=tabs + '  "arguments": []\n'//TODO add arguments, commas
         blockEnd=blockEnd + tabs + '}\n'
 
 
-        if(!item.simple){
+        if(!item.block.simple){
           this.value=this.value + tabs + '  "block": [\n'
           blockEnd=tabs + '  ],\n' + blockEnd
           this.stack.push(blockEnd)

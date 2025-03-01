@@ -1,13 +1,12 @@
 import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { ProgramBlock} from './interfaces'
 
 @customElement('block-element')
 export class BlockElement extends LitElement {
-    @property({ type: String })
-    title: string = 'Blok';
 
-    @property({ type: String })
-    condition: string = '';
+    @property()
+    block: ProgramBlock={block: {name: '', simple: false, id: ''}, arguments: []}
 
     static styles = css`
     :host {
@@ -44,11 +43,11 @@ export class BlockElement extends LitElement {
   `;
   render() {
     let header: TemplateResult=html``;
-    if(this.condition===''){
-      header=html`${this.title}`;
+    if(this.block.arguments.length===0){
+      header=html`${this.block.block.name}`;
     }
     else{
-      header=html`${this.title}<span class="condition">${this.condition}</span>`
+      header=html`${this.block.block.name}<span class="condition">${this.block.arguments[0].value}</span>`
     }
     return html`
       <div class="header">${header}</div>
