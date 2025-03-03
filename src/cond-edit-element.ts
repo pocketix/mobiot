@@ -24,11 +24,7 @@ export class CondEditElement extends LitElement {
     private newArg: Argument={type: 'note',value:'', args: []};
 
     @property()
-    condEdit: ConditionObject={
-        type: 'boolean_expression',
-        name: '',
-        value: []
-    }
+    condEdit: ConditionObject={type: 'boolean_expression',name: '', value: []}
 
     @property()
     block: Argument={type: 'boolean_expression',value:'', args: []}
@@ -75,21 +71,21 @@ export class CondEditElement extends LitElement {
             <div class="modal">
                     <input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />
                     <cond-block-element .block=${this.block}
-                        .newArg=${this.newArg}
-                        .groupAction=${this.groupAction}
-                        .deleteAction=${this.deleteAction}
-                        @select-ended=${() => { this._selectMode(); this._action();}}
-                        @new-arg-clean=${this._newArgClean}
-
-                        .selectMode=${this.selectMode}
-                        .selectedBlock=${this.selectedBlock}
-                        @block-changed=${(e: CustomEvent) => this._updateChoose(e.detail.value)}></cond-block-element>
+                      .newArg=${this.newArg}
+                      .groupAction=${this.groupAction}
+                      .deleteAction=${this.deleteAction}
+                      .selectMode=${this.selectMode}
+                      .selectedBlock=${this.selectedBlock}
+                      @block-changed=${(e: CustomEvent) => this._updateChoose(e.detail.value)}
+                      @select-ended=${() => { this._selectMode(); this._action();}}
+                      @new-arg-clean=${this._newArgClean}
+                    ></cond-block-element>
                     <var-choose-element .varList=${this.varList} @var-saved=${(e: CustomEvent) => this._addArg(e.detail.value)}></var-choose-element>
                     <new-val-element @val-saved=${(e: CustomEvent) => this._addArg(e.detail.value)}></new-val-element>
                      ${this.selectMode ? html`
                         <div>
-                            <button @click=${this._groupAction}>Group</button>
-                            <button @click=${this._deleteAction}>Delete</button>
+                            <button @click=${()=>{this.groupAction =true}}>Group</button>
+                            <button @click=${()=>{this.deleteAction =true}}>Delete</button>
                         </div>
                     ` : html`<button @click=${this._selectMode}>Select ...</button>`}
                 <div>
@@ -108,14 +104,6 @@ export class CondEditElement extends LitElement {
 
       private _selectMode() {
         this.selectMode = !this.selectMode;
-      }
-
-      private _groupAction() {
-        this.groupAction = !this.groupAction;
-      }
-
-      private _deleteAction() {
-        this.deleteAction = !this.deleteAction;
       }
 
       private _action(){

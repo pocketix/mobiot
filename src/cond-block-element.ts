@@ -61,9 +61,8 @@ export class CondBlockElement extends LitElement {
   `;
   render() {
     if(!this.block.args.includes(this.newArg) && this.selectedBlock === this.block && this.newArg.type != 'note'){
-        console.log(this.newArg.type);
         this.block.args.push(this.newArg);
-        this.newArg={type: 'note',value:'', args: []}
+        this.newArg={type: 'note',value:'', args: []};
         this.dispatchEvent(new CustomEvent('new-arg-clean'
         ));
     }
@@ -80,7 +79,8 @@ export class CondBlockElement extends LitElement {
     if(this.block.args.length===0){
       element=html`
         <p>${this.block.value}
-            ${(this.selectMode && this.selectedBlock === this.blockParent) ? html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)}>` : ''}
+            ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
+                html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)}>` : ''}
         </p>
         `
     }
@@ -96,9 +96,7 @@ export class CondBlockElement extends LitElement {
                 .groupAction=${this.groupAction}
                 .deleteAction=${this.deleteAction}
                 .newArg=${this.newArg}
-                @block-changed=${(e: CustomEvent) => this._updateChoose(e.detail.value)}
                 @choose-args-changed=${(e: CustomEvent) => this._updateList(e.detail.value)}
-                @select-ended=${this._chooseClean}
             </cond-block-element>
         `
         })
@@ -106,10 +104,10 @@ export class CondBlockElement extends LitElement {
             <div class="block">
                 <div 
                     class="header ${this.selectedBlock === this.block ? 'selected' : ''}" 
-                    @click=${this._handleClick}
                 >
-                    ${this.block.type}
-                    ${(this.selectMode && this.selectedBlock === this.blockParent) ? html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)}>` : ''}
+                    <p @click=${this._handleClick}>${this.block.type}</p>
+                    ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
+                        html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)}>` : ''}
                 </div>
                 <div class="content">
                     ${element}
@@ -136,7 +134,7 @@ export class CondBlockElement extends LitElement {
 }
 
     private _handleClick() {
-        this.selectedBlock = this.selectedBlock === this.block ? {type: 'note',value:'', args: []} : this.block;
+        this.selectedBlock = this.block;
 
         this.dispatchEvent(new CustomEvent('block-changed', {
             detail: { value: this.selectedBlock },
@@ -145,10 +143,6 @@ export class CondBlockElement extends LitElement {
         }
     ));
     }
-
-    private _updateChoose(updatedArg: Argument) {
-        this.selectedBlock = updatedArg;
-      }
 
     private _groupArgs(){
         if(this.chooseArgs.length>=2){
@@ -162,21 +156,17 @@ export class CondBlockElement extends LitElement {
         }
       }
 
-      private _deleteArgs(){
+    private _deleteArgs(){
         this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item))
         this.chooseArgs=[];
         this.deleteAction=false;
     
         this.dispatchEvent(new CustomEvent('select-ended'
         ));
-        }
+    }
 
     private _updateList(updatedList: Argument[]) {
         this.chooseArgs = [ ...updatedList ];
-    }
-
-    private _chooseClean() {
-        this.chooseArgs = [];
     }
 }
 
