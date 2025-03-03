@@ -44,7 +44,16 @@ export class TextEditorElement extends LitElement {
         this.value=this.value + tabs + '  "id": "' + item.block.id + '",\n'
 
         let blockEnd: string=''
-        blockEnd=tabs + '  "arguments": []\n'//TODO add arguments, commas
+        if(item.arguments.length!=0){
+          blockEnd=tabs + '  "arguments": [\n';//TODO add commas
+          item.arguments.forEach((argument)=>{
+            blockEnd=blockEnd + tabs + '    {\n';
+            blockEnd=blockEnd + tabs + '      "type": "' + argument.type + '",\n'
+            blockEnd=blockEnd + tabs + '      "value": "' + argument.value + '"\n'
+            blockEnd=blockEnd + tabs + '    }\n';
+          })
+          blockEnd=blockEnd + tabs + '  ]\n';
+        }
         blockEnd=blockEnd + tabs + '}\n'
 
 

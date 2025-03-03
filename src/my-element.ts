@@ -1,10 +1,11 @@
-import { LitElement, css, html } from 'lit'
+import { LitElement, css, html} from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { VarObject, Argument, ProgramBlock} from './interfaces'
+import { VarObject, ProgramBlock} from './interfaces'
 import './vp-editor-element.ts';
 import './text-editor-element.ts';
 import './var-list-element.ts';
-import './options-element.ts'
+import './options-element.ts';
+import './cond-edit-element.ts'
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -13,15 +14,15 @@ export class MyElement extends LitElement {
   docsHint = 'Click on the Vite and Lit logos to learn more'
 
   @property()
-  conditions: Argument[] = [
-    {type: 'boolean_expression', value: 'x+5==8'},
-    {type: 'boolean_expression', value: 'a*b!=25'},
-    {type: 'boolean_expression', value: 'x AND y'}
+  conditions: VarObject[] = [
+    {name: 'cond_1', type: 'boolean_expression', value: 'x+5==8'},
+    {name: 'cond_2', type: 'boolean_expression', value: 'a*b!=25'},
+    {name: 'cond_3', type: 'boolean_expression', value: 'x AND y'}
   ];
 
   @property()
   program: ProgramBlock[]=[
-    {block: {name: "If", simple: false, id: "if"}, arguments: [{type: 'boolean_expression', value: 'x==5'}]},
+    {block: {name: "If", simple: false, id: "if"}, arguments: [{name: 'cond_0', type: 'boolean_expression', value: 'x==5'}]},
     {block: {name: "Else", simple: false, id: 'else'}, arguments: []},
     {block: {name: "Send notification", simple: true, id: 'alert'}, arguments: []},
   ];
@@ -37,6 +38,7 @@ export class MyElement extends LitElement {
   render() {
     return html`
       <var-list-element .table=${this.varList} @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}></var-list-element>
+      <cond-edit-element .varList=${this.varList}></cond-edit-element>
       <p>Here is your program:</p>
       <div class="wrapper">
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>
