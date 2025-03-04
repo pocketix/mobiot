@@ -61,7 +61,7 @@ export class VarChooseElement extends LitElement {
   render() {
         const listCode: TemplateResult[]=[];
         this.varList.forEach((item)=>{
-            listCode.push(html`<li><button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value}</button></li>`);
+            listCode.push(html`<li><button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value[0].value}</button></li>`);
   });
     return html`
       <button @click=${this._openCloseModal}>Add Operand (variable)</button>

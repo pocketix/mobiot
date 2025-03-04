@@ -66,7 +66,7 @@ export class VarListElement extends LitElement {
       render() {
     
         return html`
-          <button @click=${this._openCloseModal}>List of variable</button>
+          <button @click=${this._openCloseModal}>Variables</button>
     
           ${this.isOpen ? html`
             <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.varEdit)}>

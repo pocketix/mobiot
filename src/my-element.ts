@@ -1,11 +1,12 @@
 import { LitElement, css, html} from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { VarObject, ProgramBlock} from './interfaces'
+import { VarObject, ProgramBlock, View} from './interfaces'
 import './vp-editor-element.ts';
 import './text-editor-element.ts';
 import './var-list-element.ts';
 import './options-element.ts';
 import './cond-edit-element.ts'
+import './menu-element.ts'
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -13,8 +14,14 @@ export class MyElement extends LitElement {
   @property()
   docsHint = 'Click on the Vite and Lit logos to learn more'
 
+    @property()
+    programText: string=''
+
+    @property()
+    view: View='both';
+
   @property()
-  conditions: VarObject[] = [
+  conditions: VarObject[] = [//TODO argument
     {name: 'cond_1', value: [{type: 'boolean_expression', value: 'x+5==8', args: []}]},
     {name: 'cond_2', value: [{type: 'boolean_expression', value: 'a*b!=8', args: []}]},
     {name: 'cond_3', value: [{type: 'boolean_expression', value: 'x AND y', args: []}]}
@@ -22,7 +29,7 @@ export class MyElement extends LitElement {
 
   @property()
   program: ProgramBlock[]=[
-    {block: {name: "If", simple: false, id: "if"}, arguments: [{name: 'cond_1', value: [{type: 'boolean_expression', value: 'x==5', args: []}]}]},
+    {block: {name: "If", simple: false, id: "if"}, arguments: [{type: 'boolean_expression', value: 'x==5', args: []}]},
     {block: {name: "Else", simple: false, id: 'else'}, arguments: []},
     {block: {name: "Send notification", simple: true, id: 'alert'}, arguments: []},
   ];
@@ -37,8 +44,14 @@ export class MyElement extends LitElement {
 
   render() {
     return html`
-      <var-list-element .table=${this.varList} @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}></var-list-element>
-      <cond-edit-element .varList=${this.varList}></cond-edit-element>
+      <menu-element 
+        .programText=${this.programText} 
+        @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
+        .varList=${this.varList}
+        @var-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
+        .view=${this.view}
+        @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}></menu-element>
+        <a>${this.view}</a>
       <p>Here is your program:</p>
       <div class="wrapper">
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>
@@ -53,8 +66,16 @@ export class MyElement extends LitElement {
     this.varList = [ ...newVar] ;
 }
 
+private _updateView(newView: View) {
+  this.view = newView ;
+}
+
 private _updateProgram(updatedProgram: ProgramBlock[]) {
   this.program = [ ...updatedProgram ];
+}
+
+private _saveText(newProgram: string) {
+  this.programText=newProgram ;
 }
 
   static styles = css`

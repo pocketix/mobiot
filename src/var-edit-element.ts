@@ -106,7 +106,6 @@ export class VarEditElement extends LitElement {
   }
 
   private _selectTypeInput(option: TypeOption) {
-    // this.var.value[0] = { ...this.var.value[0], type: option };
     this.var = {
       ...this.var, 
       value: [

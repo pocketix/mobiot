@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state} from 'lit/decorators.js';
-import { ProgramBlock} from './interfaces'
+import { Argument, ProgramBlock} from './interfaces'
 
 @customElement('text-editor-element')
 export class TextEditorElement extends LitElement {
@@ -40,20 +40,8 @@ export class TextEditorElement extends LitElement {
           tabs=tabs+'  ';
         }
         this.value=this.value + tabs + '{\n'
-        // tabs=tabs + '  '
         this.value=this.value + tabs + '  "id": "' + item.block.id + '",\n'
-
-        let blockEnd: string=''
-        if(item.arguments.length!=0){
-          blockEnd=tabs + '  "arguments": [\n';//TODO add commas
-          item.arguments.forEach((argument)=>{
-            blockEnd=blockEnd + tabs + '    {\n';
-            blockEnd=blockEnd + tabs + '      "type": "' + argument.type + '",\n'
-            blockEnd=blockEnd + tabs + '      "value": "' + argument.value + '"\n'
-            blockEnd=blockEnd + tabs + '    }\n';
-          })
-          blockEnd=blockEnd + tabs + '  ]\n';
-        }
+        let blockEnd=this._addArgs(item.arguments, tabs + '  ')
         blockEnd=blockEnd + tabs + '}\n'
 
 
@@ -82,6 +70,25 @@ export class TextEditorElement extends LitElement {
         placeholder="Napiš něco..."
       />
     `;
+  }
+
+  private _addArgs(args: Argument[], tabs: string): string{
+    let blockEnd: string=''
+    if(args.length!=0){
+      blockEnd=tabs + '"arguments": [\n';//TODO add commas, spaces
+      args.forEach((argument)=>{
+        blockEnd=blockEnd + tabs + '  {\n';
+        blockEnd=blockEnd + tabs + '    "type": "' + argument.type + '",\n'
+        if(argument.args.length===0){
+          blockEnd=blockEnd + tabs + '    "value": "' + argument.value + '"\n'
+        }else{
+          blockEnd=blockEnd + this._addArgs(argument.args, tabs + '  ')
+        }
+        blockEnd=blockEnd + tabs + '  }\n';
+      })
+      blockEnd=blockEnd + tabs + ']\n';
+    }
+    return blockEnd
   }
 
   private _handleInput(event: InputEvent) {

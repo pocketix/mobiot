@@ -12,16 +12,16 @@ export interface OptionBlock {
 
 export interface ProgramBlock {
     block: Block;
-    arguments: VarObject[]
+    arguments: Argument[]
 }
 
 export type TypeOption = 'num' | 'str' | 'bool' | 'expr'|'boolean_expression'|'note'|'variable'|'&&';
 
+export type View = 'vp' | 'text' | 'both' ;
+
 export interface VarObject {
-    // type: TypeOption | null;
     name: string;
-    // value: string;
-    value: Argument[]
+    value: Argument[]//TODO check if file is necessary
 }
 
 export interface Argument {
@@ -29,9 +29,3 @@ export interface Argument {
     value: string;
     args: Argument[]
 }
-
-// export interface ConditionObject {
-//     type: TypeOption | null;
-//     name: string;
-//     value: Argument[];
-// }

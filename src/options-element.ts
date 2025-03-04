@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import { OptionBlock, ProgramBlock, VarObject} from './interfaces'
+import { OptionBlock, ProgramBlock, VarObject, Argument} from './interfaces'
 
 @customElement('options-element')
 export class OptionsElement extends LitElement {
@@ -29,7 +29,7 @@ export class OptionsElement extends LitElement {
         });
         }else{
         this.conditions.forEach((condition)=>{
-            listCode.push(html`<li><button @click=${() => this._addCondition(condition)}>${condition.name}: ${condition.value}</button></li>`);
+            listCode.push(html`<li><button @click=${() => this._addCondition(condition)}>${condition.name}: ${condition.value[0].value}</button></li>`);
         });
     }
 
@@ -37,9 +37,9 @@ export class OptionsElement extends LitElement {
     }
 
     private _addToProgram(input: OptionBlock) {
-        let condition: VarObject[]=[];
+        let condition: Argument[]=[];
         if(input.arguments){
-        condition=[{name: '', value:[{type: 'note', value: 'Add condition', args: []}] }];
+        condition=[{type: 'note', value: 'Add condition', args: []}];
         this.menuCondition=true;
         }
         this.program=[...this.program, {block: input.block, arguments: condition}]
@@ -49,7 +49,7 @@ export class OptionsElement extends LitElement {
     private _addCondition(condition: VarObject) {
         let block=this.program.pop();
         if(block){
-            block={ ...block, arguments: [condition] };
+            block={ ...block, arguments: condition.value };
             this.menuCondition=false;
             this.program=[...this.program, block];
             this._saveChanges();
