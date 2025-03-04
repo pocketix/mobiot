@@ -18,9 +18,10 @@ export interface ProgramBlock {
 export type TypeOption = 'num' | 'str' | 'bool' | 'expr'|'boolean_expression'|'note'|'variable'|'&&';
 
 export interface VarObject {
-    type: TypeOption | null;
+    // type: TypeOption | null;
     name: string;
-    value: string;
+    // value: string;
+    value: Argument[]
 }
 
 export interface Argument {
@@ -29,8 +30,8 @@ export interface Argument {
     args: Argument[]
 }
 
-export interface ConditionObject {
-    type: TypeOption | null;
-    name: string;
-    value: Argument[];
-}
+// export interface ConditionObject {
+//     type: TypeOption | null;
+//     name: string;
+//     value: Argument[];
+// }

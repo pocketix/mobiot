@@ -39,7 +39,7 @@ export class OptionsElement extends LitElement {
     private _addToProgram(input: OptionBlock) {
         let condition: VarObject[]=[];
         if(input.arguments){
-        condition=[{name: '', type: 'note', value: 'Add condition'}];
+        condition=[{name: '', value:[{type: 'note', value: 'Add condition', args: []}] }];
         this.menuCondition=true;
         }
         this.program=[...this.program, {block: input.block, arguments: condition}]

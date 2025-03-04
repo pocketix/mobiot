@@ -13,9 +13,8 @@ export class VarEditElement extends LitElement {
 
     @property({ type: Object })
     var: VarObject = {
-        type: null,
         name: '',
-        value: ''
+        value: [{type: 'note', value: '', args: []}]
     };
 
     static styles = css`
@@ -78,13 +77,13 @@ export class VarEditElement extends LitElement {
             <h2>Type of variable: </h2>
             <div>
              ${this.type.map(item=>html`
-                <button class=${item === this.var.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
+                <button class=${item === this.var.value[0].type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
                 `)}
             </div>
             <h2>Name: </h2>
              <input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Zadejte text..." />
             <h2>Value: </h2>
-             <input type="text" .value=${this.var.value} @input=${this._handleValueInput} placeholder="Zadejte text..." />
+             <input type="text" .value=${this.var.value[0].value} @input=${this._handleValueInput} placeholder="Zadejte text..." />
             <button class="close-btn" @click=${this._saveChanges}>Save</button>
             <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
           </div>
@@ -103,11 +102,18 @@ export class VarEditElement extends LitElement {
 
   private _handleValueInput(event: InputEvent) {
     const target = event.target as HTMLInputElement;
-    this.var.value = target.value;
+    this.var.value[0].value = target.value;
   }
 
   private _selectTypeInput(option: TypeOption) {
-    this.var = { ...this.var, type: option };
+    // this.var.value[0] = { ...this.var.value[0], type: option };
+    this.var = {
+      ...this.var, 
+      value: [
+        { ...this.var.value[0], type: option }, 
+        ...this.var.value.slice(1)
+      ]
+    };  
   }
 
     private _saveChanges() {

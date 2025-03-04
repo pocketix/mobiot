@@ -47,8 +47,8 @@ export class BlockElement extends LitElement {
       header=html`${this.block.block.name}`;
     }
     else{
-      header=html`${this.block.block.name}<span class="condition">${this.block.arguments[0].value}</span>`
-    }
+      header=html`${this.block.block.name}<span class="condition">${this.block.arguments[0].value[0].value}</span>`
+    }//TODO check more vars
     return html`
       <div class="header">${header}</div>
       <div class="content">

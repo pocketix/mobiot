@@ -15,25 +15,25 @@ export class MyElement extends LitElement {
 
   @property()
   conditions: VarObject[] = [
-    {name: 'cond_1', type: 'boolean_expression', value: 'x+5==8'},
-    {name: 'cond_2', type: 'boolean_expression', value: 'a*b!=25'},
-    {name: 'cond_3', type: 'boolean_expression', value: 'x AND y'}
+    {name: 'cond_1', value: [{type: 'boolean_expression', value: 'x+5==8', args: []}]},
+    {name: 'cond_2', value: [{type: 'boolean_expression', value: 'a*b!=8', args: []}]},
+    {name: 'cond_3', value: [{type: 'boolean_expression', value: 'x AND y', args: []}]}
   ];
 
   @property()
   program: ProgramBlock[]=[
-    {block: {name: "If", simple: false, id: "if"}, arguments: [{name: 'cond_0', type: 'boolean_expression', value: 'x==5'}]},
+    {block: {name: "If", simple: false, id: "if"}, arguments: [{name: 'cond_1', value: [{type: 'boolean_expression', value: 'x==5', args: []}]}]},
     {block: {name: "Else", simple: false, id: 'else'}, arguments: []},
     {block: {name: "Send notification", simple: true, id: 'alert'}, arguments: []},
   ];
 
   @property()
     varList: VarObject[] = [
-            { type: 'str', name: 'name', value: 'John' },
-            { type: 'num', name: 'age', value: '40' },
-            { type: 'bool', name: 'isAdmin', value: 'true' },
-            { type: 'expr', name: 'fee', value: 'age *4 + 100' }
-            ];;
+            { name: 'name', value: [{type: 'str',value: 'John', args: []}] },
+            { name: 'age', value: [{type: 'num',value: '40', args: []}] },
+            { name: 'isAdmin', value: [{type: 'bool',value: 'true', args: []}] },
+            { name: 'fee', value: [{type: 'expr',value: 'a + b == 6', args: []}] }
+            ];
 
   render() {
     return html`

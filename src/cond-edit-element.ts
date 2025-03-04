@@ -1,6 +1,6 @@
 import { LitElement, css, html} from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import { VarObject, Argument, ConditionObject} from './interfaces'
+import { VarObject, Argument} from './interfaces'
 import './var-choose-element';
 import './new-val-element';
 import './cond-block-element';
@@ -24,7 +24,7 @@ export class CondEditElement extends LitElement {
     private newArg: Argument={type: 'note',value:'', args: []};
 
     @property()
-    condEdit: ConditionObject={type: 'boolean_expression',name: '', value: []}
+    condEdit: VarObject={name: '', value: []}
 
     @property()
     block: Argument={type: 'boolean_expression',value:'', args: []}
