@@ -1,4 +1,4 @@
-import { LitElement, css, html} from 'lit'
+import { LitElement, css, html, TemplateResult} from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { VarObject, ProgramBlock, View} from './interfaces'
 import './vp-editor-element.ts';
@@ -43,20 +43,32 @@ export class MyElement extends LitElement {
             ];
 
   render() {
+    let chooseView: TemplateResult=html``;
+    if(this.view==='both'){
+      chooseView=html`
+        <div class="wrapper">
+          <vp-editor-element class="editor" .program=${this.program}></vp-editor-element>
+          <text-editor-element class="editor" .program=${this.program}></text-editor-element>
+        </div>`
+    }
+    else if(this.view==='vp'){
+      chooseView=html`
+        <vp-editor-element class="editor" .program=${this.program}></vp-editor-element>`
+    }else{
+      chooseView=html`
+        <text-editor-element class="editor" .program=${this.program}></text-editor-element>`
+    }
     return html`
       <menu-element 
         .programText=${this.programText} 
         @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
         .varList=${this.varList}
-        @var-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
+        @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
         .view=${this.view}
-        @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}></menu-element>
-        <a>${this.view}</a>
+        @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}
+        @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}></menu-element>
       <p>Here is your program:</p>
-      <div class="wrapper">
-        <text-editor-element class="editor" .program=${this.program}></text-editor-element>
-        <vp-editor-element class="editor" .program=${this.program}></vp-editor-element>
-      </div>
+      ${chooseView}
       <options-element .conditions=${this.conditions} .program=${this.program} @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></options-element>
       <p class="read-the-docs">${this.docsHint}</p>
     `
@@ -76,6 +88,10 @@ private _updateProgram(updatedProgram: ProgramBlock[]) {
 
 private _saveText(newProgram: string) {
   this.programText=newProgram ;
+}
+
+private _addCond(newCond: VarObject){
+  this.conditions=[...this.conditions, newCond]
 }
 
   static styles = css`

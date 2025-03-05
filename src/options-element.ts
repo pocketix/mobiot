@@ -1,17 +1,29 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import { OptionBlock, ProgramBlock, VarObject, Argument} from './interfaces'
+import { OptionBlock, ProgramBlock, VarObject, Argument, BlockType} from './interfaces'
 
 @customElement('options-element')
 export class OptionsElement extends LitElement {
 
     @state()
     private blocks: OptionBlock[] = [
-        {block: {name: "If", simple: false, id: "if"}, arguments: true},
-        {block: {name: "Else", simple: false, id: "else"}, arguments: false},
-        {block: {name: "Send notification", simple: true, id: "alert"}, arguments: false},
-        {block: {name: "End of block", simple: true, id: "end"}, arguments: false}
+        {block: {name: "If", simple: false, id: "if"}, arguments: true, type: 'branch'},
+        {block: {name: "Else", simple: false, id: "else"}, arguments: false, type: 'branch'},
+        {block: {name: "Else If", simple: false, id: "elseif"}, arguments: true, type: 'branch'},
+        {block: {name: "Switch", simple: false, id: "switch"}, arguments: true, type: 'branch'},//TODO add case
+        {block: {name: "Repeat", simple: false, id: "repeat"}, arguments: true, type: 'cycle'},
+        {block: {name: "While", simple: false, id: "while"}, arguments: true, type: 'cycle'},
+        {block: {name: "Send notification", simple: true, id: "alert"}, arguments: true, type: 'alert'},
+        {block: {name: "End of block", simple: true, id: "end"}, arguments: true, type: 'end'},
+        {block: {name: "Set Variable", simple: true, id: "setvar"}, arguments: true, type: 'branch'},
+        {block: {name: "LED 1.setLedColor", simple: true, id: "str_opt"}, arguments: false, type: 'dev'},
     ];
+
+    @state()
+    private categories: BlockType[]= ['all', 'branch', 'cycle', 'alert', 'set_var', 'dev', 'end'];
+
+    @state()
+    private category: BlockType='all'
 
     @property()menuCondition=false;
 
@@ -24,7 +36,11 @@ export class OptionsElement extends LitElement {
     render() {
         const listCode: TemplateResult[]=[];
         if(!this.menuCondition){
-        this.blocks.forEach((block)=>{
+            let filteredBlocks =this.blocks;
+            if(this.category!='all'){
+                filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
+            }
+            filteredBlocks.forEach((block)=>{
             listCode.push(html`<li><button @click=${() => this._addToProgram(block)}>${block.block.name}</button></li>`);
         });
         }else{
@@ -33,7 +49,13 @@ export class OptionsElement extends LitElement {
         });
     }
 
-        return listCode
+        return html`
+            <div>
+                ${this.categories.map(item=>html`
+                <button class=${item === this.category ? 'selected' : ''} @click=${() => this._selectCategory(item)}>${item}</button>
+                `)}
+            </div>
+            ${listCode}`
     }
 
     private _addToProgram(input: OptionBlock) {
@@ -64,6 +86,11 @@ export class OptionsElement extends LitElement {
         }));
     }
 
+    private _selectCategory(cat: BlockType){
+        this.category=cat
+        this.requestUpdate();
+    }
+
     static styles = css`
         button {
         border-radius: 8px;
@@ -84,6 +111,10 @@ export class OptionsElement extends LitElement {
             button:focus-visible {
             outline: 4px auto -webkit-focus-ring-color;
         }
+        button.selected {
+        background-color: #7da7d9;
+        color: white;
+    }
      `
 }
 

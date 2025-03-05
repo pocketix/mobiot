@@ -1,4 +1,4 @@
-import { LitElement, html, css} from 'lit';
+import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { TypeOption, VarObject} from './interfaces'
 
@@ -67,9 +67,17 @@ export class VarEditElement extends LitElement {
   `;
 
   render() {
-
+    let title = this.var.value[0].type==='note' ? '+' : 'Edit';
+    let valueType: TemplateResult=html``
+    if(this.var.value[0].type==='bool'){
+      valueType=html`
+      <button class=${'true' === this.var.value[0].value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
+      <button class=${'false' === this.var.value[0].value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+    }else{
+      valueType=html`<input type="text" .value=${this.var.value[0].value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
+    }
     return html`
-      <button @click=${this._openCloseModal}>Var edit</button>
+      <button @click=${this._openCloseModal}>${title}</button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
@@ -81,9 +89,9 @@ export class VarEditElement extends LitElement {
                 `)}
             </div>
             <h2>Name: </h2>
-             <input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Zadejte text..." />
+             <input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Add variable name..." />
             <h2>Value: </h2>
-             <input type="text" .value=${this.var.value[0].value} @input=${this._handleValueInput} placeholder="Zadejte text..." />
+            <div>${valueType}</div>
             <button class="close-btn" @click=${this._saveChanges}>Save</button>
             <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
           </div>
@@ -103,6 +111,16 @@ export class VarEditElement extends LitElement {
   private _handleValueInput(event: InputEvent) {
     const target = event.target as HTMLInputElement;
     this.var.value[0].value = target.value;
+  }
+
+  private _handleBoolInput(input: string) {
+    this.var = {
+      ...this.var, 
+      value: [
+        { ...this.var.value[0], value: input }, 
+        ...this.var.value.slice(1)
+      ]
+    };  
   }
 
   private _selectTypeInput(option: TypeOption) {

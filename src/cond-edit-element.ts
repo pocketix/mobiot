@@ -65,7 +65,7 @@ export class CondEditElement extends LitElement {
     
       render() {
         return html`
-          <button @click=${this._openCloseModal}>Condition editor</button>
+          <button @click=${this._openCloseModal}>New condition</button>
     
           ${this.isOpen ? html`
             <div class="modal">
@@ -80,7 +80,7 @@ export class CondEditElement extends LitElement {
                       @select-ended=${() => { this._selectMode(); this._action();}}
                       @new-arg-clean=${this._newArgClean}
                     ></cond-block-element>
-                    <var-choose-element .varList=${this.varList} @var-saved=${(e: CustomEvent) => this._addArg(e.detail.value)}></var-choose-element>
+                    <var-choose-element .varList=${this.varList} @var-add=${(e: CustomEvent) => this._addArg(e.detail.value)}></var-choose-element>
                     <new-val-element @val-saved=${(e: CustomEvent) => this._addArg(e.detail.value)}></new-val-element>
                      ${this.selectMode ? html`
                         <div>
@@ -89,7 +89,7 @@ export class CondEditElement extends LitElement {
                         </div>
                     ` : html`<button @click=${this._selectMode}>Select ...</button>`}
                 <div>
-                    <button>Save condition</button>
+                    <button @click=${this._saveCond}>Save condition</button>
                     <button>Use value</button>
                     <button @click=${this._openCloseModal}>Back</button>
                 </div>
@@ -126,6 +126,18 @@ export class CondEditElement extends LitElement {
 
       private _newArgClean() {
         this.newArg = {type: 'note',value:'', args: []};
+      }
+
+      private _saveCond() {
+        this.condEdit.value=[this.block]
+        this.dispatchEvent(new CustomEvent('cond-saved', {
+          detail: { value: this.condEdit },
+          bubbles: true,
+          composed: true
+        }));
+        this.condEdit={name: '', value: []}//TODO repair for update of cond
+        this.block.args=[]
+        this._openCloseModal()
       }
 }
 declare global {

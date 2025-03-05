@@ -16,7 +16,7 @@ export class VarChooseElement extends LitElement {
     };
 
     @property()
-    varList: VarObject[]=[]
+    varList: VarObject[]=[];
 
     static styles = css`
 
@@ -83,7 +83,7 @@ export class VarChooseElement extends LitElement {
 
     private _addArg(value: string) {
         this.arg.value=value;
-        this.dispatchEvent(new CustomEvent('var-saved', {
+        this.dispatchEvent(new CustomEvent('var-add', {
             detail: { value: this.arg },
             bubbles: true,
             composed: true

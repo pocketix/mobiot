@@ -19,27 +19,24 @@ export class MenuElement extends LitElement {
     @property()
     view: View='both'
 
+    @property()
+    condEdit: VarObject={name: '', value: []}
+
   render() {
     return html`
+        <div>
         <button @click=${this._openFilePicker}>Import JSON file</button>
         <button @click=${this._exportText}>Export JSON file</button>
-        <var-list-element .table=${this.varList} @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}></var-list-element>
+        </div>
+        <button>Procedures</button>
+        <var-list-element .table=${this.varList} ></var-list-element>
+        <cond-edit-element .varList=${this.varList} ></cond-edit-element>
         <div>
             ${this.viewList.map(item=>html`
                 <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
                 `)}
             </div>
     `
-    }
-    //TODO <cond-edit-element .varList=${this.varList}></cond-edit-element>
-
-    private _varList(newVar: VarObject[]) {
-        this.varList = [ ...newVar] ;
-        this.dispatchEvent(new CustomEvent('var-saved', {
-            detail: { value: this.varList},
-            bubbles: true,
-            composed: true
-        }));
     }
 
     private _openFilePicker() {

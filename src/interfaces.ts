@@ -8,6 +8,7 @@ export interface Block {
 export interface OptionBlock {
     block: Block;
     arguments: boolean;
+    type: BlockType;
 }
 
 export interface ProgramBlock {
@@ -19,9 +20,11 @@ export type TypeOption = 'num' | 'str' | 'bool' | 'expr'|'boolean_expression'|'n
 
 export type View = 'vp' | 'text' | 'both' ;
 
+export type BlockType = 'branch' | 'cycle' | 'alert' | 'set_var' | 'dev'| 'end' | 'all';
+
 export interface VarObject {
     name: string;
-    value: Argument[]//TODO check if file is necessary
+    value: Argument[]//TODO check if field necessary
 }
 
 export interface Argument {
