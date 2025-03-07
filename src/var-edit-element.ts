@@ -14,7 +14,7 @@ export class VarEditElement extends LitElement {
     @property({ type: Object })
     var: VarObject = {
         name: '',
-        value: [{type: 'note', value: '', args: []}]
+        value: {type: 'note', value: '', args: []}
     };
 
     static styles = css`
@@ -67,14 +67,14 @@ export class VarEditElement extends LitElement {
   `;
 
   render() {
-    let title = this.var.value[0].type==='note' ? '+' : 'Edit';
+    let title = this.var.value.type==='note' ? '+' : 'Edit';
     let valueType: TemplateResult=html``
-    if(this.var.value[0].type==='bool'){
+    if(this.var.value.type==='bool'){
       valueType=html`
-      <button class=${'true' === this.var.value[0].value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
-      <button class=${'false' === this.var.value[0].value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+      <button class=${'true' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
+      <button class=${'false' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
     }else{
-      valueType=html`<input type="text" .value=${this.var.value[0].value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
+      valueType=html`<input type="text" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
     }
     return html`
       <button @click=${this._openCloseModal}>${title}</button>
@@ -85,7 +85,7 @@ export class VarEditElement extends LitElement {
             <h2>Type of variable: </h2>
             <div>
              ${this.type.map(item=>html`
-                <button class=${item === this.var.value[0].type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
+                <button class=${item === this.var.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
                 `)}
             </div>
             <h2>Name: </h2>
@@ -110,26 +110,18 @@ export class VarEditElement extends LitElement {
 
   private _handleValueInput(event: InputEvent) {
     const target = event.target as HTMLInputElement;
-    this.var.value[0].value = target.value;
+    this.var.value.value = target.value;
   }
 
   private _handleBoolInput(input: string) {
-    this.var = {
-      ...this.var, 
-      value: [
-        { ...this.var.value[0], value: input }, 
-        ...this.var.value.slice(1)
-      ]
+    this.var = {...this.var, 
+      value: { ...this.var.value, value: input }, 
     };  
   }
 
   private _selectTypeInput(option: TypeOption) {
-    this.var = {
-      ...this.var, 
-      value: [
-        { ...this.var.value[0], type: option }, 
-        ...this.var.value.slice(1)
-      ]
+    this.var = { ...this.var, 
+      value: { ...this.var.value, type: option }
     };  
   }
 

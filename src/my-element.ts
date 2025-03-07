@@ -22,24 +22,27 @@ export class MyElement extends LitElement {
 
   @property()
   conditions: VarObject[] = [//TODO argument
-    {name: 'cond_1', value: [{type: 'boolean_expression', value: 'x+5==8', args: []}]},
-    {name: 'cond_2', value: [{type: 'boolean_expression', value: 'a*b!=8', args: []}]},
-    {name: 'cond_3', value: [{type: 'boolean_expression', value: 'x AND y', args: []}]}
+    {name: 'cond_1', value: {type: 'boolean_expression', value: 'x+5==8', args: []}},
+    {name: 'cond_2', value: {type: 'boolean_expression', value: 'a*b!=8', args: []}},
+    {name: 'cond_3', value: {type: 'boolean_expression', value: 'x AND y', args: []}}
   ];
 
   @property()
   program: ProgramBlock[]=[
-    {block: {name: "If", simple: false, id: "if"}, arguments: [{type: 'boolean_expression', value: 'x==5', args: []}]},
-    {block: {name: "Else", simple: false, id: 'else'}, arguments: []},
-    {block: {name: "Send notification", simple: true, id: 'alert'}, arguments: []},
+    {block: {name: "If", simple: false, id: "if", type: 'branch', argTypes: ['boolean_expression']}, 
+      arguments: [{type: 'boolean_expression', value: 'x==5', args: []}], hide: false},
+    {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['str']}, 
+      arguments: [{type: 'variable', value: 'name', args: []}], hide: false},//TODO repair
+    {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
+    {block: {name: "Else", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false},
   ];
 
   @property()
     varList: VarObject[] = [
-            { name: 'name', value: [{type: 'str',value: 'John', args: []}] },
-            { name: 'age', value: [{type: 'num',value: '40', args: []}] },
-            { name: 'isAdmin', value: [{type: 'bool',value: 'true', args: []}] },
-            { name: 'fee', value: [{type: 'expr',value: 'a + b == 6', args: []}] }
+            { name: 'name', value: {type: 'str',value: 'John', args: []}},
+            { name: 'age', value: {type: 'num',value: '40', args: []}},
+            { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
+            { name: 'fee', value: {type: 'expr',value: 'a + b == 6', args: []}}
             ];
 
   render() {
@@ -69,7 +72,7 @@ export class MyElement extends LitElement {
         @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}></menu-element>
       <p>Here is your program:</p>
       ${chooseView}
-      <options-element .conditions=${this.conditions} .program=${this.program} @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></options-element>
+      <options-element .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></options-element>
       <p class="read-the-docs">${this.docsHint}</p>
     `
   }

@@ -19,8 +19,8 @@ export class MenuElement extends LitElement {
     @property()
     view: View='both'
 
-    @property()
-    condEdit: VarObject={name: '', value: []}
+    // @property()
+    // condEdit: VarObject={name: '', value: []}
 
   render() {
     return html`

@@ -5,8 +5,8 @@ import { ProgramBlock} from './interfaces'
 @customElement('block-element')
 export class BlockElement extends LitElement {
 
-    @property()
-    block: ProgramBlock={block: {name: '', simple: false, id: ''}, arguments: []}
+    @property()//TODO arguments vizualization
+    block: ProgramBlock={block: {name: '', simple: false, id: '', type: 'all', argTypes: []}, arguments: [], hide: false}
 
     static styles = css`
     :host {

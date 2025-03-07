@@ -24,10 +24,10 @@ export class CondEditElement extends LitElement {
     private newArg: Argument={type: 'note',value:'', args: []};
 
     @property()
-    condEdit: VarObject={name: '', value: []}
+    block: Argument={type: 'boolean_expression',value:'', args: []}
 
     @property()
-    block: Argument={type: 'boolean_expression',value:'', args: []}
+    condEdit: VarObject={name: '', value: this.block}//TODO check
 
     @property()
     varList: VarObject[] = []
@@ -129,13 +129,13 @@ export class CondEditElement extends LitElement {
       }
 
       private _saveCond() {
-        this.condEdit.value=[this.block]
+        this.condEdit.value={ ...this.block};
         this.dispatchEvent(new CustomEvent('cond-saved', {
           detail: { value: this.condEdit },
           bubbles: true,
           composed: true
         }));
-        this.condEdit={name: '', value: []}//TODO repair for update of cond
+        this.condEdit={name: '', value: {type: 'note',value:'', args: []}}//TODO repair for update of cond
         this.block.args=[]
         this._openCloseModal()
       }

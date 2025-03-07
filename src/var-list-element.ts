@@ -15,7 +15,7 @@ export class VarListElement extends LitElement {
     @state()
     private varEdit: VarObject={
         name: '',
-        value: [{type: 'note', value: '', args: []}]
+        value: {type: 'note', value: '', args: []}
     }
 
     @state()
@@ -83,9 +83,9 @@ export class VarListElement extends LitElement {
                         <tr @contextmenu=${(e: Event) => this._handleRowClick(e, item)}
                             @pointerdown=${() => this._handleLongPress(item)}
                             @pointerup=${() => this._cancelLongPress()}>
-                        <td>${item.value[0].type}</td>
+                        <td>${item.value.type}</td>
                         <td>${item.name}</td>
-                        <td>${item.value[0].value}</td>
+                        <td>${item.value.value}</td>
                         <div>
                         ${this.selectedRow === item ? html`
                             <var-edit-element 
@@ -119,7 +119,7 @@ export class VarListElement extends LitElement {
         if(this.varEdit.name!=''){
             this.table.push(this.varEdit)
         }
-        this.varEdit={name: '',value: [{type: 'note', value: '', args: []}]}
+        this.varEdit={name: '',value: {type: 'note', value: '', args: []}}
     }
 
     private _deleteVar(event: Event, deletedVar: VarObject) {

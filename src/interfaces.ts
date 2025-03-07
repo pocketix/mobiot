@@ -3,17 +3,18 @@ export interface Block {
     name: string;
     simple: boolean;
     id: string;
+    type: BlockType;
+    argTypes: TypeOption[];
 }
 
-export interface OptionBlock {
-    block: Block;
-    arguments: boolean;
-    type: BlockType;
-}
+// export interface OptionBlock {
+//     block: Block;
+// }
 
 export interface ProgramBlock {
     block: Block;
-    arguments: Argument[]
+    arguments: Argument[];
+    hide: boolean
 }
 
 export type TypeOption = 'num' | 'str' | 'bool' | 'expr'|'boolean_expression'|'note'|'variable'|'&&';
@@ -24,7 +25,7 @@ export type BlockType = 'branch' | 'cycle' | 'alert' | 'set_var' | 'dev'| 'end' 
 
 export interface VarObject {
     name: string;
-    value: Argument[]//TODO check if field necessary
+    value: Argument
 }
 
 export interface Argument {

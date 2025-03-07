@@ -42,7 +42,11 @@ export class VPEditorElement extends LitElement {
     while(stack_complex_name.length>=1){
       stack_program_body.push(this._createBlockElement())
     };
-    return html`${stack_program_body.pop()}`;
+    let programBody: TemplateResult=html``
+    while(stack_program_body.length>=1){//TODO check
+      programBody=html`${stack_program_body.pop()}${programBody}`
+    }
+    return programBody;
   }
 }
 

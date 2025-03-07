@@ -1,22 +1,22 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import { OptionBlock, ProgramBlock, VarObject, Argument, BlockType} from './interfaces'
+import { Block, ProgramBlock, VarObject, BlockType, TypeOption, Argument} from './interfaces'
 
 @customElement('options-element')
 export class OptionsElement extends LitElement {
 
     @state()
-    private blocks: OptionBlock[] = [
-        {block: {name: "If", simple: false, id: "if"}, arguments: true, type: 'branch'},
-        {block: {name: "Else", simple: false, id: "else"}, arguments: false, type: 'branch'},
-        {block: {name: "Else If", simple: false, id: "elseif"}, arguments: true, type: 'branch'},
-        {block: {name: "Switch", simple: false, id: "switch"}, arguments: true, type: 'branch'},//TODO add case
-        {block: {name: "Repeat", simple: false, id: "repeat"}, arguments: true, type: 'cycle'},
-        {block: {name: "While", simple: false, id: "while"}, arguments: true, type: 'cycle'},
-        {block: {name: "Send notification", simple: true, id: "alert"}, arguments: true, type: 'alert'},
-        {block: {name: "End of block", simple: true, id: "end"}, arguments: true, type: 'end'},
-        {block: {name: "Set Variable", simple: true, id: "setvar"}, arguments: true, type: 'branch'},
-        {block: {name: "LED 1.setLedColor", simple: true, id: "str_opt"}, arguments: false, type: 'dev'},
+    private blocks: Block[] = [
+        {name: "If", simple: false, id: "if", argTypes: ['boolean_expression'], type: 'branch'},
+        {name: "Else", simple: false, id: "else", argTypes: [], type: 'branch'},
+        {name: "Else If", simple: false, id: "elseif", argTypes: [], type: 'branch'},
+        {name: "Switch", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},//TODO add case, more types
+        {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
+        {name: "While", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
+        {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
+        {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
+        {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'num'], type: 'set_var'},//TODO repair
+        {name: "LED 1.setLedColor", simple: true, id: "str_opt", argTypes: ['bool'], type: 'dev'},
     ];
 
     @state()
@@ -25,7 +25,9 @@ export class OptionsElement extends LitElement {
     @state()
     private category: BlockType='all'
 
-    @property()menuCondition=false;
+    @property()menuParams=false;
+
+    @property() paramType: TypeOption='note'
 
     @property()
     program: ProgramBlock[] = [];
@@ -33,51 +35,115 @@ export class OptionsElement extends LitElement {
     @property()
     conditions: VarObject[] = [];
 
+    @property()
+    variables: VarObject[] = [];
+
     render() {
-        const listCode: TemplateResult[]=[];
-        if(!this.menuCondition){
+        let listOptions: TemplateResult[]=[];
+        if(!this.menuParams){//TODO filter according to syntax
             let filteredBlocks =this.blocks;
             if(this.category!='all'){
                 filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
             }
             filteredBlocks.forEach((block)=>{
-            listCode.push(html`<li><button @click=${() => this._addToProgram(block)}>${block.block.name}</button></li>`);
+            listOptions.push(html`<li><button @click=${() => this._addToProgram(block)}>${block.name}</button></li>`);
         });
         }else{
-        this.conditions.forEach((condition)=>{
-            listCode.push(html`<li><button @click=${() => this._addCondition(condition)}>${condition.name}: ${condition.value[0].value}</button></li>`);
-        });
-    }
+            listOptions=this._filterParams();
+        }
 
-        return html`
+        let cathegoriesMenu: TemplateResult=html``;
+        if(!this.menuParams){
+            cathegoriesMenu=html`
             <div>
                 ${this.categories.map(item=>html`
                 <button class=${item === this.category ? 'selected' : ''} @click=${() => this._selectCategory(item)}>${item}</button>
                 `)}
-            </div>
-            ${listCode}`
+            </div>`
+        }
+        return html`
+            ${cathegoriesMenu}
+            ${listOptions}`
     }
 
-    private _addToProgram(input: OptionBlock) {
-        let condition: Argument[]=[];
-        if(input.arguments){
-        condition=[{type: 'note', value: 'Add condition', args: []}];
-        this.menuCondition=true;
+    private _filterParams(): TemplateResult[]{
+        let list: TemplateResult[]=[];
+        if(this.paramType==='boolean_expression'){
+            this.conditions.forEach((condition)=>{
+                list.push(html`<li><button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${condition.value.value}</button></li>`);
+            });
+        }else if(this.paramType==='variable'){
+            this.variables.forEach((item)=>{
+                list.push(html`<li><button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button></li>`);
+            });
+        }else{
+            this.variables.filter(item => item.value.type === this.paramType).forEach((item)=>{
+                list.push(html`<li><button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button></li>`);
+            });
+            if(this.paramType==='bool'){
+                list.push(html`<li><button @click=${() => this._addParamsVal('true')}>true</button></li>`);
+                list.push(html`<li><button @click=${() => this._addParamsVal('false')}>false</button></li>`);
+            }else if(this.paramType==='str'){
+                let paramInput: string='';
+                list.push(html`
+                    <li>
+                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value}>
+                      <button @click=${() => this._addParamsVal(paramInput)}>Use this value</button>
+                    </li>
+                  `);
+            }else{
+                let paramInput: string='';
+                list.push(html`
+                    <li>
+                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value}>
+                      <button @click=${() => this._addParamsVal(paramInput)}>Use this value</button>
+                    </li>
+                  `);
+                }
         }
-        this.program=[...this.program, {block: input.block, arguments: condition}]
+        return list
+    }
+
+    private _addToProgram(input: Block) {
+        if(input.argTypes.length>0){
+            this.menuParams=true;
+            this.paramType= input.argTypes[0]
+        }
+        this.program=[...this.program, {block: input, arguments: [], hide: false}]
         this._saveChanges();
     }
 
-    private _addCondition(condition: VarObject) {
+    private _addParamsVar(param: VarObject) {
         let block=this.program.pop();
         if(block){
-            block={ ...block, arguments: condition.value };
-            this.menuCondition=false;
-            this.program=[...this.program, block];
-            this._saveChanges();
+            let arg: Argument=param.value
+            if(param.value.type!='boolean_expression'){
+                arg = {type: 'variable', value:param.name, args: []};
+            }
+            this._addParams(block, arg)
         }
     }
 
+    private _addParamsVal(value: string) {
+        let block=this.program.pop();
+        if(block){
+            let arg: Argument = {type: this.paramType, value: value, args: []};
+            this._addParams(block, arg)
+        }
+    }
+
+    private _addParams(block: ProgramBlock, arg: Argument){
+        const updatedBlock = { ...block, arguments: [...block.arguments, arg]};
+        if(block.block.argTypes.length>updatedBlock.arguments.length){
+            this.paramType=block.block.argTypes[updatedBlock.arguments.length]
+        }else{
+            this.menuParams=false;
+            this.paramType='note'
+        }
+        this.program=[...this.program, updatedBlock];
+        this._saveChanges();
+    }
+    
     private _saveChanges() {
         this.dispatchEvent(new CustomEvent('block-saved', {
             detail: { value: this.program },
