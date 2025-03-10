@@ -2,7 +2,7 @@ import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { Block, ProgramBlock, VarObject, BlockType, TypeOption, Argument} from './interfaces'
 
-@customElement('options-element')
+@customElement('options-element')//TODO clean code
 export class OptionsElement extends LitElement {
 
     @state()
@@ -40,8 +40,8 @@ export class OptionsElement extends LitElement {
 
     render() {
         let listOptions: TemplateResult[]=[];
-        if(!this.menuParams){//TODO filter according to syntax
-            let filteredBlocks =this.blocks;
+        if(!this.menuParams){
+            let filteredBlocks =this._syntaxFilter();
             if(this.category!='all'){
                 filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
             }
@@ -102,6 +102,40 @@ export class OptionsElement extends LitElement {
                 }
         }
         return list
+    }
+
+    private _syntaxFilter(): Block[]{
+        let filteredBlocks =this.blocks;
+        let deepCounter=0;
+        let filterEnd=true;
+        let filterElse=true;
+        if(this.variables.length===0){
+            filteredBlocks=filteredBlocks.filter(item => item.id != 'setvar')
+        }
+        for (let i = this.program.length - 1; i >= 0; i--){
+            if(this.program[i].block.id==='end'){
+                deepCounter++;
+            }
+            if(['branch', 'cycle'].includes(this.program[i].block.type)){
+                deepCounter--;
+            }
+            // console.log(deepCounter, this.program[i].block.id)
+            if (deepCounter===0){
+                if(['if','elseif'].includes(this.program[i].block.id) && this.program[this.program.length-1].block.id==='end'){
+                    filterElse=false;
+                }
+                if(this.program[i].block.id==='else')filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
+            }else if(deepCounter===-1){
+                if(this.program[this.program.length-1].block.simple){
+                    filterEnd=false;
+                }
+            }
+            if(!filterElse && !filterEnd)break
+        };
+        if(filterElse)filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
+        if(filterEnd)filteredBlocks=filteredBlocks.filter(item => item.id != 'end');
+
+        return filteredBlocks;
     }
 
     private _addToProgram(input: Block) {

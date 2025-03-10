@@ -34,7 +34,7 @@ export class MyElement extends LitElement {
     {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['str']}, 
       arguments: [{type: 'variable', value: 'name', args: []}], hide: false},//TODO repair
     {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
-    {block: {name: "Else", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false},
+    {block: {name: "Else", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
   ];
 
   @property()
@@ -50,13 +50,16 @@ export class MyElement extends LitElement {
     if(this.view==='both'){
       chooseView=html`
         <div class="wrapper">
-          <vp-editor-element class="editor" .program=${this.program}></vp-editor-element>
+          <vp-editor-element class="editor" 
+            .program=${this.program} 
+            @hide-block=${(e: CustomEvent) => this._hideBlock(e.detail.value)}
+            @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}></vp-editor-element>
           <text-editor-element class="editor" .program=${this.program}></text-editor-element>
         </div>`
     }
     else if(this.view==='vp'){
       chooseView=html`
-        <vp-editor-element class="editor" .program=${this.program}></vp-editor-element>`
+        <vp-editor-element class="editor" .program=${this.program} @hide-block=${(e: CustomEvent) => this._hideBlock(e.detail.value)}></vp-editor-element>`
     }else{
       chooseView=html`
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>`
@@ -95,6 +98,32 @@ private _saveText(newProgram: string) {
 
 private _addCond(newCond: VarObject){
   this.conditions=[...this.conditions, newCond]
+}
+
+private _hideBlock(block: ProgramBlock){
+  this.program = this.program.map(b => 
+    b === block ? { ...b, hide: !b.hide } : b
+  );
+}
+
+private _deleteBlock(block: ProgramBlock){
+  const index = this.program.indexOf(block);
+  let deepCounter=1;
+
+  if (index !== -1) {
+    if(block.block.simple){
+      this.program=this.program.filter(item=>item!=block)
+    }else{
+      let endIndex = index + 1;
+      while (endIndex < this.program.length && deepCounter>0) {
+        if(!this.program[endIndex].block.simple)deepCounter++;
+        if(this.program[endIndex].block.id==='end')deepCounter--;
+        endIndex++;
+      }
+
+      this.program = [...this.program.slice(0, index), ...this.program.slice(endIndex)];
+    }
+  }//TODO syntax control
 }
 
   static styles = css`

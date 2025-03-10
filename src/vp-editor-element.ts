@@ -20,7 +20,11 @@ export class VPEditorElement extends LitElement {
         program = stack_program_body.pop();
     }
     let item=stack_complex_name.pop();//TODO repair undefined in stack
-    return html`<block-element .block=${item}>${programVP}</block-element>`;//TODO repair for all args
+    if(item?.hide){
+      return html`<block-element .block=${item}></block-element>`;//TODO repair for all args
+    }else{
+      return html`<block-element .block=${item}>${programVP}</block-element>`;//TODO repair for all args
+    }
   }
 
   @property()

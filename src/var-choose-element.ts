@@ -89,7 +89,6 @@ export class VarChooseElement extends LitElement {
             composed: true
         }));
         this._openCloseModal()
-
     }
 
 }
