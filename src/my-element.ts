@@ -1,12 +1,14 @@
 import { LitElement, css, html, TemplateResult} from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { VarObject, ProgramBlock, View, varListExport, condListExport} from './interfaces'
+import { VarObject, ProgramBlock } from './general/interfaces.ts'
+import { View } from './general/types.ts';
+import { varListExport, condListExport } from './general/context.ts';
 import { provide } from '@lit/context';
-import './vp-editor-element.ts';
-import './text-editor-element.ts';
-import './var-list-element.ts';
+import './editor/vp-editor-element.ts';
+import './editor/text-editor-element.ts';
+import './variable/var-list-element.ts';
 import './options-element.ts';
-import './cond-edit-element.ts'
+import './condition/cond-edit-element.ts'
 import './menu-element.ts'
 
 

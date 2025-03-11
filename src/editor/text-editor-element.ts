@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state} from 'lit/decorators.js';
-import { Argument, ProgramBlock} from './interfaces'
+import { Argument, ProgramBlock} from '../general/interfaces'
 
 @customElement('text-editor-element')
 export class TextEditorElement extends LitElement {

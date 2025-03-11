@@ -1,9 +1,10 @@
 import { LitElement, css, html} from 'lit'
 import { customElement, property, state} from 'lit/decorators.js'
-import { VarObject, View} from './interfaces'
-import './var-list-element.ts';
+import { VarObject} from './general/interfaces.ts'
+import { View } from './general/types.ts';
+import './variable/var-list-element.ts';
 import './options-element.ts';
-import './cond-edit-element.ts'
+import './condition/cond-edit-element.ts'
 
 @customElement('menu-element')
 export class MenuElement extends LitElement {

@@ -1,18 +1,22 @@
 import { LitElement, html, css, TemplateResult} from 'lit';
-import { customElement, property} from 'lit/decorators.js';
-import { TypeOption} from './interfaces'
+import { customElement, property, state } from 'lit/decorators.js';
+import { Argument, VarObject} from '../general/interfaces'
 
-@customElement('operand-choose-element')
-export class OperandChooseElement extends LitElement {
+@customElement('var-choose-element')
+export class VarChooseElement extends LitElement {
 
-    @property()
-    isOpen: boolean = true;
+    @state()
+    private isOpen: boolean = false;
 
     @property({ type: Object })
-    operand: TypeOption = 'note'
+    arg: Argument = {
+        type: 'variable',
+        value: '',
+        args: []
+    };
 
     @property()
-    operandList: TypeOption[]=['AND','OR','NOT','==','!=','>','<','>=','<=','+','-','*','/'];
+    varList: VarObject[]=[];
 
     static styles = css`
 
@@ -55,9 +59,9 @@ export class OperandChooseElement extends LitElement {
   `;
 
   render() {
-        const listOperand: TemplateResult[]=[];
-        this.operandList.forEach((item)=>{
-            listOperand.push(html`<li><button @click=${() => this._addArg(item)}>${item}</button></li>`);
+        const listCode: TemplateResult[]=[];
+        this.varList.forEach((item)=>{
+            listCode.push(html`<li><button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button></li>`);
   });
     return html`
       <button @click=${this._openCloseModal}>Add Operand (variable)</button>
@@ -65,7 +69,7 @@ export class OperandChooseElement extends LitElement {
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
-            ${listOperand}
+            ${listCode}
             <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
           </div>
         </div>
@@ -77,9 +81,10 @@ export class OperandChooseElement extends LitElement {
   }
 
 
-    private _addArg(operand: TypeOption) {//TODO edit exist operand 4th phase
-        this.dispatchEvent(new CustomEvent('oper-choose', {
-            detail: { value: operand},
+    private _addArg(value: string) {
+        this.arg.value=value;
+        this.dispatchEvent(new CustomEvent('var-add', {
+            detail: { value: this.arg },
             bubbles: true,
             composed: true
         }));
@@ -90,6 +95,6 @@ export class OperandChooseElement extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'operand-choose-element': OperandChooseElement
+    'var-choose-element': VarChooseElement
   }
 }

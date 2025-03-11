@@ -1,7 +1,8 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import { Block, ProgramBlock, VarObject, BlockType, TypeOption, Argument} from './interfaces'
-import { CondText } from './cond-text';
+import { Block, ProgramBlock, VarObject, Argument} from './general/interfaces'
+import { BlockType, TypeOption } from './general/types';
+import { CondText } from './general/cond-text';
 
 @customElement('options-element')//TODO clean code
 export class OptionsElement extends LitElement {

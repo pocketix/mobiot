@@ -1,10 +1,11 @@
 import { LitElement, TemplateResult, css, html} from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import { VarObject, Argument, varListExport, condListExport} from './interfaces'
+import { VarObject, Argument} from '../general/interfaces'
+import { varListExport, condListExport} from '../general/context';
 import { consume } from '@lit/context';
-import { CondText } from './cond-text';
+import { CondText } from '../general/cond-text';
 import './var-choose-element';
-import './new-val-element';
+import '../editor/new-val-element';
 import './cond-block-element';
 
 @customElement('cond-edit-element')

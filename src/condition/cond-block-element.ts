@@ -1,6 +1,7 @@
 import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property} from 'lit/decorators.js';
-import { Argument, TypeOption} from './interfaces'
+import { Argument} from '../general/interfaces'
+import { TypeOption } from '../general/types';
 import './operand-choose-element'
 
 @customElement('cond-block-element')

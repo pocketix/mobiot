@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { ProgramBlock} from './interfaces'
+import { ProgramBlock} from '../general/interfaces.ts'
 import './block-element.ts';
 
 const BREAKPOINT = html`<!-- BREAKPOINT -->`;

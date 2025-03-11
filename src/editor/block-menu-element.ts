@@ -1,6 +1,6 @@
 import { LitElement, html, css} from 'lit';
 import { customElement, property} from 'lit/decorators.js';
-import {ProgramBlock} from './interfaces'
+import {ProgramBlock} from '../general/interfaces'
 
 @customElement('block-menu-element')
 export class BlockMenuElement extends LitElement {

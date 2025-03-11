@@ -1,7 +1,9 @@
 import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Argument, TypeOption, VarObject, varListExport} from './interfaces'
+import { Argument, VarObject} from '../general/interfaces'
 import { consume } from '@lit/context';
+import { TypeOption } from '../general/types';
+import { varListExport } from '../general/context';
 
 @customElement('change-val-element')
 export class ChangeValElement extends LitElement {

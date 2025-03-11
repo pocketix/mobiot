@@ -1,9 +1,9 @@
 import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Argument, ProgramBlock} from './interfaces'
+import { Argument, ProgramBlock} from '../general/interfaces.ts'
 import './block-menu-element.ts'
 import './change-val-element.ts'
-import './cond-edit-element.ts'
+import '../condition/cond-edit-element.ts'
 
 @customElement('block-element')
 export class BlockElement extends LitElement {

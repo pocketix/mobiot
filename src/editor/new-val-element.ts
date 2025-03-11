@@ -1,6 +1,7 @@
 import { LitElement, html, css} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Argument, TypeOption} from './interfaces'
+import { Argument} from '../general/interfaces'
+import { TypeOption } from '../general/types';
 
 @customElement('new-val-element')
 export class NewValElement extends LitElement {

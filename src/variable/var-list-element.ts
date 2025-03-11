@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import './var-edit-element.ts'
-import { VarObject} from './interfaces'
+import '../variable/var-edit-element.ts'
+import { VarObject} from '../general/interfaces.ts'
 
 @customElement('var-list-element')
 export class VarListElement extends LitElement {

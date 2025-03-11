@@ -1,5 +1,5 @@
 
-import { Argument} from './interfaces'
+import { Argument} from '../general/interfaces'
 
 
 export function CondText(cond: Argument): string{

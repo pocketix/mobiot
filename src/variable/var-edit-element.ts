@@ -1,6 +1,7 @@
 import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { TypeOption, VarObject} from './interfaces'
+import { VarObject} from '../general/interfaces'
+import { TypeOption } from '../general/types';
 
 @customElement('var-edit-element')
 export class VarEditElement extends LitElement {
