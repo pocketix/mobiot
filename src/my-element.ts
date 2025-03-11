@@ -1,6 +1,6 @@
 import { LitElement, css, html, TemplateResult} from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { VarObject, ProgramBlock, View, varListExport} from './interfaces'
+import { VarObject, ProgramBlock, View, varListExport, condListExport} from './interfaces'
 import { provide } from '@lit/context';
 import './vp-editor-element.ts';
 import './text-editor-element.ts';
@@ -22,17 +22,25 @@ export class MyElement extends LitElement {
     @property()
     view: View='both';
 
-  @property()
+    @provide({ context: condListExport })
+    @property({attribute: false})
   conditions: VarObject[] = [//TODO argument
-    {name: 'cond_1', value: {type: 'boolean_expression', value: 'x+5==8', args: []}},
-    {name: 'cond_2', value: {type: 'boolean_expression', value: 'a*b!=8', args: []}},
-    {name: 'cond_3', value: {type: 'boolean_expression', value: 'x AND y', args: []}}
+    {name: 'cond_1', value: {type: 'boolean_expression', value: '', args: 
+      [{type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}
+      ,{type: 'num', value: '8', args: []}]}]}},//x+5==8
+    {name: 'cond_2', value: {type: 'boolean_expression', value: '', args: 
+      [{type: '!=', value:'', args: [{type: '*', value: '', args: [{type: 'variable', value: 'a', args: []}, {type: 'variable', value: 'b', args: []}]}
+      ,{type: 'num', value: '8', args: []}]}]}},//a*b!=8
+    {name: 'cond_3', value: {type: 'boolean_expression', value: '', args: 
+      [{type: 'AND', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'variable', value: 'y', args: []}]}]}},//x AND y
   ];
 
   @property()
   program: ProgramBlock[]=[
     {block: {name: "If", simple: false, id: "if", type: 'branch', argTypes: ['boolean_expression']}, 
-      arguments: [{type: 'boolean_expression', value: 'x==5', args: []}], hide: false},
+      arguments: [{type: 'boolean_expression', value: '', args: 
+        [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}]
+      }], hide: false},
     {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['str']}, 
       arguments: [{type: 'variable', value: 'name', args: []}], hide: false},//TODO repair
     {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},

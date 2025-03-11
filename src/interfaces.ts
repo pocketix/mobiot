@@ -8,17 +8,14 @@ export interface Block {
     argTypes: TypeOption[];
 }
 
-// export interface OptionBlock {
-//     block: Block;
-// }
-
 export interface ProgramBlock {
     block: Block;
     arguments: Argument[];
     hide: boolean
 }
 
-export type TypeOption = 'num' | 'str' | 'bool' | 'expr'|'boolean_expression'|'note'|'variable'|'&&';
+export type TypeOption = 'num' | 'str' | 'bool' | 'expr'|'boolean_expression'|'note'|'variable'|
+                        'AND'|'OR'|'NOT'|'=='|'!='|'>'|'<'|'>='|'<='|'+'|'-'|'*'|'/';
 
 export type View = 'vp' | 'text' | 'both' ;
 
@@ -35,4 +32,6 @@ export interface Argument {
     args: Argument[]
 }
 
-export const varListExport = createContext<VarObject[]>('root-data');
+export const varListExport = createContext<VarObject[]>('var-list');//TODO own file
+
+export const condListExport = createContext<VarObject[]>('cond-list');//TODO folder tree

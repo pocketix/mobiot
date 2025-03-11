@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { Argument, ProgramBlock} from './interfaces'
 import './block-menu-element.ts'
 import './change-val-element.ts'
+import './cond-edit-element.ts'
 
 @customElement('block-element')
 export class BlockElement extends LitElement {
@@ -60,12 +61,19 @@ export class BlockElement extends LitElement {
     }
     else{
       if(this.block.arguments.length===1){
-        header=html`${this.block.block.name}<span class="condition">${this.block.arguments[0].value}</span>`
+        if(this.block.arguments[0].type==='boolean_expression'){
+          header=html`${this.block.block.name}<cond-edit-element 
+            .newMode=${false} .block=${this.block.arguments[0]} @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value, this.block.arguments[0])}></cond-edit-element>`
+        }else{
+          header=html`${this.block.block.name}<change-val-element 
+            .val=${this.block.arguments[0]} .type=${this.block.block.argTypes[0]}
+            @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value, this.block.arguments[0])}></change-val-element>`
+        }
       }else{
         if(this.args){
-          this.block.arguments.forEach((item)=>{
+          this.block.arguments.forEach((item)=>{//TODO cond show
             header=html`${header}<change-val-element 
-              .val=${item} .type=${this.block.block.argTypes[0]} 
+              .val=${item} .type=${this.block.block.argTypes[0]}
               @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value, item)}>`//TODO repair in 3rd phase
           })
           header=html`${this.block.block.name}<div>${header}</div><div class="condition" @click=${this._showArguments}>Hide</div>`

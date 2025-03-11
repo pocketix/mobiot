@@ -19,9 +19,6 @@ export class MenuElement extends LitElement {
     @property()
     view: View='both'
 
-    // @property()
-    // condEdit: VarObject={name: '', value: []}
-
   render() {
     return html`
         <div>
@@ -30,7 +27,7 @@ export class MenuElement extends LitElement {
         </div>
         <button>Procedures</button>
         <var-list-element .table=${this.varList} ></var-list-element>
-        <cond-edit-element .varList=${this.varList} ></cond-edit-element>
+        <cond-edit-element></cond-edit-element>
         <div>
             ${this.viewList.map(item=>html`
                 <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>

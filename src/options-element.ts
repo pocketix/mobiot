@@ -1,6 +1,7 @@
 import { LitElement, TemplateResult, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { Block, ProgramBlock, VarObject, BlockType, TypeOption, Argument} from './interfaces'
+import { CondText } from './cond-text';
 
 @customElement('options-element')//TODO clean code
 export class OptionsElement extends LitElement {
@@ -70,7 +71,7 @@ export class OptionsElement extends LitElement {
         let list: TemplateResult[]=[];
         if(this.paramType==='boolean_expression'){
             this.conditions.forEach((condition)=>{
-                list.push(html`<li><button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${condition.value.value}</button></li>`);
+                list.push(html`<li><button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value.args[0])}</button></li>`);
             });
         }else if(this.paramType==='variable'){
             this.variables.forEach((item)=>{

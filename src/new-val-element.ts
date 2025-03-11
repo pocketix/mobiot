@@ -65,7 +65,7 @@ export class NewValElement extends LitElement {
     }
   `;
 
-  render() {
+  render() {//TODO boolean choose
 
     return html`
       <button @click=${this._openCloseModal}>Add Operand (value)</button>

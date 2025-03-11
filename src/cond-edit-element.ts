@@ -1,6 +1,8 @@
-import { LitElement, css, html} from 'lit'
+import { LitElement, TemplateResult, css, html} from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import { VarObject, Argument} from './interfaces'
+import { VarObject, Argument, varListExport, condListExport} from './interfaces'
+import { consume } from '@lit/context';
+import { CondText } from './cond-text';
 import './var-choose-element';
 import './new-val-element';
 import './cond-block-element';
@@ -20,6 +22,9 @@ export class CondEditElement extends LitElement {
     @state()
     private selectMode: boolean = false;
 
+    @property()
+    newMode: boolean=true;
+
     @state()
     private newArg: Argument={type: 'note',value:'', args: []};
 
@@ -29,8 +34,13 @@ export class CondEditElement extends LitElement {
     @property()
     condEdit: VarObject={name: '', value: this.block}//TODO check
 
-    @property()
+    @consume({ context: varListExport })
+    @property({ attribute: false })
     varList: VarObject[] = []
+
+    @consume({ context: condListExport })
+    @property({ attribute: false })
+    condList: VarObject[] = []
 
     @state()
     private selectedBlock: Argument=this.block
@@ -63,13 +73,22 @@ export class CondEditElement extends LitElement {
 
       `;
     
-      render() {
+      render() {//TODO error in selected
+        //TODO boolean expr syntax check
+        let cond: TemplateResult=html``;
+        if(!this.newMode){
+          this.condList.forEach((item)=>{
+            cond=html`${cond}<li><button @click=${()=>{this.block=item.value;this._updateCond()}}>${CondText(item.value.args[0])}</button></li>`
+          })
+          cond=html`<h2>Or select one from exist</h2>
+            <div>${cond}</div>`;
+        }
         return html`
-          <button @click=${this._openCloseModal}>New condition</button>
+          <button @click=${this._openCloseModal}>${this.newMode ? 'New condition': CondText(this.block.args[0])}</button>
     
           ${this.isOpen ? html`
             <div class="modal">
-                    <input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />
+                    ${this.newMode ? html`<input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />`:''}
                     <cond-block-element .block=${this.block}
                       .newArg=${this.newArg}
                       .groupAction=${this.groupAction}
@@ -89,10 +108,10 @@ export class CondEditElement extends LitElement {
                         </div>
                     ` : html`<button @click=${this._selectMode}>Select ...</button>`}
                 <div>
-                    <button @click=${this._saveCond}>Save condition</button>
-                    <button>Use value</button>
+                    ${this.newMode ? html`<button @click=${this._saveCond}>Save condition</button>`:html`<button @click=${this._updateCond}>Use value</button>`}
                     <button @click=${this._openCloseModal}>Back</button>
                 </div>
+              ${cond}
             </div>
           ` : ''}
         `;
@@ -128,7 +147,7 @@ export class CondEditElement extends LitElement {
         this.newArg = {type: 'note',value:'', args: []};
       }
 
-      private _saveCond() {
+      private _saveCond() {//TODO name check
         this.condEdit.value={ ...this.block};
         this.dispatchEvent(new CustomEvent('cond-saved', {
           detail: { value: this.condEdit },
@@ -137,6 +156,17 @@ export class CondEditElement extends LitElement {
         }));
         this.condEdit={name: '', value: {type: 'note',value:'', args: []}}//TODO repair for update of cond
         this.block.args=[]
+        this._openCloseModal()
+      }
+
+      private _updateCond() {//TODO name check
+        this.dispatchEvent(new CustomEvent('cond-update', {
+          detail: { value: this.block },
+          bubbles: true,
+          composed: true
+        }));
+        // this.condEdit={name: '', value: {type: 'note',value:'', args: []}}//TODO repair for update of cond
+        // this.block.args=[]
         this._openCloseModal()
       }
 }

@@ -1,6 +1,7 @@
 import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property} from 'lit/decorators.js';
-import { Argument} from './interfaces'
+import { Argument, TypeOption} from './interfaces'
+import './operand-choose-element'
 
 @customElement('cond-block-element')
 export class CondBlockElement extends LitElement {
@@ -67,15 +68,15 @@ export class CondBlockElement extends LitElement {
         ));
     }
 
-    if(this.groupAction && this.selectedBlock === this.block){
-        this._groupArgs()
-    }
-
     if(this.deleteAction && this.selectedBlock === this.block){
         this._deleteArgs()
     }
 
     let element: TemplateResult=html``;
+    if(this.groupAction && this.selectedBlock === this.block){
+        element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operand-choose-element>`
+    }
+
     if(this.block.args.length===0){
       element=html`
         <p>${this.block.value}
@@ -99,7 +100,8 @@ export class CondBlockElement extends LitElement {
                 @choose-args-changed=${(e: CustomEvent) => this._updateList(e.detail.value)}
             </cond-block-element>
         `
-        })
+        })//TODO help block 3rd phase
+        //TODO clean in back
         element=html`
             <div class="block">
                 <div 
@@ -144,9 +146,9 @@ export class CondBlockElement extends LitElement {
     ));
     }
 
-    private _groupArgs(){
+    private _groupArgs(type: TypeOption){
         if(this.chooseArgs.length>=2){
-            let newArg: Argument={type: '&&', value: '', args: this.chooseArgs};
+            let newArg: Argument={type: type, value: '', args: this.chooseArgs};
             this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item))
             this.block.args = [ ...this.block.args, newArg];
             this.chooseArgs=[];
