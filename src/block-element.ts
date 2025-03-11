@@ -1,7 +1,8 @@
 import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { ProgramBlock} from './interfaces'
+import { Argument, ProgramBlock} from './interfaces'
 import './block-menu-element.ts'
+import './change-val-element.ts'
 
 @customElement('block-element')
 export class BlockElement extends LitElement {
@@ -11,6 +12,9 @@ export class BlockElement extends LitElement {
 
     @state()
     private menu: boolean=false;
+
+    @state()
+    private args: boolean=false;
 
     private longPressTimeout: any = null;
 
@@ -55,8 +59,21 @@ export class BlockElement extends LitElement {
       header=html`${this.block.block.name}`;
     }
     else{
-      header=html`${this.block.block.name}<span class="condition">${this.block.arguments[0].value}</span>`
-    }//TODO check more vars
+      if(this.block.arguments.length===1){
+        header=html`${this.block.block.name}<span class="condition">${this.block.arguments[0].value}</span>`
+      }else{
+        if(this.args){
+          this.block.arguments.forEach((item)=>{
+            header=html`${header}<change-val-element 
+              .val=${item} .type=${this.block.block.argTypes[0]} 
+              @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value, item)}>`//TODO repair in 3rd phase
+          })
+          header=html`${this.block.block.name}<div>${header}</div><div class="condition" @click=${this._showArguments}>Hide</div>`
+        }else{
+          header=html`${this.block.block.name}<span class="condition" @click=${this._showArguments}>Arguments...</span>`
+        }
+      }
+    }
     if(!this.block.block.simple){
       if(this.block.hide){
         hide=html`<button @click=${this._hideBlock}>Show block contend</button>`
@@ -84,7 +101,17 @@ export class BlockElement extends LitElement {
   }
 
   private _hideBlock(){
-    this.dispatchEvent(new CustomEvent('hide-block', {
+    this.block.hide=!this.block.hide;
+    this.dispatchEvent(new CustomEvent('change-block', {
+        detail: { value: this.block },
+        bubbles: true,
+        composed: true
+    }));  
+  }
+
+  private _changeBlock(updated: Argument, original: Argument){
+    this.block.arguments[this.block.arguments.indexOf(original)]=updated
+    this.dispatchEvent(new CustomEvent('change-block', {
         detail: { value: this.block },
         bubbles: true,
         composed: true
@@ -108,6 +135,9 @@ export class BlockElement extends LitElement {
 
   private _cancelLongPress() {
       clearTimeout(this.longPressTimeout);
+  }
+  private _showArguments(){
+    this.args=!this.args;
   }
 }
 

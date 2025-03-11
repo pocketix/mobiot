@@ -15,7 +15,7 @@ export class OptionsElement extends LitElement {
         {name: "While", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
         {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
-        {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'num'], type: 'set_var'},//TODO repair
+        {name: "Set Variable", simple: true, id: "setvar", argTypes: ['num', 'num'], type: 'set_var'},//TODO repair
         {name: "LED 1.setLedColor", simple: true, id: "str_opt", argTypes: ['bool'], type: 'dev'},
     ];
 

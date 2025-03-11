@@ -1,12 +1,14 @@
 import { LitElement, css, html, TemplateResult} from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { VarObject, ProgramBlock, View} from './interfaces'
+import { VarObject, ProgramBlock, View, varListExport} from './interfaces'
+import { provide } from '@lit/context';
 import './vp-editor-element.ts';
 import './text-editor-element.ts';
 import './var-list-element.ts';
 import './options-element.ts';
 import './cond-edit-element.ts'
 import './menu-element.ts'
+
 
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -37,7 +39,8 @@ export class MyElement extends LitElement {
     {block: {name: "Else", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
   ];
 
-  @property()
+  @provide({ context: varListExport })
+  @property({attribute: false})
     varList: VarObject[] = [
             { name: 'name', value: {type: 'str',value: 'John', args: []}},
             { name: 'age', value: {type: 'num',value: '40', args: []}},
@@ -52,14 +55,17 @@ export class MyElement extends LitElement {
         <div class="wrapper">
           <vp-editor-element class="editor" 
             .program=${this.program} 
-            @hide-block=${(e: CustomEvent) => this._hideBlock(e.detail.value)}
+            @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
             @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}></vp-editor-element>
           <text-editor-element class="editor" .program=${this.program}></text-editor-element>
         </div>`
     }
     else if(this.view==='vp'){
       chooseView=html`
-        <vp-editor-element class="editor" .program=${this.program} @hide-block=${(e: CustomEvent) => this._hideBlock(e.detail.value)}></vp-editor-element>`
+        <vp-editor-element class="editor" 
+          .program=${this.program} 
+          @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
+          @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}></vp-editor-element>`
     }else{
       chooseView=html`
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>`
@@ -100,9 +106,10 @@ private _addCond(newCond: VarObject){
   this.conditions=[...this.conditions, newCond]
 }
 
-private _hideBlock(block: ProgramBlock){
+
+private _changeBlock(block: ProgramBlock){
   this.program = this.program.map(b => 
-    b === block ? { ...b, hide: !b.hide } : b
+    b === block ? { ...block } : b
   );
 }
 

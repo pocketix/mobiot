@@ -1,3 +1,4 @@
+import { createContext } from '@lit/context';
 
 export interface Block {
     name: string;
@@ -33,3 +34,5 @@ export interface Argument {
     value: string;
     args: Argument[]
 }
+
+export const varListExport = createContext<VarObject[]>('root-data');
