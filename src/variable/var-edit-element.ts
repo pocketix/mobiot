@@ -98,8 +98,8 @@ export class VarEditElement extends LitElement {
              <input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Add variable name..." />
             <h2>Value: </h2>
             <div>${valueType}</div>
-            <button class="close-btn" @click=${this._saveChanges}>Save</button>
-            <button class="close-btn" @click=${()=>{this.var={...this.original};this._saveChanges()}}>Cancel</button>
+            <button class="close-btn" @click=${()=>{this._saveChanges(false)}}>Save</button>
+            <button class="close-btn" @click=${()=>{this.var=this.original;this._saveChanges(true)}}>Cancel</button>
           </div>
         </div>
       ` : ''}
@@ -134,14 +134,16 @@ export class VarEditElement extends LitElement {
     };  
   }
 
-    private _saveChanges() {
+    private _saveChanges(cancelMode: boolean) {//TODO clean code 3rd phase
+      if(cancelMode||(this.var.name && this.var.value.value && this.var.value.type!='note' && 
+        (this.var.value.type!='bool' || this.var.value.value==='true' || this.var.value.value==='false'))){
         this.dispatchEvent(new CustomEvent('var-saved', {
             detail: { value: this.var },
             bubbles: true,
             composed: true
         }));
         this._openCloseModal()
-
+      }
     }
 
 }

@@ -12,13 +12,13 @@ export class OptionsElement extends LitElement {
         {name: "If", simple: false, id: "if", argTypes: ['boolean_expression'], type: 'branch'},
         {name: "Else", simple: false, id: "else", argTypes: [], type: 'branch'},
         {name: "Else If", simple: false, id: "elseif", argTypes: [], type: 'branch'},
-        {name: "Switch", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},//TODO add case, more types
+        {name: "Switch", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},
         {name: "Case", simple: false, id: "case", argTypes: ['num'], type: 'branch'},
         {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
         {name: "While", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
         {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
-        {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'num'], type: 'set_var'},//TODO repair
+        {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'note'], type: 'set_var'},
         {name: "LED 1.setLedColor", simple: true, id: "str_opt", argTypes: ['bool'], type: 'dev'},
     ];
 
@@ -80,7 +80,11 @@ export class OptionsElement extends LitElement {
                 list.push(html`<li><button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button></li>`);
             });
         }else{
-            this.variables.filter(item => item.value.type === this.paramType).forEach((item)=>{
+            let varList: VarObject[]=this.variables;
+            if(this.paramType!='note'){
+                varList=this.variables.filter(item => item.value.type === this.paramType)
+            }
+            varList.forEach((item)=>{
                 list.push(html`<li><button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button></li>`);
             });
             if(this.paramType==='bool'){
@@ -122,9 +126,15 @@ export class OptionsElement extends LitElement {
             if(['branch', 'cycle'].includes(this.program[i].block.type)){
                 deepCounter--;
             }
+            if(this.program[this.program.length-1].block.id==='switch'){
+                return filteredBlocks.filter(item => item.id === 'case');
+            }
             if (deepCounter===0){
                 if(['if','elseif'].includes(this.program[i].block.id) && this.program[this.program.length-1].block.id==='end'){
                     filterElse=false;
+                }
+                if(this.program[i].block.id==='case'){
+                    return filteredBlocks.filter(item => item.id === 'case'||item.id==='end');
                 }
                 if(this.program[i].block.id==='else')filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
             }else if(deepCounter===-1){
@@ -161,10 +171,12 @@ export class OptionsElement extends LitElement {
     }
 
     private _addParamsVal(value: string) {
-        let block=this.program.pop();
-        if(block){
-            let arg: Argument = {type: this.paramType, value: value, args: []};
-            this._addParams(block, arg)
+        if(value){
+            let block=this.program.pop();
+            if(block){
+                let arg: Argument = {type: this.paramType, value: value, args: []};
+                this._addParams(block, arg)
+            }
         }
     }
 
