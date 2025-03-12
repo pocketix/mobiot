@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js'
 import '../variable/var-edit-element.ts'
 import { VarObject} from '../general/interfaces.ts'
 
-@customElement('var-list-element')
+@customElement('var-list-element')//TODO sort table 3rd phase
 export class VarListElement extends LitElement {
 
     @state()

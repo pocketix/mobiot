@@ -6,7 +6,7 @@ import './block-element.ts';
 const BREAKPOINT = html`<!-- BREAKPOINT -->`;
 
 let stack_complex_name: ProgramBlock[] = [];
-let stack_program_body: TemplateResult[]=[];//TODO rewrite to one stack? 
+let stack_program_body: TemplateResult[]=[];//TODO rewrite to one stack, not necessary
 
 @customElement('vp-editor-element')
 export class VPEditorElement extends LitElement {
@@ -19,11 +19,15 @@ export class VPEditorElement extends LitElement {
         programVP = html`${program}${programVP}`;
         program = stack_program_body.pop();
     }
-    let item=stack_complex_name.pop();//TODO repair undefined in stack
-    if(item?.hide){
-      return html`<block-element .block=${item}></block-element>`;//TODO repair for all args
+    let item=stack_complex_name.pop();
+    if(item){
+      if(item.hide){
+        return html`<block-element .block=${item}></block-element>`;
+      }else{
+        return html`<block-element .block=${item}>${programVP}</block-element>`;
+      }
     }else{
-      return html`<block-element .block=${item}>${programVP}</block-element>`;//TODO repair for all args
+      return programVP
     }
   }
 
@@ -47,7 +51,7 @@ export class VPEditorElement extends LitElement {
       stack_program_body.push(this._createBlockElement())
     };
     let programBody: TemplateResult=html``
-    while(stack_program_body.length>=1){//TODO check
+    while(stack_program_body.length>=1){
       programBody=html`${stack_program_body.pop()}${programBody}`
     }
     return programBody;

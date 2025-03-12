@@ -26,14 +26,17 @@ export class CondEditElement extends LitElement {
     @property()
     newMode: boolean=true;
 
-    @state()
-    private newArg: Argument={type: 'note',value:'', args: []};
+    @property()
+    title: string='New condition'
+
+    @property()
+    newArg: Argument={type: 'note',value:'', args: []};
 
     @property()
     block: Argument={type: 'boolean_expression',value:'', args: []}
 
     @property()
-    condEdit: VarObject={name: '', value: this.block}//TODO check
+    condEdit: VarObject={name: '', value: this.block}
 
     @consume({ context: varListExport })
     @property({ attribute: false })
@@ -44,7 +47,7 @@ export class CondEditElement extends LitElement {
     condList: VarObject[] = []
 
     @state()
-    private selectedBlock: Argument=this.block
+    selectedBlock: Argument=this.block
 
     static styles = css`
         
@@ -74,8 +77,7 @@ export class CondEditElement extends LitElement {
 
       `;
     
-      render() {//TODO error in selected
-        //TODO boolean expr syntax check
+      render() {
         let cond: TemplateResult=html``;
         if(!this.newMode){
           this.condList.forEach((item)=>{
@@ -85,7 +87,7 @@ export class CondEditElement extends LitElement {
             <div>${cond}</div>`;
         }
         return html`
-          <button @click=${this._openCloseModal}>${this.newMode ? 'New condition': CondText(this.block.args[0])}</button>
+          <button @click=${this._openCloseModal}>${this.title}</button>
     
           ${this.isOpen ? html`
             <div class="modal">
@@ -96,7 +98,7 @@ export class CondEditElement extends LitElement {
                       .deleteAction=${this.deleteAction}
                       .selectMode=${this.selectMode}
                       .selectedBlock=${this.selectedBlock}
-                      @block-changed=${(e: CustomEvent) => this._updateChoose(e.detail.value)}
+                      @cond-changed=${(e: CustomEvent) => this._updateChoose(e.detail.value)}
                       @select-ended=${() => { this._selectMode(); this._action();}}
                       @new-arg-clean=${this._newArgClean}
                     ></cond-block-element>
@@ -109,8 +111,8 @@ export class CondEditElement extends LitElement {
                         </div>
                     ` : html`<button @click=${this._selectMode}>Select ...</button>`}
                 <div>
-                    ${this.newMode ? html`<button @click=${this._saveCond}>Save condition</button>`:html`<button @click=${this._updateCond}>Use value</button>`}
-                    <button @click=${this._openCloseModal}>Back</button>
+                    ${this.newMode ? html`<button @click=${()=>{this._saveUpdate(true)}}>Save condition</button>`:html`<button @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}
+                    <button @click=${this._backAction}>Back</button>
                 </div>
               ${cond}
             </div>
@@ -148,26 +150,44 @@ export class CondEditElement extends LitElement {
         this.newArg = {type: 'note',value:'', args: []};
       }
 
-      private _saveCond() {//TODO name check
-        this.condEdit.value={ ...this.block};
-        this.dispatchEvent(new CustomEvent('cond-saved', {
-          detail: { value: this.condEdit },
-          bubbles: true,
-          composed: true
-        }));
-        this.condEdit={name: '', value: {type: 'note',value:'', args: []}}//TODO repair for update of cond
-        this.block.args=[]
-        this._openCloseModal()
+      private _saveUpdate(newItem: boolean){
+        if(this.block.args.length===1 && (!['num', 'str', 'bool', 'expr','variable','+','-','*','/'].includes(this.block.args[0].type))){
+          if(newItem)this._saveCond();
+          else this._updateCond();
+        }
+      }
+      private _saveCond() {
+        if(this.condEdit.name){
+          this.condEdit.value={ ...this.block};
+          this.dispatchEvent(new CustomEvent('cond-saved', {
+            detail: { value: this.condEdit },
+            bubbles: true,
+            composed: true
+          }));
+          this.condEdit={name: '', value: {type: 'note',value:'', args: []}}
+          this.block.args=[]
+          this._openCloseModal()
+        }
       }
 
-      private _updateCond() {//TODO name check
+      private _updateCond() {
         this.dispatchEvent(new CustomEvent('cond-update', {
           detail: { value: this.block },
           bubbles: true,
           composed: true
         }));
-        // this.condEdit={name: '', value: {type: 'note',value:'', args: []}}//TODO repair for update of cond
-        // this.block.args=[]
+        this._openCloseModal()
+      }
+
+      private _backAction() {
+        if(this.newArg){
+          this.condEdit={name: '', value: {type: 'note',value:'', args: []}}
+          this.block.args=[]
+        }
+        this.dispatchEvent(new CustomEvent('cond-clean', {
+          bubbles: true,
+          composed: true
+        }));
         this._openCloseModal()
       }
 }

@@ -11,7 +11,7 @@ export class TextEditorElement extends LitElement {
   @property({ type: String })
   value: string = '';
 
-  @state()//TODO repair state
+  @state()
   private deepCounter: number = 1;
 
   @property()
@@ -75,7 +75,7 @@ export class TextEditorElement extends LitElement {
   private _addArgs(args: Argument[], tabs: string): string{
     let blockEnd: string=''
     if(args.length!=0){
-      blockEnd=tabs + '"arguments": [\n';//TODO add commas, spaces
+      blockEnd=tabs + '"arguments": [\n';//TODO add commas, spaces, 4th phase
       args.forEach((argument)=>{
         blockEnd=blockEnd + tabs + '  {\n';
         blockEnd=blockEnd + tabs + '    "type": "' + argument.type + '",\n'
@@ -94,8 +94,6 @@ export class TextEditorElement extends LitElement {
   private _handleInput(event: InputEvent) {
     const target = event.target as HTMLInputElement;
     this.value = target.value;
-
-    // TODO Spustí vlastní událost pro obousměrnou datovou vazbu
     this.dispatchEvent(new CustomEvent('value-changed', {
       detail: { value: this.value },
       bubbles: true,

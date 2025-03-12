@@ -4,7 +4,7 @@ import { Block, ProgramBlock, VarObject, Argument} from './general/interfaces'
 import { BlockType, TypeOption } from './general/types';
 import { CondText } from './general/cond-text';
 
-@customElement('options-element')//TODO clean code
+@customElement('options-element')//TODO clean code 3rd phase
 export class OptionsElement extends LitElement {
 
     @state()
@@ -13,11 +13,12 @@ export class OptionsElement extends LitElement {
         {name: "Else", simple: false, id: "else", argTypes: [], type: 'branch'},
         {name: "Else If", simple: false, id: "elseif", argTypes: [], type: 'branch'},
         {name: "Switch", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},//TODO add case, more types
+        {name: "Case", simple: false, id: "case", argTypes: ['num'], type: 'branch'},
         {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
         {name: "While", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
         {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
-        {name: "Set Variable", simple: true, id: "setvar", argTypes: ['num', 'num'], type: 'set_var'},//TODO repair
+        {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'num'], type: 'set_var'},//TODO repair
         {name: "LED 1.setLedColor", simple: true, id: "str_opt", argTypes: ['bool'], type: 'dev'},
     ];
 
@@ -121,7 +122,6 @@ export class OptionsElement extends LitElement {
             if(['branch', 'cycle'].includes(this.program[i].block.type)){
                 deepCounter--;
             }
-            // console.log(deepCounter, this.program[i].block.id)
             if (deepCounter===0){
                 if(['if','elseif'].includes(this.program[i].block.id) && this.program[this.program.length-1].block.id==='end'){
                     filterElse=false;

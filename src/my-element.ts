@@ -1,5 +1,5 @@
 import { LitElement, css, html, TemplateResult} from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { VarObject, ProgramBlock } from './general/interfaces.ts'
 import { View } from './general/types.ts';
 import { varListExport, condListExport } from './general/context.ts';
@@ -21,12 +21,12 @@ export class MyElement extends LitElement {
     @property()
     programText: string=''
 
-    @property()
-    view: View='both';
+    @state()
+    private view: View='both';
 
     @provide({ context: condListExport })
     @property({attribute: false})
-  conditions: VarObject[] = [//TODO argument
+  conditions: VarObject[] = [
     {name: 'cond_1', value: {type: 'boolean_expression', value: '', args: 
       [{type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}
       ,{type: 'num', value: '8', args: []}]}]}},//x+5==8
@@ -44,7 +44,7 @@ export class MyElement extends LitElement {
         [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}]
       }], hide: false},
     {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['str']}, 
-      arguments: [{type: 'variable', value: 'name', args: []}], hide: false},//TODO repair
+      arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
     {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
     {block: {name: "Else", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
   ];
@@ -140,7 +140,7 @@ private _deleteBlock(block: ProgramBlock){
 
       this.program = [...this.program.slice(0, index), ...this.program.slice(endIndex)];
     }
-  }//TODO syntax control
+  }//TODO syntax control 4th phase
 }
 
   static styles = css`

@@ -1,6 +1,7 @@
 import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Argument, ProgramBlock} from '../general/interfaces.ts'
+import { CondText } from '../general/cond-text.ts';
 import './block-menu-element.ts'
 import './change-val-element.ts'
 import '../condition/cond-edit-element.ts'
@@ -8,7 +9,7 @@ import '../condition/cond-edit-element.ts'
 @customElement('block-element')
 export class BlockElement extends LitElement {
 
-    @property()//TODO arguments vizualization
+    @property()
     block: ProgramBlock={block: {name: '', simple: false, id: '', type: 'all', argTypes: []}, arguments: [], hide: false}
 
     @state()
@@ -56,6 +57,7 @@ export class BlockElement extends LitElement {
     let header: TemplateResult=html``;
     let hide: TemplateResult=html``;
     let body: TemplateResult=html``;
+    const original: ProgramBlock=structuredClone(this.block)
     if(this.block.arguments.length===0){
       header=html`${this.block.block.name}`;
     }
@@ -63,18 +65,20 @@ export class BlockElement extends LitElement {
       if(this.block.arguments.length===1){
         if(this.block.arguments[0].type==='boolean_expression'){
           header=html`${this.block.block.name}<cond-edit-element 
-            .newMode=${false} .block=${this.block.arguments[0]} @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value, this.block.arguments[0])}></cond-edit-element>`
+            .newMode=${false} .block=${this.block.arguments[0]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0].args[0])}
+            @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
+            @cond-clean=${() => this._changeBlock(original.arguments[0])}></cond-edit-element>`
         }else{
           header=html`${this.block.block.name}<change-val-element 
             .val=${this.block.arguments[0]} .type=${this.block.block.argTypes[0]}
-            @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value, this.block.arguments[0])}></change-val-element>`
+            @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}></change-val-element>`
         }
       }else{
         if(this.args){
-          this.block.arguments.forEach((item)=>{//TODO cond show
+          this.block.arguments.forEach((item)=>{
             header=html`${header}<change-val-element 
               .val=${item} .type=${this.block.block.argTypes[0]}
-              @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value, item)}>`//TODO repair in 3rd phase
+              @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}>`//TODO repair in 3rd phase
           })
           header=html`${this.block.block.name}<div>${header}</div><div class="condition" @click=${this._showArguments}>Hide</div>`
         }else{
@@ -117,8 +121,8 @@ export class BlockElement extends LitElement {
     }));  
   }
 
-  private _changeBlock(updated: Argument, original: Argument){
-    this.block.arguments[this.block.arguments.indexOf(original)]=updated
+  private _changeBlock(updated: Argument){
+    this.block.arguments[0]=updated;
     this.dispatchEvent(new CustomEvent('change-block', {
         detail: { value: this.block },
         bubbles: true,
@@ -130,7 +134,7 @@ export class BlockElement extends LitElement {
     this.menu=menu
   }
 
-  private _handleRowClick(event: Event) {//TODO clean code
+  private _handleRowClick(event: Event) {//TODO clean code 3rd phase
       event.preventDefault();
       this.menu=!this.menu;
   }

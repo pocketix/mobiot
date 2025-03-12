@@ -65,7 +65,9 @@ export class CondBlockElement extends LitElement {
     if(!this.block.args.includes(this.newArg) && this.selectedBlock === this.block && this.newArg.type != 'note'){
         this.block.args.push(this.newArg);
         this.newArg={type: 'note',value:'', args: []};
-        this.dispatchEvent(new CustomEvent('new-arg-clean'
+        this.dispatchEvent(new CustomEvent('new-arg-clean',{
+            bubbles: true, composed: true
+        }
         ));
     }
 
@@ -102,7 +104,6 @@ export class CondBlockElement extends LitElement {
             </cond-block-element>
         `
         })//TODO help block 3rd phase
-        //TODO clean in back
         element=html`
             <div class="block">
                 <div 
@@ -139,7 +140,7 @@ export class CondBlockElement extends LitElement {
     private _handleClick() {
         this.selectedBlock = this.block;
 
-        this.dispatchEvent(new CustomEvent('block-changed', {
+        this.dispatchEvent(new CustomEvent('cond-changed', {
             detail: { value: this.selectedBlock },
             bubbles: true,
             composed: true

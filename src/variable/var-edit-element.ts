@@ -6,6 +6,11 @@ import { TypeOption } from '../general/types';
 @customElement('var-edit-element')
 export class VarEditElement extends LitElement {
 
+  original: VarObject= {
+    name: '',
+    value: {type: 'note', value: '', args: []}
+  };
+
     @state()
     private isOpen: boolean = false;
 
@@ -94,13 +99,16 @@ export class VarEditElement extends LitElement {
             <h2>Value: </h2>
             <div>${valueType}</div>
             <button class="close-btn" @click=${this._saveChanges}>Save</button>
-            <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
+            <button class="close-btn" @click=${()=>{this.var={...this.original};this._saveChanges()}}>Cancel</button>
           </div>
         </div>
       ` : ''}
     `;
   }
   private _openCloseModal() {
+    if(!this.isOpen){
+      this.original=structuredClone(this.var);
+    }
     this.isOpen = !this.isOpen;
   }
 

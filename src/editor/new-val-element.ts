@@ -1,4 +1,4 @@
-import { LitElement, html, css} from 'lit';
+import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Argument} from '../general/interfaces'
 import { TypeOption } from '../general/types';
@@ -66,8 +66,15 @@ export class NewValElement extends LitElement {
     }
   `;
 
-  render() {//TODO boolean choose
-
+  render() {
+    let valueType: TemplateResult=html``
+    if(this.value.type==='bool'){
+      valueType=html`
+      <button class=${'true' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
+      <button class=${'false' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+    }else{
+      valueType=html`<input type="text" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
+    }
     return html`
       <button @click=${this._openCloseModal}>Add Operand (value)</button>
 
@@ -81,7 +88,7 @@ export class NewValElement extends LitElement {
                 `)}
             </div>
             <h2>Value: </h2>
-             <input type="text" .value=${this.value.value} @input=${this._handleValueInput}  />
+             ${valueType}
             <button class="close-btn" @click=${this._addNew}>Save</button>
             <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
           </div>
@@ -98,9 +105,13 @@ export class NewValElement extends LitElement {
 
   }
 
-  private _handleValueInput(event: InputEvent) {
+  private _handleValueInput(event: InputEvent) {//TODO clean code 3rd phase
     const target = event.target as HTMLInputElement;
     this.value.value = target.value;
+  }
+
+  private _handleBoolInput(input: string) {
+    this.value= {...this.value, value:input} 
   }
 
   private _selectTypeInput(option: TypeOption) {
@@ -108,12 +119,14 @@ export class NewValElement extends LitElement {
   }
 
     private _addNew() {
+      if(this.value.value && (this.value.type!='bool' || this.value.value==='true' || this.value.value==='false')){
         this.dispatchEvent(new CustomEvent('val-saved', {
             detail: { value: this.value },
             bubbles: true,
             composed: true
         }));
         this._openCloseModal()
+      }
     }
 
 }
