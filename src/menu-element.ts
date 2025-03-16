@@ -15,7 +15,7 @@ export class MenuElement extends LitElement {
     programText: string=''
 
     @state()
-    private viewList: View[] = ['both','text','vp'];
+    private viewList: View[] = window.matchMedia('(max-width: 768px)').matches ?['text','vp']:['both','text','vp'];
 
     @property()
     view: View='both'
@@ -29,7 +29,7 @@ export class MenuElement extends LitElement {
         <button>Procedures</button>
         <var-list-element .table=${this.varList} ></var-list-element>
         <cond-edit-element></cond-edit-element>
-        <div>
+        <div class="view">
             ${this.viewList.map(item=>html`
                 <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
                 `)}
@@ -101,13 +101,25 @@ export class MenuElement extends LitElement {
       border-color: #646cff;
     }
 
-    button.selected {
-        background-color: #7da7d9;
-        color: white;
+    .view button{
+      background-color: gray;
     }
-    button:focus,
+
+    button.selected {
+      background-color: #1a1a1a;
+      border-color: #646cff;
+    }
+
     button:focus-visible {
       outline: 4px auto -webkit-focus-ring-color;
+    }
+
+    .view {
+      max-width: fit-content;
+      border-radius: 12px;
+      padding: 8px;
+      background: gray;
+      margin: 0 auto;
     }
   `
 }

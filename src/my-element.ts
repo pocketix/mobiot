@@ -22,7 +22,7 @@ export class MyElement extends LitElement {
     programText: string=''
 
     @state()
-    private view: View='both';
+    private view: View=window.matchMedia('(max-width: 768px)').matches ? 'vp' : 'both';
 
     @provide({ context: condListExport })
     @property({attribute: false})
@@ -59,40 +59,43 @@ export class MyElement extends LitElement {
             ];
 
   render() {
-    let chooseView: TemplateResult=html``;
+    let editors: TemplateResult=html``;
     if(this.view==='both'){
-      chooseView=html`
-        <div class="wrapper">
+      editors=html`
           <vp-editor-element class="editor" 
             .program=${this.program} 
             @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
             @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}></vp-editor-element>
-          <text-editor-element class="editor" .program=${this.program}></text-editor-element>
-        </div>`
+          <text-editor-element class="editor" 
+            .program=${this.program}></text-editor-element>`
     }
     else if(this.view==='vp'){
-      chooseView=html`
+      editors=html`
         <vp-editor-element class="editor" 
           .program=${this.program} 
           @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
           @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}></vp-editor-element>`
     }else{
-      chooseView=html`
+      editors=html`
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>`
     }
     return html`
-      <menu-element 
-        .programText=${this.programText} 
-        @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
-        .varList=${this.varList}
-        @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
-        .view=${this.view}
-        @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}
-        @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}></menu-element>
-      <p>Here is your program:</p>
-      ${chooseView}
-      <options-element .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></options-element>
-      <p class="read-the-docs">${this.docsHint}</p>
+      <div class="container">
+        <menu-element class="menu"
+          .programText=${this.programText} 
+          @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
+          .varList=${this.varList}
+          @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
+          .view=${this.view}
+          @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}
+          @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}></menu-element>
+        <div class="editor-container">
+          ${editors}
+        </div>
+        <options-element class="options"
+          .conditions=${this.conditions} .variables=${this.varList} .program=${this.program}
+          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></options-element>
+      </div>
     `
   }
 
@@ -147,30 +150,42 @@ private _deleteBlock(block: ProgramBlock){
     :host {
       max-width: 1280px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 0.5rem;
       text-align: center;
-    }
-    .wrapper {
       display: flex;
-      gap: 16px;
-      align-items: flex-start;
+      flex-direction: column;
+      background: white;
+    }
+
+    @media (max-width: 768px) {
+      :host {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .menu{
+      flex: 0 0 auto;
+      z-index: 105;
     }
 
     .editor{
       flex: 1;
+      position: relative;
+      z-index: 100;
     }
 
-    .card {
-      padding: 2em;
-    }
-
-    .read-the-docs {
-      color: #888;
-    }
-
-    ::slotted(h1) {
-      font-size: 3.2em;
-      line-height: 1.1;
+    .editor-container {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      display: flex; 
     }
 
     a {
@@ -201,14 +216,16 @@ private _deleteBlock(block: ProgramBlock){
       outline: 4px auto -webkit-focus-ring-color;
     }
 
-    @media (prefers-color-scheme: light) {
-      a:hover {
-        color: #747bff;
-      }
-      button {
-        background-color: #f9f9f9;
-      }
+    .options {
+      flex: 0 0 30vh;
+      overflow-y: auto;
+      width: 100%;
+      border-top: 2px solid #ccc;
+      z-index: 10;
+      background: gray;
     }
+
+ 
   `
 }
 

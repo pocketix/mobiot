@@ -23,7 +23,7 @@ export class OptionsElement extends LitElement {
     ];
 
     @state()
-    private categories: BlockType[]= ['all', 'branch', 'cycle', 'alert', 'set_var', 'dev', 'end'];
+    private categories: BlockType[]= ['all', 'branch', 'cycle', 'dev','others'];
 
     @state()
     private category: BlockType='all'
@@ -45,7 +45,9 @@ export class OptionsElement extends LitElement {
         let listOptions: TemplateResult[]=[];
         if(!this.menuParams){
             let filteredBlocks =this._syntaxFilter();
-            if(this.category!='all'){
+            if (this.category ==='others'){
+                filteredBlocks=filteredBlocks.filter(item => item.type === 'alert' || item.type === 'end' || item.type === 'set_var')
+            }else if(this.category!='all'){
                 filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
             }
             filteredBlocks.forEach((block)=>{
