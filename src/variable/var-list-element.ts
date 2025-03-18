@@ -21,28 +21,36 @@ export class VarListElement extends LitElement {
     @state()
     private selectedRow: VarObject | null = null;
 
-    private longPressTimeout: any = null;
-
     static styles = css`
         
         button {
-                padding: 8px 16px;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                background-color: #ddd;
-                transition: background-color 0.2s, color 0.2s;
-                color: black;
-            }
+            border-radius: 8px;
+            border: 1px solid transparent;
+            padding: 0.5em 1em;
+            margin: 0.2em 0.4em;
+            font-size: 1em;
+            font-weight: 500;
+            font-family: inherit;
+            background-color:rgb(51, 51, 51);
+            cursor: pointer;
+            transition: border-color 0.25s;
+        }
+
+        h1 {
+            color: black;
+        }
+
+        .delete {
+            background-color:rgb(255, 64, 64);
+        }
         
-        /* Překrytí při otevřeném pop-up okně */
         .modal {
           position: fixed;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          background: black;
+          background: white;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -51,15 +59,36 @@ export class VarListElement extends LitElement {
         }
 
         table {
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 2px;
             margin: 20px 0;
             font-size: 18px;
         }
     
         th, td {
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            
             text-align: left;
+            color: black;
+        }
+           
+        tr {
+            border-radius: 8px;
+            background-color:rgb(170, 170, 170);
+        }
+
+        tr td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        tr td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        thead tr {
+            background-color:white;
         }
       `;
     
@@ -70,7 +99,8 @@ export class VarListElement extends LitElement {
     
           ${this.isOpen ? html`
             <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.varEdit)}>
-                <table>
+                <h1>List of variables</h1>
+                <table @click=${(e: Event) => { e.stopPropagation()}}>
                     <thead>
                     <tr>
                         <th>Type</th>
@@ -80,9 +110,7 @@ export class VarListElement extends LitElement {
                     </thead>
                     <tbody>
                     ${this.table.map(item => html`
-                        <tr @contextmenu=${(e: Event) => this._handleRowClick(e, item)}
-                            @pointerdown=${() => this._handleLongPress(item)}
-                            @pointerup=${() => this._cancelLongPress()}>
+                        <tr @click=${(e: Event) => this._handleRowClick(e, item)}>
                         <td>${item.value.type}</td>
                         <td>${item.name}</td>
                         <td>${item.value.value}</td>
@@ -93,7 +121,7 @@ export class VarListElement extends LitElement {
                                 .var=${item} 
                                 @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value, item)}>
                             </var-edit-element>
-                            <button @click=${(e: Event) => this._deleteVar(e, item)}>Delete</button>
+                            <button class="delete" @click=${(e: Event) => this._deleteVar(e, item)}>Delete</button>
                         ` : ''}
                         </div>
                         </tr>
@@ -139,16 +167,6 @@ export class VarListElement extends LitElement {
     private _handleRowClick(event: Event, item: VarObject) {
         event.preventDefault();
         this.selectedRow = this.selectedRow === item ? null : item;
-    }
-
-    private _handleLongPress(item: VarObject) {
-        this.longPressTimeout = setTimeout(() => {
-            this.selectedRow = item;
-        }, 500);
-    }
-
-    private _cancelLongPress() {
-        clearTimeout(this.longPressTimeout);
     }
 
 }

@@ -23,6 +23,12 @@ export class CondEditElement extends LitElement {
     @state()
     private selectMode: boolean = false;
 
+    @state()
+    private canSave: boolean = false;
+
+    @state()
+    private canGroup: boolean = false;
+
     @property()
     newMode: boolean=true;
 
@@ -51,67 +57,153 @@ export class CondEditElement extends LitElement {
 
     static styles = css`
         
-        button {
-                padding: 8px 16px;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                background-color: #ddd;
-                transition: background-color 0.2s, color 0.2s;
-                color: black;
-            }
-        
-        .modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: black;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-          gap: 16px;
-        }
+      button {
+        padding: 8px 16px;
+        margin: 0px 4px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: rgb(168, 168, 168);
+        transition: background-color 0.2s, color 0.2s;
+        color: black;
+      }
 
+      .save {
+        margin: 16px 4px;
+        background-color:rgb(79, 255, 108);
+      }
+
+      button:disabled {
+        background-color: grey;
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      .delete {
+        margin: 16px 4px;
+        background-color:rgb(255, 104, 104);
+      }
+          
+      .group {
+        background-color: #7da7d9;
+      }
+
+      h2{
+        color: black;
+        margin: 0px;
+      }
+
+      h1 {
+        color:  #7da7d9;
+      }
+
+      input {
+        font-size: 1em;
+        padding: 4px;
+        border: none;
+        background-color: #7da7d9;
+        color: black;
+      }
+
+      .empty {
+        display: block;
+        border: 2px solid #333;
+        border-radius: 8px;
+        margin: 8px;
+      }
+
+      .empty-header {
+        border-bottom: 2px solid #333;
+        background-color: gray;
+        padding: 8px;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px 4px 0 0;
+      }
+      
+      .empty-content {
+        background-color: rgb(168, 168, 168);
+        min-height: 50px;
+        padding: 8px;
+        border-radius: 0 0 4px 4px;
+      }
+
+      .menu {
+        border-radius: 8px;
+        border: 1px solid transparent;
+        padding: 0.5em 1em;
+        margin: 0.2em 0.4em;
+        font-size: 1em;
+        font-weight: 500;
+        font-family: inherit;
+        background-color:rgb(51, 51, 51);
+        cursor: pointer;
+        transition: border-color 0.25s;
+        color: white;
+      }
+
+      .block {
+        background-color: #ddd;
+      }
+        
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 16px;
+        overflow: auto;
+      }
       `;
     
       render() {
         let cond: TemplateResult=html``;
         if(!this.newMode){
           this.condList.forEach((item)=>{
-            cond=html`${cond}<li><button @click=${()=>{this.block=item.value;this._updateCond()}}>${CondText(item.value.args[0])}</button></li>`
+            cond=html`${cond}<button @click=${()=>{this.block=structuredClone(item.value);this._updateCond()}}>${CondText(item.value.args[0])}</button>`
           })
-          cond=html`<h2>Or select one from exist</h2>
+          cond=html`<h2>Select one from exist</h2>
             <div>${cond}</div>`;
         }
         return html`
-          <button @click=${this._openCloseModal}>${this.title}</button>
+          <button class=${'New condition' === this.title ? 'menu' : 'block'} @click=${this._openCloseModal}>${this.title}</button>
     
           ${this.isOpen ? html`
             <div class="modal">
-                    ${this.newMode ? html`<input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />`:''}
-                    <cond-block-element .block=${this.block}
-                      .newArg=${this.newArg}
-                      .groupAction=${this.groupAction}
-                      .deleteAction=${this.deleteAction}
-                      .selectMode=${this.selectMode}
-                      .selectedBlock=${this.selectedBlock}
-                      @cond-changed=${(e: CustomEvent) => this._updateChoose(e.detail.value)}
-                      @select-ended=${() => { this._selectMode(); this._action();}}
-                      @new-arg-clean=${this._newArgClean}
-                    ></cond-block-element>
-                    <var-choose-element .varList=${this.varList} @var-add=${(e: CustomEvent) => this._addArg(e.detail.value)}></var-choose-element>
-                    <new-val-element @val-saved=${(e: CustomEvent) => this._addArg(e.detail.value)}></new-val-element>
-                     ${this.selectMode ? html`
-                        <div>
-                            <button @click=${()=>{this.groupAction =true}}>Group</button>
-                            <button @click=${()=>{this.deleteAction =true}}>Delete</button>
-                        </div>
-                    ` : html`<button @click=${this._selectMode}>Select ...</button>`}
+              <h1>Condition editor</h1>
+              ${this.newMode ? html`<h2>Fill name of new condition</h2><input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />`:''}
+              ${this.block.args.length===0? html`<div class="empty"><div class="empty-header">Add first variable or value to your condition</div><div class="empty-content" /></div>`:''}
+              <cond-block-element .block=${this.block}
+                .newArg=${this.newArg}
+                .groupAction=${this.groupAction}
+                .deleteAction=${this.deleteAction}
+                .selectMode=${this.selectMode}
+                .selectedBlock=${this.selectedBlock}
+                .canGroup=${this.canGroup}
+                @cond-changed=${(e: CustomEvent) => this._updateChoose(e.detail.value)}
+                @select-ended=${() => {this._selectMode(); this._action();}}
+                @new-arg-clean=${this._newArgClean}
+                @can-group=${(e: CustomEvent) => this.canGroup = e.detail}
+              ></cond-block-element>
+              <div>
+                <var-choose-element .varList=${this.varList} @var-add=${(e: CustomEvent) => this._addArg(e.detail.value)}></var-choose-element>
+                <new-val-element @val-saved=${(e: CustomEvent) => this._addArg(e.detail.value)}></new-val-element>
+              </div>
+                ${this.selectMode ? html`
+                  <div>
+                      <button class="group" ?disabled=${!this.canGroup} @click=${()=>{this.groupAction =true}}>Group</button>
+                      <button class="delete" @click=${()=>{this.deleteAction =true}}>Delete</button>
+                  </div>
+              ` : html`<button class="group" @click=${this._selectMode}>Select ...</button>`}
                 <div>
-                    ${this.newMode ? html`<button @click=${()=>{this._saveUpdate(true)}}>Save condition</button>`:html`<button @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}
+                    ${this.newMode ? html`<button ?disabled=${!this.canSave} class="save" @click=${()=>{this._saveUpdate(true)}}>Save condition</button>`:
+                      html`<button class="save" @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}
                     <button @click=${this._backAction}>Back</button>
                 </div>
               ${cond}
@@ -126,6 +218,7 @@ export class CondEditElement extends LitElement {
 
       private _selectMode() {
         this.selectMode = !this.selectMode;
+        this._saveCheck();
       }
 
       private _action(){
@@ -136,6 +229,7 @@ export class CondEditElement extends LitElement {
       private _handleValueInput(event: InputEvent) {
         const target = event.target as HTMLInputElement;
         this.condEdit.name = target.value;
+        this._saveCheck();
       }
 
       private _addArg(newArg: Argument) {
@@ -150,24 +244,29 @@ export class CondEditElement extends LitElement {
         this.newArg = {type: 'note',value:'', args: []};
       }
 
-      private _saveUpdate(newItem: boolean){
-        if(this.block.args.length===1 && (!['num', 'str', 'bool', 'expr','variable','+','-','*','/'].includes(this.block.args[0].type))){
-          if(newItem)this._saveCond();
-          else this._updateCond();
-        }
+      private _saveUpdate(newItem: boolean){//TODO clean code 3rd phase
+        if(newItem)this._saveCond();
+        else this._updateCond();
       }
+
+      private _saveCheck(){
+        // console.log("neco", this.block.args);
+        if(this.block.args.length===1 && 
+          (!['num', 'str', 'bool', 'expr','variable','+','-','*','/'].includes(this.block.args[0].type) &&
+          (!this.newMode || this.condEdit.name)))this.canSave=true;
+        else this.canSave=false;
+      }
+
       private _saveCond() {
-        if(this.condEdit.name){
-          this.condEdit.value={ ...this.block};
-          this.dispatchEvent(new CustomEvent('cond-saved', {
-            detail: { value: this.condEdit },
-            bubbles: true,
-            composed: true
-          }));
-          this.condEdit={name: '', value: {type: 'note',value:'', args: []}}
-          this.block.args=[]
-          this._openCloseModal()
-        }
+        this.condEdit.value={ ...this.block};
+        this.dispatchEvent(new CustomEvent('cond-saved', {
+          detail: { value: this.condEdit },
+          bubbles: true,
+          composed: true
+        }));
+        this.condEdit={name: '', value: {type: 'note',value:'', args: []}}
+        this.block.args=[]
+        this._openCloseModal()
       }
 
       private _updateCond() {

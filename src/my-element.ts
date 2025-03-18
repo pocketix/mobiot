@@ -22,7 +22,7 @@ export class MyElement extends LitElement {
     programText: string=''
 
     @state()
-    private view: View=window.matchMedia('(max-width: 768px)').matches ? 'vp' : 'both';
+    private view: View=window.matchMedia('(max-width: 768px)').matches ? 'Graphical' : 'Both';
 
     @provide({ context: condListExport })
     @property({attribute: false})
@@ -60,7 +60,7 @@ export class MyElement extends LitElement {
 
   render() {
     let editors: TemplateResult=html``;
-    if(this.view==='both'){
+    if(this.view==='Both'){
       editors=html`
           <vp-editor-element class="editor" 
             .program=${this.program} 
@@ -69,7 +69,7 @@ export class MyElement extends LitElement {
           <text-editor-element class="editor" 
             .program=${this.program}></text-editor-element>`
     }
-    else if(this.view==='vp'){
+    else if(this.view==='Graphical'){
       editors=html`
         <vp-editor-element class="editor" 
           .program=${this.program} 

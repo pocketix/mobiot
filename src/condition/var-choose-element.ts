@@ -25,16 +25,20 @@ export class VarChooseElement extends LitElement {
     }
     
     button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: #ddd;
-            transition: background-color 0.2s, color 0.2s;
-            color: black;
-        }
+      padding: 8px 16px;
+      margin: 6px 0px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: rgb(168, 168, 168);
+      transition: background-color 0.2s, color 0.2s;
+      color: black;
+    }
 
-    /* Překrytí při otevřeném pop-up okně */
+    .cancel {
+      background-color:rgb(255, 104, 104);
+    }
+
     .overlay {
       position: fixed;
       top: 0;
@@ -48,29 +52,30 @@ export class VarChooseElement extends LitElement {
       z-index: 10;
     }
 
-    /* Vzhled pop-up okna */
     .modal {
       background: white;
       padding: 24px;
       border-radius: 8px;
       max-width: 400px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
     }
   `;
 
   render() {
         const listCode: TemplateResult[]=[];
         this.varList.forEach((item)=>{
-            listCode.push(html`<li><button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button></li>`);
+            listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button>`);
   });
     return html`
-      <button @click=${this._openCloseModal}>Add Operand (variable)</button>
+      <button @click=${this._openCloseModal}>Add variable</button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             ${listCode}
-            <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
+            <button class="cancel" @click=${this._openCloseModal}>Cancel</button>
           </div>
         </div>
       ` : ''}

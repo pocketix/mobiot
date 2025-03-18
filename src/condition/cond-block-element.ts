@@ -14,6 +14,9 @@ export class CondBlockElement extends LitElement {
     private groupAction: boolean = false;
 
     @property()
+    private canGroup: boolean = false;
+
+    @property()
     private deleteAction: boolean = false;
 
     @property()
@@ -49,15 +52,15 @@ export class CondBlockElement extends LitElement {
     }
 
     .header.selected {
-      background: blue;
-      color: black;
+      background:rgb(66, 63, 255);
     }
 
     .content {
-      background-color:black;
+      background-color: rgb(168, 168, 168);
       min-height: 50px;
       padding: 8px;
       border-radius: 0 0 4px 4px;
+      color: black;
     }
 
   `;
@@ -103,7 +106,7 @@ export class CondBlockElement extends LitElement {
                 @choose-args-changed=${(e: CustomEvent) => this._updateList(e.detail.value)}
             </cond-block-element>
         `
-        })//TODO help block 3rd phase
+        })
         element=html`
             <div class="block">
                 <div 
@@ -149,28 +152,37 @@ export class CondBlockElement extends LitElement {
     }
 
     private _groupArgs(type: TypeOption){
-        if(this.chooseArgs.length>=2){
-            let newArg: Argument={type: type, value: '', args: this.chooseArgs};
-            this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item))
-            this.block.args = [ ...this.block.args, newArg];
-            this.chooseArgs=[];
-            this.groupAction=false;
-        
-            this.dispatchEvent(new CustomEvent('select-ended'));
-        }
+        let newArg: Argument={type: type, value: '', args: this.chooseArgs};
+        this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item))
+        this.block.args = [ ...this.block.args, newArg];
+        this.chooseArgs=[];
+        this.groupAction=false;
+    
+        this.dispatchEvent(new CustomEvent('select-ended', {
+            bubbles: true,
+            composed: true}
+        ));
       }
 
     private _deleteArgs(){
         this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item))
         this.chooseArgs=[];
         this.deleteAction=false;
-    
-        this.dispatchEvent(new CustomEvent('select-ended'
+        this.dispatchEvent(new CustomEvent('select-ended', {
+            bubbles: true,
+            composed: true}
         ));
     }
 
     private _updateList(updatedList: Argument[]) {
         this.chooseArgs = [ ...updatedList ];
+        this.canGroup = this.chooseArgs.length >= 2;
+
+        this.dispatchEvent(new CustomEvent('can-group', { 
+            detail: this.canGroup, 
+            bubbles: true, 
+            composed: true 
+        }));
     }
 }
 

@@ -10,6 +10,9 @@ export class NewValElement extends LitElement {
     private isOpen: boolean = false;
 
     @state()
+    private canSave: boolean = false;
+
+    @state()
     private type: TypeOption[] = ['num', 'str', 'bool', 'expr'];
 
     @property({ type: Object })
@@ -30,18 +33,38 @@ export class NewValElement extends LitElement {
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            background-color: #ddd;
+            background-color: rgb(168, 168, 168);
             transition: background-color 0.2s, color 0.2s;
             color: black;
         }
         
     button.selected {
-        background-color: #7da7d9;
-        color: white;
+      background-color: #7da7d9;
+      color: white;
+    }
+
+    .save {
+      margin: 16px 1px;
+      background-color:rgb(79, 255, 108);
+    }
+
+    button:disabled {
+      background-color: grey;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .cancel {
+      margin: 16px 1px;
+      background-color:rgb(255, 104, 104);
     }
 
     input {
-        background-color: #7da7d9;
+      font-size: 1em;
+      padding: 4px;
+      border: none;
+      background-color: #7da7d9;
+      color: black;
     }
 
     .overlay {
@@ -72,11 +95,13 @@ export class NewValElement extends LitElement {
       valueType=html`
       <button class=${'true' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
       <button class=${'false' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+    }else if(this.value.type==='num'){
+      valueType=html`<input type="number" inputmode="decimal" step="any" placeholder="Enter a number">`
     }else{
       valueType=html`<input type="text" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
     }
     return html`
-      <button @click=${this._openCloseModal}>Add Operand (value)</button>
+      <button @click=${this._openCloseModal}>Add value</button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
@@ -89,8 +114,10 @@ export class NewValElement extends LitElement {
             </div>
             <h2>Value: </h2>
              ${valueType}
-            <button class="close-btn" @click=${this._addNew}>Save</button>
-            <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
+            <div>
+            <button class="save" ?disabled=${!this.canSave} @click=${this._addNew}>Save</button>
+            <button class="cancel" @click=${this._openCloseModal}>Cancel</button>
+            </div>
           </div>
         </div>
       ` : ''}
@@ -108,26 +135,32 @@ export class NewValElement extends LitElement {
   private _handleValueInput(event: InputEvent) {//TODO clean code 3rd phase
     const target = event.target as HTMLInputElement;
     this.value.value = target.value;
+    this._saveBut();
   }
 
   private _handleBoolInput(input: string) {
     this.value= {...this.value, value:input} 
+    this._saveBut();
   }
 
   private _selectTypeInput(option: TypeOption) {
     this.value = { ...this.value, type: option };
+    this._saveBut();
   }
 
-    private _addNew() {
-      if(this.value.value && (this.value.type!='bool' || this.value.value==='true' || this.value.value==='false')){
-        this.dispatchEvent(new CustomEvent('val-saved', {
-            detail: { value: this.value },
-            bubbles: true,
-            composed: true
-        }));
-        this._openCloseModal()
-      }
-    }
+  private _addNew() {
+    this.dispatchEvent(new CustomEvent('val-saved', {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true
+    }));
+    this._openCloseModal()
+  }
+
+  private _saveBut(){
+    if(this.value.value && (this.value.type!='bool' || this.value.value==='true' || this.value.value==='false'))this.canSave=true;
+    else this.canSave=false
+  }
 
 }
 

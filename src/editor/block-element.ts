@@ -64,6 +64,7 @@ export class BlockElement extends LitElement {
     else{
       if(this.block.arguments.length===1){
         if(this.block.arguments[0].type==='boolean_expression'){
+          // console.log(this.block.arguments[0]);
           header=html`${this.block.block.name}<cond-edit-element 
             .newMode=${false} .block=${this.block.arguments[0]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0].args[0])}
             @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value)}

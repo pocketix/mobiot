@@ -15,10 +15,10 @@ export class MenuElement extends LitElement {
     programText: string=''
 
     @state()
-    private viewList: View[] = window.matchMedia('(max-width: 768px)').matches ?['text','vp']:['both','text','vp'];
+    private viewList: View[] = window.matchMedia('(max-width: 768px)').matches ?['Text','Graphical']:['Both','Text','Graphical'];
 
     @property()
-    view: View='both'
+    view: View='Both'
 
   render() {
     return html`
@@ -29,11 +29,14 @@ export class MenuElement extends LitElement {
         <button>Procedures</button>
         <var-list-element .table=${this.varList} ></var-list-element>
         <cond-edit-element></cond-edit-element>
-        <div class="view">
+        <div class="view-container">
+          <h2>Choose type of editor: </h2>
+          <div class="view">
             ${this.viewList.map(item=>html`
-                <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
-                `)}
-            </div>
+            <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
+            `)}
+          </div>
+        </div>
     `
     }
 
@@ -86,19 +89,31 @@ export class MenuElement extends LitElement {
 
   static styles = css`
 
+    h2 {
+      font-size: 1.2em;
+      font-weight: 500;
+      font-family: inherit;
+      color: #1a1a1a;
+      margin: 0 auto;
+    }
+
+    .view-container {
+      display: flex;
+      align-items: center;
+      margin: 0 auto;
+    }
+
     button {
       border-radius: 8px;
       border: 1px solid transparent;
-      padding: 0.6em 1.2em;
+      padding: 0.5em 1em;
+      margin: 0.2em 0.4em;
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
-      background-color: #1a1a1a;
+      background-color:rgb(51, 51, 51);
       cursor: pointer;
       transition: border-color 0.25s;
-    }
-    button:hover {
-      border-color: #646cff;
     }
 
     .view button{
@@ -106,8 +121,7 @@ export class MenuElement extends LitElement {
     }
 
     button.selected {
-      background-color: #1a1a1a;
-      border-color: #646cff;
+      background-color:rgb(51, 51, 51);
     }
 
     button:focus-visible {
@@ -117,7 +131,7 @@ export class MenuElement extends LitElement {
     .view {
       max-width: fit-content;
       border-radius: 12px;
-      padding: 8px;
+      padding: 4px;
       background: gray;
       margin: 0 auto;
     }
