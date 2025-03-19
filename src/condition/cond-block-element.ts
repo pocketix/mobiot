@@ -104,6 +104,7 @@ export class CondBlockElement extends LitElement {
                 .deleteAction=${this.deleteAction}
                 .newArg=${this.newArg}
                 @choose-args-changed=${(e: CustomEvent) => this._updateList(e.detail.value)}
+                @select-ended=${()=>this._cleanGroups()}
             </cond-block-element>
         `
         })
@@ -172,6 +173,15 @@ export class CondBlockElement extends LitElement {
             bubbles: true,
             composed: true}
         ));
+    }
+
+    private _cleanGroups(){
+        this.block.args.forEach((item)=>{
+            if(['AND','OR','NOT','==','!=','>','<','>=','<=','+','-','*','/'].includes(item.type) && item.args.length===0){
+                this.block.args=this.block.args.filter(filtered=> filtered!=item);
+                this._handleClick();
+            }
+        })
     }
 
     private _updateList(updatedList: Argument[]) {

@@ -1,5 +1,5 @@
 import { LitElement, html, css, TemplateResult} from 'lit';
-import { customElement, property} from 'lit/decorators.js';
+import { customElement, property, state} from 'lit/decorators.js';
 import { TypeOption} from '../general/types'
 
 @customElement('operand-choose-element')
@@ -11,9 +11,11 @@ export class OperandChooseElement extends LitElement {
     @property({ type: Object })
     operand: TypeOption = 'note'
 
-    @property()
-    operandList: TypeOption[]=['AND','OR','NOT','==','!=','>','<','>=','<=','+','-','*','/'];
+    @state()
+    private operandTypes: string[]=['Compare', 'Logical', 'Numeric'];
 
+    @state()
+    private selected: string='Compare';
     static styles = css`
 
     h2{
@@ -21,16 +23,47 @@ export class OperandChooseElement extends LitElement {
     }
     
     button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: #ddd;
-            transition: background-color 0.2s, color 0.2s;
-            color: black;
-        }
+      max-width: fit-content;
+      margin: 8px 0px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 500;
+      font-family: inherit;
+      background-color: #ddd;
+      transition: background-color 0.2s, color 0.2s;
+      color: black;
+    }
 
-    /* Překrytí při otevřeném pop-up okně */
+    button.selected {
+      background-color: #7da7d9;
+      margin 0px;
+      color: white;
+    }
+
+    .cancel {
+      background-color:rgb(255, 104, 104);
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .menu-container {
+      border-radius: 12px;
+      padding: 2px 4px;
+      background: rgb(168, 168, 168);
+    }
+
+    .menu {
+      background: rgb(168, 168, 168);
+      margin 0px;
+    }
+
     .overlay {
       position: fixed;
       top: 0;
@@ -44,7 +77,6 @@ export class OperandChooseElement extends LitElement {
       z-index: 10;
     }
 
-    /* Vzhled pop-up okna */
     .modal {
       background: white;
       padding: 24px;
@@ -56,17 +88,26 @@ export class OperandChooseElement extends LitElement {
 
   render() {
         const listOperand: TemplateResult[]=[];
-        this.operandList.forEach((item)=>{
-            listOperand.push(html`<li><button @click=${() => this._addArg(item)}>${item}</button></li>`);
-  });
+        let operandList: TypeOption[]=[];
+        if(this.selected==='Compare')operandList=['==','!=','>','<','>=','<='];
+        else if(this.selected==='Logical')operandList=['AND','OR','NOT'];
+        else operandList=['+','-','*','/'];
+        operandList.forEach((item)=>{
+            listOperand.push(html`<button @click=${() => this._addArg(item)}>${item}</button>`);
+  });//<button @click=${this._openCloseModal}>Add Operand (variable)</button>
     return html`
-      <button @click=${this._openCloseModal}>Add Operand (variable)</button>
-
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
-            ${listOperand}
-            <button class="close-btn" @click=${this._openCloseModal}>Cancel</button>
+            <div class="menu-container">
+              ${this.operandTypes.map(item=>html`
+              <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${item}</button>
+              `)}
+            </div>
+            <div class="button-container">
+              ${listOperand}
+            </div>
+            <button class="cancel" @click=${this._openCloseModal}>Cancel</button>
           </div>
         </div>
       ` : ''}
@@ -76,15 +117,20 @@ export class OperandChooseElement extends LitElement {
     this.isOpen = !this.isOpen;
   }
 
+  private _selectType(cat: string){
+    this.selected=cat
+    this.requestUpdate();
+  }
 
-    private _addArg(operand: TypeOption) {//TODO edit exist operand 4th phase
-        this.dispatchEvent(new CustomEvent('oper-choose', {
-            detail: { value: operand},
-            bubbles: true,
-            composed: true
-        }));
-        this._openCloseModal()
-    }
+
+  private _addArg(operand: TypeOption) {//TODO edit exist operand 4th phase
+    this.dispatchEvent(new CustomEvent('oper-choose', {
+      detail: { value: operand},
+      bubbles: true,
+      composed: true
+    }));
+    this._openCloseModal()
+  }
 
 }
 

@@ -203,7 +203,7 @@ export class CondEditElement extends LitElement {
               ` : html`<button class="group" @click=${this._selectMode}>Select ...</button>`}
                 <div>
                     ${this.newMode ? html`<button ?disabled=${!this.canSave} class="save" @click=${()=>{this._saveUpdate(true)}}>Save condition</button>`:
-                      html`<button class="save" @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}
+                      html`<button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}
                     <button @click=${this._backAction}>Back</button>
                 </div>
               ${cond}
@@ -214,6 +214,7 @@ export class CondEditElement extends LitElement {
 
       private _openCloseModal() {
         this.isOpen = !this.isOpen;
+        this._saveCheck();
       }
 
       private _selectMode() {
@@ -238,6 +239,7 @@ export class CondEditElement extends LitElement {
 
       private _updateChoose(updatedArg: Argument) {
         this.selectedBlock = updatedArg;
+        this._selectMode();
       }
 
       private _newArgClean() {
@@ -250,7 +252,6 @@ export class CondEditElement extends LitElement {
       }
 
       private _saveCheck(){
-        // console.log("neco", this.block.args);
         if(this.block.args.length===1 && 
           (!['num', 'str', 'bool', 'expr','variable','+','-','*','/'].includes(this.block.args[0].type) &&
           (!this.newMode || this.condEdit.name)))this.canSave=true;
