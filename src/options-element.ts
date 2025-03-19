@@ -9,13 +9,13 @@ export class OptionsElement extends LitElement {
 
     @state()
     private blocks: Block[] = [
-        {name: "If", simple: false, id: "if", argTypes: ['boolean_expression'], type: 'branch'},
-        {name: "Else", simple: false, id: "else", argTypes: [], type: 'branch'},
-        {name: "Else If", simple: false, id: "elseif", argTypes: [], type: 'branch'},
-        {name: "Switch", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},
+        {name: "If ... do ...", simple: false, id: "if", argTypes: ['boolean_expression'], type: 'branch'},
+        {name: "Else do ...", simple: false, id: "else", argTypes: [], type: 'branch'},
+        {name: "Else If ... do ...", simple: false, id: "elseif", argTypes: [], type: 'branch'},
+        {name: "Switch according ...", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},
         {name: "Case", simple: false, id: "case", argTypes: ['num'], type: 'branch'},
         {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
-        {name: "While", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
+        {name: "While ... do ...", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
         {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
         {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'note'], type: 'set_var'},
@@ -51,7 +51,7 @@ export class OptionsElement extends LitElement {
                 filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
             }
             filteredBlocks.forEach((block)=>{
-            listOptions.push(html`<li><button @click=${() => this._addToProgram(block)}>${block.name}</button></li>`);
+            listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}>${block.name}</button>`);
         });
         }else{
             listOptions=this._filterParams();
@@ -62,24 +62,29 @@ export class OptionsElement extends LitElement {
             cathegoriesMenu=html`
             <div>
                 ${this.categories.map(item=>html`
-                <button class=${item === this.category ? 'selected' : ''} @click=${() => this._selectCategory(item)}>${item}</button>
+                <button class=${item === this.category ? 'selected' : 'menu-item'} @click=${() => this._selectCategory(item)}>${item}</button>
                 `)}
             </div>`
         }
         return html`
-            ${cathegoriesMenu}
-            ${listOptions}`
+            <div class="menu">
+                ${cathegoriesMenu}
+            </div>
+            <div class="content">
+                ${listOptions}
+            </div>`
+                
     }
 
     private _filterParams(): TemplateResult[]{
         let list: TemplateResult[]=[];
         if(this.paramType==='boolean_expression'){
             this.conditions.forEach((condition)=>{
-                list.push(html`<li><button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value.args[0])}</button></li>`);
+                list.push(html`<button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value.args[0])}</button>`);
             });
         }else if(this.paramType==='variable'){
             this.variables.forEach((item)=>{
-                list.push(html`<li><button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button></li>`);
+                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button>`);
             });
         }else{
             let varList: VarObject[]=this.variables;
@@ -87,16 +92,16 @@ export class OptionsElement extends LitElement {
                 varList=this.variables.filter(item => item.value.type === this.paramType)
             }
             varList.forEach((item)=>{
-                list.push(html`<li><button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button></li>`);
+                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button>`);
             });
             if(this.paramType==='bool'){
                 list.push(html`<li><button @click=${() => this._addParamsVal('true')}>true</button></li>`);
                 list.push(html`<li><button @click=${() => this._addParamsVal('false')}>false</button></li>`);
-            }else if(this.paramType==='str'){
+            }else if(this.paramType==='num'){
                 let paramInput: string='';
                 list.push(html`
                     <li>
-                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value}>
+                      <input type="number" inputmode="decimal" step="any" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder="Enter a number">
                       <button @click=${() => this._addParamsVal(paramInput)}>Use this value</button>
                     </li>
                   `);
@@ -104,7 +109,7 @@ export class OptionsElement extends LitElement {
                 let paramInput: string='';
                 list.push(html`
                     <li>
-                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value}>
+                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder="Enter a string">
                       <button @click=${() => this._addParamsVal(paramInput)}>Use this value</button>
                     </li>
                   `);
@@ -209,28 +214,62 @@ export class OptionsElement extends LitElement {
 
     static styles = css`
         button {
-        border-radius: 8px;
-        border: 1px solid transparent;
-        padding: 0.6em 1.2em;
-        font-size: 1em;
-        font-weight: 500;
-        font-family: inherit;
-        background-color: #1a1a1a;
-        cursor: pointer;
-        transition: border-color 0.25s;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            margin: 0.3em;
+            padding: 0.6em 1.2em;
+            font-size: 1em;
+            font-weight: 500;
+            font-family: inherit;
+            background-color: #7da7d9;
+            cursor: pointer;
+            transition: border-color 0.25s;
+            }
+        button.selected {
+            background-color: #7da7d9;
+            color: white;
+            margin: 0px;
+            padding: 0.8em 1.6em;
+            border-radius: 0px;
         }
 
-        button:hover {
-            border-color: #646cff;
+        .menu {
+            position: fixed;
+            bottom: 20vh;
+            left: 0;
+            background-color: gray;
+            width: 100%;
         }
-        button:focus,
-            button:focus-visible {
-            outline: 4px auto -webkit-focus-ring-color;
+
+        .menu-item {
+            background-color: gray;
+            margin: 0px;
         }
-        button.selected {
-        background-color: #7da7d9;
-        color: white;
-    }
+
+        .content{
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        input {
+            font-size: 1em;
+            padding: 4px;
+            border: none;
+            background-color: #7da7d9;
+            color: black;
+        }
+
+        li {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .branch { background-color:rgb(106, 175, 108); }
+        .cycle { background-color: #7da7d9; }
+        .dev { background-color: #ff9800; }
+        .alert { background-color:rgb(255, 108, 108); }
+        .end { background-color:rgb(226, 192, 0); }
+        .set_var { background-color: #E2A7F0; } 
      `
 }
 

@@ -217,12 +217,12 @@ private _deleteBlock(block: ProgramBlock){
     }
 
     .options {
-      flex: 0 0 30vh;
+      flex: 0 0 20vh;
       overflow-y: auto;
       width: 100%;
       border-top: 2px solid #ccc;
       z-index: 10;
-      background: gray;
+      background: rgb(168, 168, 168);;
     }
 
  
