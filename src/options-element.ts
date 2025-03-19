@@ -9,14 +9,14 @@ export class OptionsElement extends LitElement {
 
     @state()
     private blocks: Block[] = [
+        {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
+        {name: "While ... do ...", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
+        {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
         {name: "If ... do ...", simple: false, id: "if", argTypes: ['boolean_expression'], type: 'branch'},
         {name: "Else do ...", simple: false, id: "else", argTypes: [], type: 'branch'},
         {name: "Else If ... do ...", simple: false, id: "elseif", argTypes: [], type: 'branch'},
         {name: "Switch according ...", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},
         {name: "Case", simple: false, id: "case", argTypes: ['num'], type: 'branch'},
-        {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
-        {name: "While ... do ...", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
-        {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
         {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'note'], type: 'set_var'},
         {name: "LED 1.setLedColor", simple: true, id: "str_opt", argTypes: ['bool'], type: 'dev'},
@@ -264,8 +264,8 @@ export class OptionsElement extends LitElement {
             padding: 0;
         }
 
-        .branch { background-color:rgb(106, 175, 108); }
-        .cycle { background-color: #7da7d9; }
+        .branch { background-color: #7da7d9;}
+        .cycle { background-color: rgb(106, 175, 108);}
         .dev { background-color: #ff9800; }
         .alert { background-color:rgb(255, 108, 108); }
         .end { background-color:rgb(226, 192, 0); }

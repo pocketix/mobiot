@@ -25,12 +25,10 @@ export class BlockElement extends LitElement {
       display: block;
       border: 2px solid #333;
       border-radius: 8px;
-      padding: 8px;
       background-color: #e0e0e0;
       margin: 8px;
     }
     .header {
-      background-color: #7da7d9;
       padding: 8px;
       color: white;
       font-weight: bold;
@@ -38,8 +36,7 @@ export class BlockElement extends LitElement {
     }
 
     .content {
-      background-color: #d4f1c5;
-      min-height: 50px;
+      min-height: 20px;
       padding: 8px;
       border-radius: 0 0 4px 4px;
     }
@@ -52,6 +49,22 @@ export class BlockElement extends LitElement {
       font-size: 0.8em;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    .hide {
+      background-color: #e0e0e0;
+      color: black;
+      border: 1px solid transparent;
+      font-size: 1em;
+    }
+
+    .branch { background-color: #7da7d9; }
+    .cycle { background-color: rgb(106, 175, 108); }
+    .dev { background-color: #ff9800; }
+    .alert { background-color:rgb(255, 108, 108); }
+    .end { background-color:rgb(226, 192, 0); }
+    .set_var { background-color: #E2A7F0; } 
+    .branch-body { background-color:rgb(179, 200, 224); }
+    .cycle-body { background-color: #d4f1c5; }
   `;
   render() {
     let header: TemplateResult=html``;
@@ -64,7 +77,6 @@ export class BlockElement extends LitElement {
     else{
       if(this.block.arguments.length===1){
         if(this.block.arguments[0].type==='boolean_expression'){
-          // console.log(this.block.arguments[0]);
           header=html`${this.block.block.name}<cond-edit-element 
             .newMode=${false} .block=${this.block.arguments[0]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0].args[0])}
             @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
@@ -89,13 +101,13 @@ export class BlockElement extends LitElement {
     }
     if(!this.block.block.simple){
       if(this.block.hide){
-        hide=html`<button @click=${this._hideBlock}>Show block contend</button>`
+        hide=html`<button class="hide" @click=${this._hideBlock}>Show block contend</button>`
       }
       else{
-        hide=html`<button @click=${this._hideBlock}>Hide block contend</button>`
+        hide=html`<button class="hide" @click=${this._hideBlock}>Hide block contend</button>`
       }
       body=html`
-      <div class="content">
+      <div class="content ${this.block.block.type==='branch'? 'branch-body':'cycle-body'}">
       <slot></slot>
     </div>`
     }
@@ -103,7 +115,7 @@ export class BlockElement extends LitElement {
     ${this.menu === true ? html`
       <block-menu-element isOpen=${this.menu} .block=${this.block} @block-menu=${(e: CustomEvent) => this._blockMenu(e.detail.value)}></block-menu-element>
       ` : ''}
-      <div class="header" @contextmenu=${(e: Event) => this._handleRowClick(e)}
+      <div class="header ${this.block.block.type}" @contextmenu=${(e: Event) => this._handleRowClick(e)}
           @pointerdown=${() => this._handleLongPress()}
           @pointerup=${() => this._cancelLongPress()}>
         ${header}
