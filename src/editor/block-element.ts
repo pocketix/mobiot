@@ -18,6 +18,9 @@ export class BlockElement extends LitElement {
     @state()
     private args: boolean=false;
 
+    @property()
+    detail: boolean=false;
+
     private longPressTimeout: any = null;
 
     static styles = css`
@@ -42,12 +45,37 @@ export class BlockElement extends LitElement {
     }
 
     .condition {
-      background-color: white;
-      color: #333;
       padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 0.8em;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin: 4px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #ddd;
+      color: black;
+      font-weight: normal;
+    }
+
+    .focus-arg {
+      padding: 4px 8px;
+      margin: 4px 20px;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 8px;
+      background-color: gray;
+    }
+
+    .focus-block {
+      border: 4px solid red;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .detail {
+      display: block;
+      left: 0;
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
     }
 
     .hide {
@@ -55,6 +83,11 @@ export class BlockElement extends LitElement {
       color: black;
       border: 1px solid transparent;
       font-size: 1em;
+    }
+
+    .menu {
+      position: relative;
+      z-index: 100;
     }
 
     .branch { background-color: #7da7d9; }
@@ -71,11 +104,19 @@ export class BlockElement extends LitElement {
     let hide: TemplateResult=html``;
     let body: TemplateResult=html``;
     const original: ProgramBlock=structuredClone(this.block)
-    if(this.block.arguments.length===0){
+    if(this.block.block.argTypes.length===0){
       header=html`${this.block.block.name}`;
     }
     else{
-      if(this.block.arguments.length===1){
+      if(this.block.arguments.length!=this.block.block.argTypes.length){
+        this.block.arguments.forEach((item)=>{
+          header=html`${header}<div class="condition">${item.type==='boolean_expression'? CondText(item.args[0]):item.value}</div>`
+        })
+        for(let i=this.block.arguments.length;i<this.block.block.argTypes.length;i++){
+          header=html`${header}<div class="${i===this.block.arguments.length ? 'focus-arg':'condition'}">Add argument: ${this.block.block.argTypes[i]}</div>`
+        }
+        header=html`${this.block.block.name} ${header}`
+      }else if(this.block.arguments.length===1){
         if(this.block.arguments[0].type==='boolean_expression'){
           header=html`${this.block.block.name}<cond-edit-element 
             .newMode=${false} .block=${this.block.arguments[0]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0].args[0])}
@@ -91,7 +132,7 @@ export class BlockElement extends LitElement {
           this.block.arguments.forEach((item)=>{
             header=html`${header}<change-val-element 
               .val=${item} .type=${this.block.block.argTypes[0]}
-              @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}>`//TODO repair in 3rd phase
+              @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}>`
           })
           header=html`${this.block.block.name}<div>${header}</div><div class="condition" @click=${this._showArguments}>Hide</div>`
         }else{
@@ -113,17 +154,24 @@ export class BlockElement extends LitElement {
     }
     return html`
     ${this.menu === true ? html`
-      <block-menu-element isOpen=${this.menu} .block=${this.block} @block-menu=${(e: CustomEvent) => this._blockMenu(e.detail.value)}></block-menu-element>
+      <block-menu-element class="menu" 
+        isOpen=${this.menu} .block=${this.block} 
+        @block-menu=${(e: CustomEvent) => this._blockMenu(e.detail.value)}
+        @detail-block=${() => this._detailBlock()}></block-menu-element>
       ` : ''}
-      <div class="header ${this.block.block.type}" @contextmenu=${(e: Event) => this._handleRowClick(e)}
+      <div class="${this.menu===true ? 'focus-block' : ''}">
+      <div class="${this.detail ? 'detail' : ''}">
+      <div class="header ${this.block.block.type}" 
           @pointerdown=${() => this._handleLongPress()}
           @pointerup=${() => this._cancelLongPress()}>
-        ${header}
+        ${header} ${this.detail ? html`<button class="${this.block.block.type}" @click=${()=>this._detailBlock()}>End</button>`:''}
       </div>
       ${hide}
       ${body}
+      </div>
+      </div>
     `;
-  }
+  }//TODO change End for icon
 
   private _hideBlock(){
     this.block.hide=!this.block.hide;
@@ -147,9 +195,8 @@ export class BlockElement extends LitElement {
     this.menu=menu
   }
 
-  private _handleRowClick(event: Event) {//TODO clean code 3rd phase
-      event.preventDefault();
-      this.menu=!this.menu;
+  private _detailBlock(){
+    this.detail=!this.detail;
   }
 
   private _handleLongPress() {

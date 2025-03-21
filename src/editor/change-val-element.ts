@@ -29,14 +29,14 @@ export class ChangeValElement extends LitElement {
     }
     
     button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: #ddd;
-            transition: background-color 0.2s, color 0.2s;
-            color: black;
-        }
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #ddd;
+      transition: background-color 0.2s, color 0.2s;
+      color: black;
+    }
         
     button.selected {
         background-color: #7da7d9;

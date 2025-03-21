@@ -60,16 +60,14 @@ export class OptionsElement extends LitElement {
         let cathegoriesMenu: TemplateResult=html``;
         if(!this.menuParams){
             cathegoriesMenu=html`
-            <div>
+            <div class="menu">
                 ${this.categories.map(item=>html`
                 <button class=${item === this.category ? 'selected' : 'menu-item'} @click=${() => this._selectCategory(item)}>${item}</button>
                 `)}
             </div>`
         }
         return html`
-            <div class="menu">
-                ${cathegoriesMenu}
-            </div>
+            ${cathegoriesMenu}
             <div class="content">
                 ${listOptions}
             </div>`
@@ -153,6 +151,7 @@ export class OptionsElement extends LitElement {
         };
         if(filterElse)filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
         if(filterEnd)filteredBlocks=filteredBlocks.filter(item => item.id != 'end');
+        filteredBlocks=filteredBlocks.filter(item => item.id != 'case');
 
         return filteredBlocks;
     }
@@ -236,9 +235,9 @@ export class OptionsElement extends LitElement {
         .menu {
             position: fixed;
             bottom: 20vh;
-            left: 0;
             background-color: gray;
             width: 100%;
+            max-width: 1040px;
         }
 
         .menu-item {

@@ -41,11 +41,12 @@ export class BlockMenuElement extends LitElement {
     }
 
     .modal {
-      background: white;
-      padding: 24px;
-      border-radius: 8px;
-      max-width: 400px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      position: fixed;
+      bottom: 20vh;
+      background-color: #7da7d9;
+      width: 100%;
+      max-width: 1040px;
+      padding: 10px;
     }
   `;
 
@@ -54,7 +55,7 @@ export class BlockMenuElement extends LitElement {
     return html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
-            <button>Detail</button>
+            <button @click=${this._detailBlock}>Detail</button>
             <button @click=${this._deleteBlock}>Delete</button>
             <button>Replace</button>
             <button>Save as procedure</button>
@@ -81,6 +82,14 @@ export class BlockMenuElement extends LitElement {
         }));
         this._openCloseModal()
     }
+
+    private _detailBlock() {
+      this.dispatchEvent(new CustomEvent('detail-block', {
+          bubbles: true,
+          composed: true
+      }));
+      this._openCloseModal()
+  }
 
   
 }
