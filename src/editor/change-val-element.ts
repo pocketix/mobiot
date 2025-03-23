@@ -25,26 +25,37 @@ export class ChangeValElement extends LitElement {
     static styles = css`
 
     h2{
-        color: black;
+      color: black;
     }
     
     button {
       padding: 8px 16px;
+      margin: 4px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background-color: #ddd;
+      background-color: #7da7d9;
       transition: background-color 0.2s, color 0.2s;
       color: black;
     }
         
     button.selected {
-        background-color: #7da7d9;
-        color: white;
+      background-color: #7da7d9;
+      color: white;
     }
 
     input {
-        background-color: #7da7d9;
+      background-color: #7da7d9;
+    }
+
+    .save {
+      margin: 16px 1px;
+      background-color:rgb(79, 255, 108);
+    }
+
+    .back {
+      margin: 0px;
+      background-color: #ddd;
     }
 
     .overlay {
@@ -77,8 +88,10 @@ export class ChangeValElement extends LitElement {
       valueType=html`
       <button class=${'true' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
       <button class=${'false' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+    }else if(this.type==='num'){
+      valueType=html`<input type="number" .value=${this.val.type === 'variable' ? '' : this.val.value} @input=${this._handleValueInput} inputmode="decimal" step="any" placeholder="Enter a number">`
     }else{
-      valueType=html`<input type="text" .value=${this.val.type === 'variable' ? '' : this.val.value} @input=${this._handleValueInput}/>`
+      valueType=html`<input type="text" .value=${this.val.type === 'variable' ? '' : this.val.value} @input=${this._handleValueInput} placeholder="Add value" />`
     }
     if(this.type!='variable'){
       filteredList=filteredList.filter(item=>item.value.type===this.type)
@@ -86,19 +99,19 @@ export class ChangeValElement extends LitElement {
     filteredList.forEach((item)=>{
         varBlock=html`${varBlock}
         <button @click=${() => this._saveChanges(item.name)}>${item.name}: ${item.value.value}</button>`
-    })
+    })//TODO save check? 
     return html`
-      <button @click=${this._openCloseModal}>${this.val.value}</button>
+      <button class="back" @click=${this._openCloseModal}>${this.val.value}</button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             ${this.type!='variable' ? html`
             <h2>Change value: </h2>
-            <div>${valueType} <button class="close-btn" @click=${() => this._saveChanges()}>Save</button></div>
+            <div>${valueType} <button class="save" @click=${() => this._saveChanges()}>Save</button></div>
             ` : ''}
             ${filteredList.length != 0 ? html`${varBlock}` : ''}
-            <button @click=${this._openCloseModal}>Back</button>
+            <div><button class="back" @click=${this._openCloseModal}>Back</button></div>
           </div>
         </div>
       ` : ''}

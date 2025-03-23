@@ -88,7 +88,7 @@ export class MyElement extends LitElement {
           @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
           .view=${this.view}
           @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}
-          @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}></menu-element>
+          @cond-list-saved=${(e: CustomEvent) => this._condList(e.detail.value)}></menu-element>
         <div class="editor-container">
           ${editors}
         </div>
@@ -115,8 +115,8 @@ private _saveText(newProgram: string) {
   this.programText=newProgram ;
 }
 
-private _addCond(newCond: VarObject){
-  this.conditions=[...this.conditions, newCond]
+private _condList(newCond: VarObject[]){
+  this.conditions=[... newCond]
 }
 
 
@@ -222,7 +222,7 @@ private _deleteBlock(block: ProgramBlock){
       width: 100%;
       border-top: 2px solid #ccc;
       z-index: 10;
-      background: rgb(168, 168, 168);;
+      background: rgb(168, 168, 168);
     }
 
  

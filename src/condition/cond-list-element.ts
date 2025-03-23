@@ -1,19 +1,23 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-import '../variable/var-edit-element.ts'
-import { VarObject} from '../general/interfaces.ts'
+import { condListExport} from '../general/context';
+import { consume } from '@lit/context';
+import './cond-edit-element.ts';
+import { VarObject, Argument} from '../general/interfaces.ts';
+import { CondText } from '../general/cond-text.ts';
 
-@customElement('var-list-element')//TODO sort table 3rd phase
-export class VarListElement extends LitElement {
+@customElement('cond-list-element')//TODO sort table 3rd phase
+export class CondListElement extends LitElement {
 
     @state()
     private isOpen: boolean = false;
 
-    @property()
+    @consume({ context: condListExport })
+    @property({ attribute: false })
     table: VarObject[] = []
 
     @state()
-    private varEdit: VarObject={
+    private condEdit: VarObject={
         name: '',
         value: {type: 'note', value: '', args: []}
     }
@@ -93,17 +97,16 @@ export class VarListElement extends LitElement {
       `;
     
       render() {
-    
+
         return html`
-          <button @click=${this._openCloseModal}>Variables</button>
+          <button @click=${this._openCloseModal}>Conditions</button>
     
           ${this.isOpen ? html`
-            <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.varEdit)}>
-                <h1>List of variables</h1>
+            <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.condEdit)}>
+                <h1>List of conditions</h1>
                 <table @click=${(e: Event) => { e.stopPropagation()}}>
                     <thead>
                     <tr>
-                        <th>Type</th>
                         <th>Name</th>
                         <th>Value</th>
                     </tr>
@@ -111,18 +114,19 @@ export class VarListElement extends LitElement {
                     <tbody>
                     ${this.table.map(item => html`
                         <tr @click=${(e: Event) => this._handleRowClick(e, item)}>
-                        <td>${item.value.type}</td>
                         <td>${item.name}</td>
-                        <td>${item.value.value}</td>
+                        <td>${CondText(item.value.args[0])}</td>
                         <div>
-                        ${this.selectedRow === item ? html`
-                            <var-edit-element 
-                                @click=${(e: Event) => e.stopPropagation()} 
-                                .var=${item} 
-                                @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value, item)}>
-                            </var-edit-element>
-                            <button class="delete" @click=${(e: Event) => this._deleteVar(e, item)}>Delete</button>
-                        ` : ''}
+                        ${this.selectedRow === item ? (() => {
+                            const original = structuredClone(item.value); return html`
+                            <cond-edit-element 
+                                .newMode=${false} .block=${item.value} .selectedBlock=${item.value} .title=${'Edit'}
+                                @click=${(e: Event) => e.stopPropagation()}
+                                @cond-update=${(e: CustomEvent) => this._updateCond(e.detail.value, item)}
+                                @cond-clean=${() => this._updateCond(original, item)}>
+                            </cond-edit-element>
+                            <button class="delete" @click=${(e: Event) => this._deleteCond(e, item)}>Delete</button>
+                        ` ;})(): ''}
                         </div>
                         </tr>
                     `)}
@@ -130,33 +134,34 @@ export class VarListElement extends LitElement {
                 </table>
                 <div>
                     <button @click=${this._saveChanges}>Back</button>
-                    <var-edit-element .var=${this.varEdit} @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value)}></var-edit-element>
+                    <cond-edit-element @click=${(e: Event) => e.stopPropagation()} @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}>></cond-edit-element>
                 </div>
             </div>
           ` : ''}
         `;
       }
 
-      private _openCloseModal() {
-        this.isOpen = !this.isOpen;
-      }
-
-    private _addVar(updatedVar: VarObject, originalVar: VarObject=this.varEdit) {
-        this.table=this.table.filter(item => item != originalVar)
-        this.varEdit = { ...updatedVar };
-        if(this.varEdit.name!=''){
-            this.table.push(this.varEdit)
-        }
-        this.varEdit={name: '',value: {type: 'note', value: '', args: []}}
+    private _openCloseModal() {
+    this.isOpen = !this.isOpen;
     }
 
-    private _deleteVar(event: Event, deletedVar: VarObject) {
+    private _addCond(newCond: VarObject){
+        this.table=[...this.table, newCond]
+    }
+
+    private _updateCond(updatedCond: Argument, originalCond: VarObject) {
+        this.table=this.table.filter(item => item != originalCond)
+        originalCond.value = { ...updatedCond };
+            this.table.push(originalCond)
+    }
+
+    private _deleteCond(event: Event, deletedVar: VarObject) {
         event.stopPropagation();
         this.table=this.table.filter(item => item != deletedVar)
     }
 
     private _saveChanges() {
-        this.dispatchEvent(new CustomEvent('list-saved', {
+        this.dispatchEvent(new CustomEvent('cond-list-saved', {
             detail: { value: this.table },
             bubbles: true,
             composed: true
@@ -172,6 +177,6 @@ export class VarListElement extends LitElement {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    'var-list-element': VarListElement
+    'cond-list-element': CondListElement
   }
 }

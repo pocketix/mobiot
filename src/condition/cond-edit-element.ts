@@ -136,7 +136,7 @@ export class CondEditElement extends LitElement {
         font-size: 1em;
         font-weight: 500;
         font-family: inherit;
-        background-color:rgb(51, 51, 51);
+        background-color: #7da7d9;
         cursor: pointer;
         transition: border-color 0.25s;
         color: white;
@@ -164,7 +164,7 @@ export class CondEditElement extends LitElement {
     
       render() {
         let cond: TemplateResult=html``;
-        if(!this.newMode){
+        if(!this.newMode && this.title!=='Edit'){
           this.condList.forEach((item)=>{
             cond=html`${cond}<button @click=${()=>{this.block=structuredClone(item.value);this._updateCond()}}>${CondText(item.value.args[0])}</button>`
           })
@@ -172,7 +172,7 @@ export class CondEditElement extends LitElement {
             <div>${cond}</div>`;
         }
         return html`
-          <button class=${'New condition' === this.title ? 'menu' : 'block'} @click=${this._openCloseModal}>${this.title}</button>
+          <button class=${'New condition' === this.title || 'Edit' === this.title? 'menu' : 'block'} @click=${this._openCloseModal}>${this.title}</button>
     
           ${this.isOpen ? html`
             <div class="modal">
@@ -239,7 +239,7 @@ export class CondEditElement extends LitElement {
 
       private _updateChoose(updatedArg: Argument) {
         this.selectedBlock = updatedArg;
-        this._selectMode();
+        this.selectMode=false;
       }
 
       private _newArgClean() {

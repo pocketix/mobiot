@@ -5,6 +5,7 @@ import { View } from './general/types.ts';
 import './variable/var-list-element.ts';
 import './options-element.ts';
 import './condition/cond-edit-element.ts'
+import './condition/cond-list-element.ts'
 
 @customElement('menu-element')
 export class MenuElement extends LitElement {
@@ -28,7 +29,7 @@ export class MenuElement extends LitElement {
         </div>
         <button>Procedures</button>
         <var-list-element .table=${this.varList} ></var-list-element>
-        <cond-edit-element></cond-edit-element>
+        <cond-list-element></cond-list-element>
         <div class="view-container">
           <h2>Choose type of editor: </h2>
           <div class="view">
@@ -111,7 +112,7 @@ export class MenuElement extends LitElement {
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
-      background-color:rgb(51, 51, 51);
+      background-color: gray;
       cursor: pointer;
       transition: border-color 0.25s;
     }
@@ -121,7 +122,8 @@ export class MenuElement extends LitElement {
     }
 
     button.selected {
-      background-color:rgb(51, 51, 51);
+      background-color:rgb(168, 168, 168);
+      color: black;
     }
 
     button:focus-visible {
@@ -133,7 +135,7 @@ export class MenuElement extends LitElement {
       border-radius: 12px;
       padding: 4px;
       background: gray;
-      margin: 0 auto;
+      margin: 3px auto;
     }
   `
 }

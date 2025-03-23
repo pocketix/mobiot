@@ -96,7 +96,7 @@ export class NewValElement extends LitElement {
       <button class=${'true' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
       <button class=${'false' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
     }else if(this.value.type==='num'){
-      valueType=html`<input type="number" inputmode="decimal" step="any" placeholder="Enter a number">`
+      valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
     }else{
       valueType=html`<input type="text" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
     }
