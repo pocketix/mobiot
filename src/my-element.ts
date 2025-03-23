@@ -81,6 +81,7 @@ export class MyElement extends LitElement {
     }
     return html`
       <div class="container">
+        <div class="rest">
         <menu-element class="menu"
           .programText=${this.programText} 
           @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
@@ -91,6 +92,7 @@ export class MyElement extends LitElement {
           @cond-list-saved=${(e: CustomEvent) => this._condList(e.detail.value)}></menu-element>
         <div class="editor-container">
           ${editors}
+        </div>
         </div>
         <options-element class="options"
           .conditions=${this.conditions} .variables=${this.varList} .program=${this.program}
@@ -172,14 +174,21 @@ private _deleteBlock(block: ProgramBlock){
     }
 
     .menu{
+      position: sticky;
+      top: 0;
       flex: 0 0 auto;
-      z-index: 105;
+    }
+
+    .rest {
+      flex: 0 0 75vh;
+      position: relative;
+      z-index: 100;
+      overflow-y: auto;
     }
 
     .editor{
       flex: 1;
-      position: relative;
-      z-index: 100;
+      
     }
 
     .editor-container {
@@ -217,7 +226,7 @@ private _deleteBlock(block: ProgramBlock){
     }
 
     .options {
-      flex: 0 0 20vh;
+      flex: 0 0 25vh;
       overflow-y: auto;
       width: 100%;
       border-top: 2px solid #ccc;

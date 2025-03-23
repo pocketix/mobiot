@@ -6,7 +6,7 @@ import './block-element.ts';
 const BREAKPOINT = html`<!-- BREAKPOINT -->`;
 
 let stack_complex_name: ProgramBlock[] = [];
-let stack_program_body: TemplateResult[]=[];//TODO rewrite to one stack, not necessary
+let stack_program_body: TemplateResult[]=[];
 
 @customElement('vp-editor-element')
 export class VPEditorElement extends LitElement {

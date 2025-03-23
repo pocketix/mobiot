@@ -233,8 +233,8 @@ export class OptionsElement extends LitElement {
         }
 
         .menu {
-            position: fixed;
-            bottom: 20vh;
+            position: sticky;
+            top: 0;
             background-color: gray;
             width: 100%;
             max-width: 1040px;

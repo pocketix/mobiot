@@ -23,6 +23,7 @@ export class MenuElement extends LitElement {
 
   render() {
     return html`
+        <div class="content">
         <div>
         <button @click=${this._openFilePicker}>Import JSON file</button>
         <button @click=${this._exportText}>Export JSON file</button>
@@ -37,6 +38,7 @@ export class MenuElement extends LitElement {
             <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
             `)}
           </div>
+        </div>
         </div>
     `
     }
@@ -89,6 +91,10 @@ export class MenuElement extends LitElement {
     }
 
   static styles = css`
+    
+    .content{
+      background: white;
+    }
 
     h2 {
       font-size: 1.2em;
@@ -135,7 +141,7 @@ export class MenuElement extends LitElement {
       border-radius: 12px;
       padding: 4px;
       background: gray;
-      margin: 3px auto;
+      margin: 2px auto;
     }
   `
 }

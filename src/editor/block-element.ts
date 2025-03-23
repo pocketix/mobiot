@@ -171,7 +171,7 @@ export class BlockElement extends LitElement {
       </div>
       </div>
     `;
-  }//TODO change End for icon
+  }//TODO change End for icon 3rd phase
 
   private _hideBlock(){
     this.block.hide=!this.block.hide;

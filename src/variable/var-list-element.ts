@@ -147,7 +147,8 @@ export class VarListElement extends LitElement {
         if(this.varEdit.name!=''){
             this.table.push(this.varEdit)
         }
-        this.varEdit={name: '',value: {type: 'note', value: '', args: []}}
+        this.varEdit={name: '',value: {type: 'note', value: '', args: []}};
+        this.table = [...this.table.sort((a, b) => a.name.localeCompare(b.name))];
     }
 
     private _deleteVar(event: Event, deletedVar: VarObject) {

@@ -62,7 +62,6 @@ export class BlockMenuElement extends LitElement {
           </div>
         </div>
       `//buttons save as procedure function is not part of this thesis
-      //TODO button detail 3rd phase
       //TODO button replace 4th phase
   }
     private _openCloseModal() {

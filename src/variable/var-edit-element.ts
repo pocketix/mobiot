@@ -115,7 +115,7 @@ export class VarEditElement extends LitElement {
       <button class=${'true' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
       <button class=${'false' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
     }else if(this.var.value.type==='num'){
-      valueType=html`<input type="number" inputmode="decimal" step="any" placeholder="Enter a number">`
+      valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
     }else{
       valueType=html`<input type="text" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
     }//TODO add expression editor 4th phase

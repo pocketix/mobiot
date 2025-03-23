@@ -6,7 +6,7 @@ import './cond-edit-element.ts';
 import { VarObject, Argument} from '../general/interfaces.ts';
 import { CondText } from '../general/cond-text.ts';
 
-@customElement('cond-list-element')//TODO sort table 3rd phase
+@customElement('cond-list-element')
 export class CondListElement extends LitElement {
 
     @state()
@@ -146,13 +146,15 @@ export class CondListElement extends LitElement {
     }
 
     private _addCond(newCond: VarObject){
-        this.table=[...this.table, newCond]
+        this.table=[...this.table, newCond];
+        this.table = [...this.table.sort((a, b) => a.name.localeCompare(b.name))];
     }
 
     private _updateCond(updatedCond: Argument, originalCond: VarObject) {
         this.table=this.table.filter(item => item != originalCond)
         originalCond.value = { ...updatedCond };
-            this.table.push(originalCond)
+        this.table.push(originalCond)
+        this.table = [...this.table.sort((a, b) => a.name.localeCompare(b.name))];
     }
 
     private _deleteCond(event: Event, deletedVar: VarObject) {
