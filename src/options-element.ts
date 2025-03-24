@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { Block, ProgramBlock, VarObject, Argument} from './general/interfaces'
 import { BlockType, TypeOption } from './general/types';
 import { CondText } from './general/cond-text';
+import './icons/block-icon.ts';
 
 @customElement('options-element')//TODO clean code 3rd phase
 export class OptionsElement extends LitElement {
@@ -51,7 +52,7 @@ export class OptionsElement extends LitElement {
                 filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
             }
             filteredBlocks.forEach((block)=>{
-            listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}>${block.name}</button>`);
+            listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}><block-icon type=${block.id}></block-icon> ${block.name}</button>`);
         });
         }else{
             listOptions=this._filterParams();
@@ -216,7 +217,7 @@ export class OptionsElement extends LitElement {
             border-radius: 8px;
             border: 1px solid transparent;
             margin: 0.3em;
-            padding: 0.6em 1.2em;
+            padding: 0.6em 0.2em;
             font-size: 1em;
             font-weight: 500;
             font-family: inherit;
@@ -241,6 +242,7 @@ export class OptionsElement extends LitElement {
         }
 
         .menu-item {
+            padding: 0.6em 1.2em;
             background-color: gray;
             margin: 0px;
         }

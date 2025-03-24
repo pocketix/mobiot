@@ -5,6 +5,7 @@ import { CondText } from '../general/cond-text.ts';
 import './block-menu-element.ts'
 import './change-val-element.ts'
 import '../condition/cond-edit-element.ts'
+import '../icons/block-icon.ts'
 
 @customElement('block-element')
 export class BlockElement extends LitElement {
@@ -105,7 +106,7 @@ export class BlockElement extends LitElement {
     let body: TemplateResult=html``;
     const original: ProgramBlock=structuredClone(this.block)
     if(this.block.block.argTypes.length===0){
-      header=html`${this.block.block.name}`;
+      header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}`;
     }
     else{
       if(this.block.arguments.length!=this.block.block.argTypes.length){
@@ -115,15 +116,15 @@ export class BlockElement extends LitElement {
         for(let i=this.block.arguments.length;i<this.block.block.argTypes.length;i++){
           header=html`${header}<div class="${i===this.block.arguments.length ? 'focus-arg':'condition'}">Add argument: ${this.block.block.argTypes[i]}</div>`
         }
-        header=html`${this.block.block.name} ${header}`
+        header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name} ${header}`
       }else if(this.block.arguments.length===1){
         if(this.block.arguments[0].type==='boolean_expression'){
-          header=html`${this.block.block.name}<cond-edit-element 
+          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<cond-edit-element 
             .newMode=${false} .block=${this.block.arguments[0]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0].args[0])}
             @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
             @cond-clean=${() => this._changeBlock(original.arguments[0])}></cond-edit-element>`
         }else{
-          header=html`${this.block.block.name}<change-val-element 
+          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<change-val-element 
             .val=${this.block.arguments[0]} .type=${this.block.block.argTypes[0]}
             @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}></change-val-element>`
         }
@@ -134,9 +135,9 @@ export class BlockElement extends LitElement {
               .val=${item} .type=${this.block.block.argTypes[0]}
               @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}>`
           })
-          header=html`${this.block.block.name}<div>${header}</div><div class="condition" @click=${this._showArguments}>Hide</div>`
+          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<div>${header}</div><div class="condition" @click=${this._showArguments}>Hide</div>`
         }else{
-          header=html`${this.block.block.name}<span class="condition" @click=${this._showArguments}>Arguments...</span>`
+          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<span class="condition" @click=${this._showArguments}>Arguments...</span>`
         }
       }
     }

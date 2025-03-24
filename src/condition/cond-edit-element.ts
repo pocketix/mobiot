@@ -7,6 +7,7 @@ import { CondText } from '../general/cond-text';
 import './var-choose-element';
 import '../editor/new-val-element';
 import './cond-block-element';
+import '../icons/delete-icon'
 
 @customElement('cond-edit-element')
 export class CondEditElement extends LitElement {
@@ -33,7 +34,7 @@ export class CondEditElement extends LitElement {
     newMode: boolean=true;
 
     @property()
-    title: string='New condition'
+    title: string='+ New condition'
 
     @property()
     newArg: Argument={type: 'note',value:'', args: []};
@@ -164,7 +165,7 @@ export class CondEditElement extends LitElement {
     
       render() {
         let cond: TemplateResult=html``;
-        if(!this.newMode && this.title!=='Edit'){
+        if(!this.newMode && this.title!=='✎ Edit'){
           this.condList.forEach((item)=>{
             cond=html`${cond}<button @click=${()=>{this.block=structuredClone(item.value);this._updateCond()}}>${CondText(item.value.args[0])}</button>`
           })
@@ -172,7 +173,7 @@ export class CondEditElement extends LitElement {
             <div>${cond}</div>`;
         }
         return html`
-          <button class=${'New condition' === this.title || 'Edit' === this.title? 'menu' : 'block'} @click=${this._openCloseModal}>${this.title}</button>
+          <button class=${'+ New condition' === this.title || '✎ Edit' === this.title? 'menu' : 'block'} @click=${this._openCloseModal}>${this.title}</button>
     
           ${this.isOpen ? html`
             <div class="modal">
@@ -198,9 +199,9 @@ export class CondEditElement extends LitElement {
                 ${this.selectMode ? html`
                   <div>
                       <button class="group" ?disabled=${!this.canGroup} @click=${()=>{this.groupAction =true}}>Group</button>
-                      <button class="delete" @click=${()=>{this.deleteAction =true}}>Delete</button>
+                      <button class="delete" @click=${()=>{this.deleteAction =true}}><delete-icon></delete-icon>Delete</button>
                   </div>
-              ` : html`<button class="group" @click=${this._selectMode}>Select ...</button>`}
+              ` : html`<button class="group" @click=${this._selectMode}>☑ Select ...</button>`}
                 <div>
                     ${this.newMode ? html`<button ?disabled=${!this.canSave} class="save" @click=${()=>{this._saveUpdate(true)}}>Save condition</button>`:
                       html`<button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}

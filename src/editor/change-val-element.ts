@@ -99,7 +99,7 @@ export class ChangeValElement extends LitElement {
     filteredList.forEach((item)=>{
         varBlock=html`${varBlock}
         <button @click=${() => this._saveChanges(item.name)}>${item.name}: ${item.value.value}</button>`
-    })//TODO save check? 
+    })
     return html`
       <button class="back" @click=${this._openCloseModal}>${this.val.value}</button>
 

@@ -1,6 +1,8 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import '../variable/var-edit-element.ts'
+import '../icons/table-icon.ts'
+import '../icons/delete-icon.ts'
 import { VarObject} from '../general/interfaces.ts'
 
 @customElement('var-list-element')//TODO sort table 3rd phase
@@ -26,8 +28,8 @@ export class VarListElement extends LitElement {
         button {
             border-radius: 8px;
             border: 1px solid transparent;
-            padding: 0.5em 1em;
-            margin: 0.2em 0.4em;
+            padding: 0.4em 0.8em;
+            margin: 0.1em 0.2em;
             font-size: 1em;
             font-weight: 500;
             font-family: inherit;
@@ -95,7 +97,7 @@ export class VarListElement extends LitElement {
       render() {
     
         return html`
-          <button @click=${this._openCloseModal}>Variables</button>
+        <button @click=${this._openCloseModal}><table-icon></table-icon>Variables</button>
     
           ${this.isOpen ? html`
             <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.varEdit)}>
@@ -121,7 +123,7 @@ export class VarListElement extends LitElement {
                                 .var=${item} 
                                 @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value, item)}>
                             </var-edit-element>
-                            <button class="delete" @click=${(e: Event) => this._deleteVar(e, item)}>Delete</button>
+                            <button class="delete" @click=${(e: Event) => this._deleteVar(e, item)}><delete-icon></delete-icon>Delete</button>
                         ` : ''}
                         </div>
                         </tr>

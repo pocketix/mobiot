@@ -39,14 +39,14 @@ export class MyElement extends LitElement {
 
   @property()
   program: ProgramBlock[]=[
-    {block: {name: "If", simple: false, id: "if", type: 'branch', argTypes: ['boolean_expression']}, 
+    {block: {name: "If ...do ...", simple: false, id: "if", type: 'branch', argTypes: ['boolean_expression']}, 
       arguments: [{type: 'boolean_expression', value: '', args: 
         [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}]
       }], hide: false},
     {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['str']}, 
       arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
     {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
-    {block: {name: "Else", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
+    {block: {name: "Else do ...", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
   ];
 
   @provide({ context: varListExport })

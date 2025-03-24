@@ -45,7 +45,7 @@ export class VarEditElement extends LitElement {
     .menu {
             border-radius: 8px;
             border: 1px solid transparent;
-            padding: 0.5em 1em;
+            padding: 0.4em 0.8em;
             margin: 0.2em 0.4em;
             font-size: 1em;
             font-weight: 500;
@@ -107,7 +107,7 @@ export class VarEditElement extends LitElement {
   `;
 
   render() {
-    let title = this.var.value.type==='note' ? '+' : 'Edit';
+    let title = this.var.value.type==='note' ? '+ New variable' : '✎Edit';
     this._saveBut();
     let valueType: TemplateResult=html``
     if(this.var.value.type==='bool'){

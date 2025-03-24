@@ -107,7 +107,7 @@ export class OperandChooseElement extends LitElement {
             <div class="button-container">
               ${listOperand}
             </div>
-            <button class="cancel" @click=${this._openCloseModal}>Cancel</button>
+            <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
           </div>
         </div>
       ` : ''}

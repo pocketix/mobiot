@@ -116,7 +116,7 @@ export class NewValElement extends LitElement {
              ${valueType}
             <div>
             <button class="save" ?disabled=${!this.canSave} @click=${this._addNew}>Save</button>
-            <button class="cancel" @click=${this._openCloseModal}>Cancel</button>
+            <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
             </div>
           </div>
         </div>

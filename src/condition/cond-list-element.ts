@@ -3,6 +3,8 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { condListExport} from '../general/context';
 import { consume } from '@lit/context';
 import './cond-edit-element.ts';
+import '../icons/table-icon.ts'
+import '../icons/delete-icon.ts'
 import { VarObject, Argument} from '../general/interfaces.ts';
 import { CondText } from '../general/cond-text.ts';
 
@@ -99,7 +101,7 @@ export class CondListElement extends LitElement {
       render() {
 
         return html`
-          <button @click=${this._openCloseModal}>Conditions</button>
+          <button @click=${this._openCloseModal}><table-icon></table-icon>Conditions</button>
     
           ${this.isOpen ? html`
             <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.condEdit)}>
@@ -120,12 +122,12 @@ export class CondListElement extends LitElement {
                         ${this.selectedRow === item ? (() => {
                             const original = structuredClone(item.value); return html`
                             <cond-edit-element 
-                                .newMode=${false} .block=${item.value} .selectedBlock=${item.value} .title=${'Edit'}
+                                .newMode=${false} .block=${item.value} .selectedBlock=${item.value} .title=${'✎ Edit'}
                                 @click=${(e: Event) => e.stopPropagation()}
                                 @cond-update=${(e: CustomEvent) => this._updateCond(e.detail.value, item)}
                                 @cond-clean=${() => this._updateCond(original, item)}>
                             </cond-edit-element>
-                            <button class="delete" @click=${(e: Event) => this._deleteCond(e, item)}>Delete</button>
+                            <button class="delete" @click=${(e: Event) => this._deleteCond(e, item)}><delete-icon></delete-icon>Delete</button>
                         ` ;})(): ''}
                         </div>
                         </tr>

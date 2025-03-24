@@ -25,10 +25,21 @@ export class MenuElement extends LitElement {
     return html`
         <div class="content">
         <div>
-        <button @click=${this._openFilePicker}>Import JSON file</button>
-        <button @click=${this._exportText}>Export JSON file</button>
+        <button @click=${this._openFilePicker}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v12"></path>
+          <path d="m8 11 4 4 4-4"></path>
+          <path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"></path>
+          </svg>
+        Import JSON file</button>
+        <button @click=${this._exportText}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12l7-7 7 7" />
+          <path d="M12 5v14" />
+          </svg>
+        Export JSON file</button>
         </div>
-        <button>Procedures</button>
+        <button>{ } Procedures</button>
         <var-list-element .table=${this.varList} ></var-list-element>
         <cond-list-element></cond-list-element>
         <div class="view-container">

@@ -75,7 +75,7 @@ export class VarChooseElement extends LitElement {
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             ${listCode}
-            <button class="cancel" @click=${this._openCloseModal}>Cancel</button>
+            <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
           </div>
         </div>
       ` : ''}
