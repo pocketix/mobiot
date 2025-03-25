@@ -32,11 +32,30 @@ export class BlockElement extends LitElement {
       background-color: #e0e0e0;
       margin: 8px;
     }
+
+    button {
+      border: 2px solid #fff;
+      border-radius: 8px;
+    }
+    
     .header {
       padding: 8px;
       color: white;
       font-weight: bold;
       border-radius: 4px 4px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header .center {
+      flex: 1; 
+      display: flex;
+      justify-content: center;
+    }
+
+    .header .right {
+      margin-left: auto;
     }
 
     .content {
@@ -77,6 +96,8 @@ export class BlockElement extends LitElement {
       left: 0;
       width: 100vw;
       margin-left: calc(-50vw + 50%);
+      background-color: #e0e0e0;
+      border: 2px solid #333;
     }
 
     .hide {
@@ -165,7 +186,15 @@ export class BlockElement extends LitElement {
       <div class="header ${this.block.block.type}" 
           @pointerdown=${() => this._handleLongPress()}
           @pointerup=${() => this._cancelLongPress()}>
-        ${header} ${this.detail ? html`<button class="${this.block.block.type}" @click=${()=>this._detailBlock()}>End</button>`:''}
+        <div class="center">${header}</div> ${this.detail ? html`<div class="right">
+        <button class="${this.block.block.type}" @click=${()=>this._detailBlock()}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 14 9 14 9 19"></polyline>
+          <polyline points="14 4 14 9 19 9"></polyline>
+          <polyline points="14 19 14 14 19 14"></polyline>
+          <polyline points="4 9 9 9 9 4"></polyline>
+          </svg>
+        </button></div>`:''}
       </div>
       ${hide}
       ${body}

@@ -1,6 +1,7 @@
 import { LitElement, html, css} from 'lit';
 import { customElement, property} from 'lit/decorators.js';
 import {ProgramBlock} from '../general/interfaces'
+import '../icons/delete-icon'
 
 @customElement('block-menu-element')
 export class BlockMenuElement extends LitElement {
@@ -48,6 +49,14 @@ export class BlockMenuElement extends LitElement {
       max-width: 1040px;
       padding: 10px;
     }
+
+    .save {
+      background-color:rgb(79, 255, 108);
+    }
+
+    .delete {
+      background-color:rgb(255, 104, 104);
+    }
   `;
 
   render() {
@@ -55,10 +64,17 @@ export class BlockMenuElement extends LitElement {
     return html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
-            <button @click=${this._detailBlock}>Detail</button>
-            <button @click=${this._deleteBlock}>Delete</button>
+            <button @click=${this._detailBlock}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3H3v5"/>
+              <path d="M3 16v5h5"/>
+              <path d="M16 3h5v5"/>
+              <path d="M21 16v5h-5"/>
+              </svg>
+            Detail</button>
+            <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>Delete</button>
             <button>Replace</button>
-            <button>Save as procedure</button>
+            <button class="save">Save as procedure</button>
           </div>
         </div>
       `//buttons save as procedure function is not part of this thesis

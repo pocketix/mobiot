@@ -1,5 +1,5 @@
 import { LitElement, html, TemplateResult, css } from 'lit';
-import { customElement, property} from 'lit/decorators.js';
+import { customElement, property, state} from 'lit/decorators.js';
 import { Argument} from '../general/interfaces'
 import { TypeOption } from '../general/types';
 import './operand-choose-element'
@@ -18,6 +18,10 @@ export class CondBlockElement extends LitElement {
 
     @property()
     private deleteAction: boolean = false;
+
+    @state()
+    private changeOperand: boolean=false;
+    
 
     @property()
     block: Argument={type: 'note',value:'', args: []}
@@ -49,6 +53,9 @@ export class CondBlockElement extends LitElement {
       color: white;
       font-weight: bold;
       border-radius: 4px 4px 0 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .header.selected {
@@ -61,6 +68,17 @@ export class CondBlockElement extends LitElement {
       padding: 8px;
       border-radius: 0 0 4px 4px;
       color: black;
+    }
+
+    .edit {
+        background-color: #7da7d9;
+        border: 2px solid #fff;
+        margin: 5px;
+        border-radius: 8px;
+    }
+    
+    .edit.selected {
+      background:rgb(66, 63, 255);
     }
 
   `;
@@ -81,6 +99,10 @@ export class CondBlockElement extends LitElement {
     let element: TemplateResult=html``;
     if(this.groupAction && this.selectedBlock === this.block){
         element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operand-choose-element>`
+    }
+
+    if(this.changeOperand){
+        element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operand-choose-element>`
     }
 
     if(this.block.args.length===0){
@@ -111,11 +133,13 @@ export class CondBlockElement extends LitElement {
         element=html`
             <div class="block">
                 <div 
-                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" 
+                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleClick}
                 >
+                    ${this.block.type!='boolean_expression'? html`<button class="edit ${this.selectedBlock === this.block ? 'selected' : ''}" 
+                        @click=${(e: Event) => {this.changeOperand=true;e.stopPropagation()}}>✎</button>`:''}
                     <p @click=${this._handleClick}>${this.block.type}</p>
                     ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
-                        html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)}>` : ''}
+                        html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)} @click=${(e: Event) => e.stopPropagation()}>` : ''}
                 </div>
                 <div class="content">
                     ${element}
@@ -164,6 +188,11 @@ export class CondBlockElement extends LitElement {
             composed: true}
         ));
       }
+
+    private _changeOper(type: TypeOption){
+        this.block.type=type;
+        this.changeOperand=false;
+    }
 
     private _deleteArgs(){
         this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item))

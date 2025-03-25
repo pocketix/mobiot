@@ -81,7 +81,7 @@ export class MyElement extends LitElement {
     }
     return html`
       <div class="container">
-        <div class="rest">
+        <div class="body">
         <menu-element class="menu"
           .programText=${this.programText} 
           @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
@@ -179,7 +179,7 @@ private _deleteBlock(block: ProgramBlock){
       flex: 0 0 auto;
     }
 
-    .rest {
+    .body {
       flex: 0 0 75vh;
       position: relative;
       z-index: 100;
