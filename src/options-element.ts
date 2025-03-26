@@ -3,6 +3,8 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { Block, ProgramBlock, VarObject, Argument} from './general/interfaces'
 import { BlockType, TypeOption } from './general/types';
 import { CondText } from './general/cond-text';
+import { consume } from '@lit/context';
+import { programIndexExport} from './general/context';
 import './icons/block-icon.ts';
 
 @customElement('options-element')//TODO clean code 3rd phase
@@ -41,6 +43,13 @@ export class OptionsElement extends LitElement {
 
     @property()
     variables: VarObject[] = [];
+
+    @consume({ context: programIndexExport, subscribe: true })
+    @property({ attribute: false })
+    programIndex: number=-1;
+
+    @state()
+    private programStartIndex: number=-1;
 
     render() {
         let listOptions: TemplateResult[]=[];
@@ -117,7 +126,7 @@ export class OptionsElement extends LitElement {
         return list
     }
 
-    private _syntaxFilter(): Block[]{
+    private _syntaxFilter(): Block[]{//TODO repair for index
         let filteredBlocks =this.blocks;
         let deepCounter=0;
         let filterEnd=true;
@@ -162,12 +171,71 @@ export class OptionsElement extends LitElement {
             this.menuParams=true;
             this.paramType= input.argTypes[0]
         }
-        this.program=[...this.program, {block: input, arguments: [], hide: false}]
+        if(this.programIndex===-1){
+            this.program=[...this.program, {block: input, arguments: [], hide: false}]
+        }
+        else{
+            if (this.programIndex > 0 && this.programIndex < this.program.length) {
+                if(input.id==='end'){
+                    this.programIndex=this._endCheck();
+                    this.dispatchEvent(new CustomEvent('index-changed', {
+                        detail: { value: this.programIndex },
+                        bubbles: true,
+                        composed: true
+                    }));
+                }else{
+                    if(!input.simple){
+                        this.program = [
+                            ...this.program.slice(0, this.programIndex),
+                            { block: input, arguments: [], hide: false },
+                            { block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false },
+                            ...this.program.slice(this.programIndex)
+                        ];
+                        if(this.programStartIndex===-1){
+                            this.programStartIndex=this.programIndex;
+                        }
+                    }else{
+                        this.program = [
+                            ...this.program.slice(0, this.programIndex),
+                            { block: input, arguments: [], hide: false },
+                            ...this.program.slice(this.programIndex)
+                        ];
+                        if(input.argTypes.length===0){
+                            this.programIndex=-1;
+                            this.dispatchEvent(new CustomEvent('index-changed', {
+                                detail: { value: this.programIndex },
+                                bubbles: true,
+                                composed: true
+                            }));
+                        }
+                    }
+                }
+            }
+        }
         this._saveChanges();
     }
 
+    private _endCheck(): number{
+        let deep: number=0;
+        for(let i=this.programStartIndex; i<this.programIndex+1;i++){
+            if(!this.program[i].block.simple)deep++;
+            if(this.program[i].block.id==='end')deep--;
+        }
+        if(deep===0){
+            this.programStartIndex=-1;
+            return -1;
+        }else{
+            return this.programIndex+=1;
+        }
+    }
+
     private _addParamsVar(param: VarObject) {
-        let block=this.program.pop();
+        let block: ProgramBlock|undefined;
+        if (this.programIndex >= 0 && this.programIndex < this.program.length) {
+            block = this.program.splice(this.programIndex, 1)[0]; 
+        } else {
+            block=this.program.pop();
+        }
         if(block){
             let arg: Argument=param.value
             if(param.value.type!='boolean_expression'){
@@ -179,7 +247,12 @@ export class OptionsElement extends LitElement {
 
     private _addParamsVal(value: string) {
         if(value){
-            let block=this.program.pop();
+            let block: ProgramBlock|undefined;
+            if (this.programIndex >= 0 && this.programIndex < this.program.length) {
+                block = this.program.splice(this.programIndex, 1)[0]; 
+            } else {
+                block=this.program.pop();
+            }
             if(block){
                 let arg: Argument = {type: this.paramType, value: value, args: []};
                 this._addParams(block, arg)
@@ -189,13 +262,35 @@ export class OptionsElement extends LitElement {
 
     private _addParams(block: ProgramBlock, arg: Argument){
         const updatedBlock = { ...block, arguments: [...block.arguments, arg]};
+        
+        if(this.programIndex===-1){
+            this.program=[...this.program, updatedBlock];
+        }else{
+            if (this.programIndex > 0 && this.programIndex < this.program.length) {
+                this.program = [
+                    ...this.program.slice(0, this.programIndex),
+                    updatedBlock,
+                    ...this.program.slice(this.programIndex)
+                ];
+            }
+        }
+        
         if(block.block.argTypes.length>updatedBlock.arguments.length){
             this.paramType=block.block.argTypes[updatedBlock.arguments.length]
         }else{
             this.menuParams=false;
-            this.paramType='note'
+            this.paramType='note';
+            if(updatedBlock.block.simple && this.programStartIndex===-1){
+                this.programIndex=-1;
+            }else{
+                this.programIndex++;
+            }
+            this.dispatchEvent(new CustomEvent('index-changed', {
+                detail: { value: this.programIndex },
+                bubbles: true,
+                composed: true
+            }));
         }
-        this.program=[...this.program, updatedBlock];
         this._saveChanges();
     }
     

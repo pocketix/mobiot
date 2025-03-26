@@ -1,6 +1,8 @@
 import { LitElement, TemplateResult, html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { ProgramBlock} from '../general/interfaces.ts'
+import { consume } from '@lit/context';
+import { programIndexExport} from '../general/context';
 import './block-element.ts';
 
 const BREAKPOINT = html`<!-- BREAKPOINT -->`;
@@ -39,6 +41,10 @@ export class VPEditorElement extends LitElement {
   @property()
   program: ProgramBlock[] = [];
 
+  @consume({ context: programIndexExport,subscribe: true })
+  @property({ attribute: false })
+  programIndex: number=-1;
+
   render() {
     if(this.program.length===0){
       return html`
@@ -48,6 +54,9 @@ export class VPEditorElement extends LitElement {
         </div>`
     }
     this.program.forEach((item)=>{
+      if(this.program.indexOf(item)===this.programIndex){
+        stack_program_body.push(html`<div class="block"><div class="header">Insert next block of your program. </div></div>`);
+      }
       if(item.block.id=="end"){
         stack_program_body.push(this._createBlockElement(true))
       }
@@ -60,7 +69,7 @@ export class VPEditorElement extends LitElement {
       }
     });
     let last:ProgramBlock=this.program[this.program.length-1];
-    if(last.arguments.length===last.block.argTypes.length){
+    if(last.arguments.length===last.block.argTypes.length && this.programIndex===-1){
       stack_program_body.push(html`<div class="block"><div class="header">Insert next block of your program. </div></div>`);
     }
     while(stack_complex_name.length>=1){

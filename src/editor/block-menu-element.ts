@@ -73,7 +73,7 @@ export class BlockMenuElement extends LitElement {
               </svg>
             Detail</button>
             <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>Delete</button>
-            <button>Replace</button>
+            <button @click=${this._replaceBlock}>Replace</button>
             <button class="save">Save as procedure</button>
           </div>
         </div>
@@ -87,6 +87,15 @@ export class BlockMenuElement extends LitElement {
             bubbles: true,
             composed: true
         }));
+    }
+
+    private _replaceBlock(){//TODO clean code
+      this.dispatchEvent(new CustomEvent('replace-block', {
+        detail: { value: this.block },
+        bubbles: true,
+        composed: true
+    }));
+    this._deleteBlock();
     }
 
     private _deleteBlock() {

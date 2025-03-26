@@ -2,7 +2,7 @@ import { LitElement, css, html, TemplateResult} from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { VarObject, ProgramBlock } from './general/interfaces.ts'
 import { View } from './general/types.ts';
-import { varListExport, condListExport } from './general/context.ts';
+import { varListExport, condListExport, programIndexExport } from './general/context.ts';
 import { provide } from '@lit/context';
 import './editor/vp-editor-element.ts';
 import './editor/text-editor-element.ts';
@@ -14,12 +14,13 @@ import './menu-element.ts'
 
 @customElement('my-element')
 export class MyElement extends LitElement {
-  
-  @property()
-  docsHint = 'Click on the Vite and Lit logos to learn more'
 
     @property()
     programText: string=''
+
+    @provide({ context: programIndexExport})
+    @property({attribute: false})
+    programIndex: number = -1;
 
     @state()
     private view: View=window.matchMedia('(max-width: 768px)').matches ? 'Graphical' : 'Both';
@@ -74,7 +75,8 @@ export class MyElement extends LitElement {
         <vp-editor-element class="editor" 
           .program=${this.program} 
           @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
-          @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}></vp-editor-element>`
+          @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
+          @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}></vp-editor-element>`
     }else{
       editors=html`
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>`
@@ -96,7 +98,8 @@ export class MyElement extends LitElement {
         </div>
         <options-element class="options"
           .conditions=${this.conditions} .variables=${this.varList} .program=${this.program}
-          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></options-element>
+          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
+          @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}></options-element>
       </div>
     `
   }
@@ -126,6 +129,14 @@ private _changeBlock(block: ProgramBlock){
   this.program = this.program.map(b => 
     b === block ? { ...block } : b
   );
+}
+
+private _updateIndex(newIndex: number){
+  this.programIndex=newIndex
+}
+
+private _replaceBlock(block: ProgramBlock){
+  this.programIndex=this.program.indexOf(block);
 }
 
 private _deleteBlock(block: ProgramBlock){
