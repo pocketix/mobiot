@@ -1,6 +1,8 @@
 import { LitElement, html, css} from 'lit';
 import { customElement, property} from 'lit/decorators.js';
 import {ProgramBlock} from '../general/interfaces'
+import { consume } from '@lit/context';
+import { detailGeneralExport} from '../general/context';
 import '../icons/delete-icon'
 
 @customElement('block-menu-element')
@@ -11,6 +13,10 @@ export class BlockMenuElement extends LitElement {
 
     @property({ type: Object })
     block: ProgramBlock = {block: {name: '', simple: false, id: '', type: 'all', argTypes: []}, arguments: [], hide: false};
+
+    @consume({ context: detailGeneralExport, subscribe: true })
+    @property({ attribute: false })
+    detailGeneral: boolean=false;
 
     static styles = css`
 
@@ -43,7 +49,7 @@ export class BlockMenuElement extends LitElement {
 
     .modal {
       position: fixed;
-      bottom: 20vh;
+      bottom: 15vh;
       background-color: #7da7d9;
       width: 100%;
       max-width: 1040px;
@@ -60,10 +66,11 @@ export class BlockMenuElement extends LitElement {
   `;
 
   render() {
-
+    //TODO do not able whole menu in detail mode and use it for replace menu too? 
     return html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
+            ${!this.block.block.simple && !this.detailGeneral ? html`
             <button @click=${this._detailBlock}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 3H3v5"/>
@@ -71,14 +78,13 @@ export class BlockMenuElement extends LitElement {
               <path d="M16 3h5v5"/>
               <path d="M21 16v5h-5"/>
               </svg>
-            Detail</button>
+            Detail</button>` :''}
             <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>Delete</button>
             <button @click=${this._replaceBlock}>Replace</button>
             <button class="save">Save as procedure</button>
           </div>
         </div>
       `//buttons save as procedure function is not part of this thesis
-      //TODO button replace 4th phase
   }
     private _openCloseModal() {
         this.isOpen = !this.isOpen;

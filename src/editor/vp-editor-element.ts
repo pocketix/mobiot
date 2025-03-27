@@ -1,8 +1,8 @@
 import { LitElement, TemplateResult, html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { ProgramBlock} from '../general/interfaces.ts'
-import { consume } from '@lit/context';
-import { programIndexExport} from '../general/context';
+import { consume, provide } from '@lit/context';
+import { programIndexExport, detailGeneralExport} from '../general/context';
 import './block-element.ts';
 
 const BREAKPOINT = html`<!-- BREAKPOINT -->`;
@@ -13,7 +13,7 @@ let stack_program_body: TemplateResult[]=[];
 @customElement('vp-editor-element')
 export class VPEditorElement extends LitElement {
 
-  private _createBlockElement(detail: boolean=false): TemplateResult {
+  private _createBlockElement( endIndex: number=this.program.length): TemplateResult {
     let programVP: TemplateResult = html``;
     let program = stack_program_body.pop();
   
@@ -24,17 +24,29 @@ export class VPEditorElement extends LitElement {
     let item=stack_complex_name.pop();
     if(item){
       if(item.hide){
-        return html`<block-element .block=${item} .detail=${false}></block-element>`;
+        return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex)} .detail=${false}></block-element>`;
       }else{
-        if(detail){
-          return html`<block-element .block=${item} .detail=${false}>${programVP}</block-element>`;
+        if(endIndex!==this.program.length){
+          return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex)} .detail=${false}>${programVP}</block-element>`;
         }
         else{
-          return html`<block-element .block=${item}>${programVP}</block-element>`;
+          return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex)}>${programVP}</block-element>`;
         }
       }
     }else{
       return programVP
+    }
+  }
+
+  private _changeDetail(index: number){//TODO clean code
+    this.detailGeneral=!this.detailGeneral;
+    console.log(this.detailGeneral);
+    if(this.detailGeneral){
+      this.dispatchEvent(new CustomEvent('replace-block', {
+        detail: { value: this.program[index] },
+        bubbles: true,
+        composed: true
+      }));
     }
   }
 
@@ -45,6 +57,10 @@ export class VPEditorElement extends LitElement {
   @property({ attribute: false })
   programIndex: number=-1;
 
+  @provide({ context: detailGeneralExport})
+  @property({attribute: false})
+  detailGeneral: boolean=false;//TODO move to my-element
+
   render() {
     if(this.program.length===0){
       return html`
@@ -54,11 +70,11 @@ export class VPEditorElement extends LitElement {
         </div>`
     }
     this.program.forEach((item)=>{
-      if(this.program.indexOf(item)===this.programIndex){
+      if(this.program.indexOf(item)===this.programIndex && item.arguments.length===item.block.argTypes.length){
         stack_program_body.push(html`<div class="block"><div class="header">Insert next block of your program. </div></div>`);
       }
       if(item.block.id=="end"){
-        stack_program_body.push(this._createBlockElement(true))
+        stack_program_body.push(this._createBlockElement(this.program.indexOf(item)))//TODO clean code
       }
       else if(item.block.simple==true){
         stack_program_body.push(html`<block-element .block=${item}></block-element>`);
@@ -88,10 +104,10 @@ static styles = css`
     border: 2px solid #333;
     border-radius: 8px;
     background-color: #e0e0e0;
-    margin: 8px;
+    margin: 4px ;
   }
   .header {
-    padding: 8px;
+    padding: 6px 2px;
     color: white;
     font-weight: bold;
     border-radius: 4px 4px 0 0;
@@ -100,7 +116,7 @@ static styles = css`
 
   .content {
     min-height: 80px;
-    padding: 8px;
+    padding: 4px;
     border-radius: 0 0 4px 4px;
   }`
 }

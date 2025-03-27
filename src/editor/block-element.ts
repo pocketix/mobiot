@@ -30,7 +30,7 @@ export class BlockElement extends LitElement {
       border: 2px solid #333;
       border-radius: 8px;
       background-color: #e0e0e0;
-      margin: 8px;
+      margin: 4px;
     }
 
     button {
@@ -39,7 +39,7 @@ export class BlockElement extends LitElement {
     }
     
     .header {
-      padding: 8px;
+      padding: 6px 2px;
       color: white;
       font-weight: bold;
       border-radius: 4px 4px 0 0;
@@ -60,7 +60,7 @@ export class BlockElement extends LitElement {
 
     .content {
       min-height: 20px;
-      padding: 8px;
+      padding: 4px;
       border-radius: 0 0 4px 4px;
     }
 
@@ -201,7 +201,7 @@ export class BlockElement extends LitElement {
       </div>
       </div>
     `;
-  }//TODO change End for icon 3rd phase
+  }
 
   private _hideBlock(){
     this.block.hide=!this.block.hide;
@@ -227,6 +227,10 @@ export class BlockElement extends LitElement {
 
   private _detailBlock(){
     this.detail=!this.detail;
+    this.dispatchEvent(new CustomEvent('change-detail', {
+      bubbles: true,
+      composed: true
+  })); 
   }
 
   private _handleLongPress() {

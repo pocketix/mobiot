@@ -4,7 +4,7 @@ import { Block, ProgramBlock, VarObject, Argument} from './general/interfaces'
 import { BlockType, TypeOption } from './general/types';
 import { CondText } from './general/cond-text';
 import { consume } from '@lit/context';
-import { programIndexExport} from './general/context';
+import { programIndexExport, detailGeneralExport} from './general/context';
 import './icons/block-icon.ts';
 
 @customElement('options-element')//TODO clean code 3rd phase
@@ -47,6 +47,10 @@ export class OptionsElement extends LitElement {
     @consume({ context: programIndexExport, subscribe: true })
     @property({ attribute: false })
     programIndex: number=-1;
+
+    @consume({ context: detailGeneralExport, subscribe: true })
+    @property({ attribute: false })
+    detailGeneral: boolean=false;
 
     @state()
     private programStartIndex: number=-1;
@@ -126,7 +130,7 @@ export class OptionsElement extends LitElement {
         return list
     }
 
-    private _syntaxFilter(): Block[]{//TODO repair for index
+    private _syntaxFilter(): Block[]{
         let filteredBlocks =this.blocks;
         let deepCounter=0;
         let filterEnd=true;
@@ -134,18 +138,19 @@ export class OptionsElement extends LitElement {
         if(this.variables.length===0){
             filteredBlocks=filteredBlocks.filter(item => item.id != 'setvar')
         }
-        for (let i = this.program.length - 1; i >= 0; i--){
+        let endIndex: number=this.programIndex===-1 ? this.program.length-1 : this.programIndex-1;
+        for (let i = endIndex; i >= 0; i--){
             if(this.program[i].block.id==='end'){
                 deepCounter++;
             }
             if(['branch', 'cycle'].includes(this.program[i].block.type)){
                 deepCounter--;
             }
-            if(this.program[this.program.length-1].block.id==='switch'){
+            if(this.program[endIndex].block.id==='switch'){
                 return filteredBlocks.filter(item => item.id === 'case');
             }
             if (deepCounter===0){
-                if(['if','elseif'].includes(this.program[i].block.id) && this.program[this.program.length-1].block.id==='end'){
+                if(['if','elseif'].includes(this.program[i].block.id) && this.program[endIndex].block.id==='end'){
                     filterElse=false;
                 }
                 if(this.program[i].block.id==='case'){
@@ -153,7 +158,7 @@ export class OptionsElement extends LitElement {
                 }
                 if(this.program[i].block.id==='else')filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
             }else if(deepCounter===-1){
-                if(this.program[this.program.length-1].block.simple){
+                if(this.program[endIndex].block.simple){
                     filterEnd=false;
                 }
             }
@@ -201,7 +206,11 @@ export class OptionsElement extends LitElement {
                             ...this.program.slice(this.programIndex)
                         ];
                         if(input.argTypes.length===0){
-                            this.programIndex=-1;
+                            if(this.detailGeneral){
+                                this.programIndex+=1;
+                            }else{
+                                this.programIndex=-1;
+                            }
                             this.dispatchEvent(new CustomEvent('index-changed', {
                                 detail: { value: this.programIndex },
                                 bubbles: true,
@@ -280,9 +289,10 @@ export class OptionsElement extends LitElement {
         }else{
             this.menuParams=false;
             this.paramType='note';
-            if(updatedBlock.block.simple && this.programStartIndex===-1){
+            if(updatedBlock.block.simple && this.programStartIndex===-1 && !this.detailGeneral){
+                console.log(this.detailGeneral);
                 this.programIndex=-1;
-            }else{
+            }else if(this.programIndex!==-1){
                 this.programIndex++;
             }
             this.dispatchEvent(new CustomEvent('index-changed', {

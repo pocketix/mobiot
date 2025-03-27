@@ -40,7 +40,7 @@ export class CondEditElement extends LitElement {
     newArg: Argument={type: 'note',value:'', args: []};
 
     @property()
-    block: Argument={type: 'boolean_expression',value:'', args: []}
+    block: Argument={type: 'boolean_expression',value:'', args: []}//TODO delete boolean expression
 
     @property()
     condEdit: VarObject={name: '', value: this.block}
