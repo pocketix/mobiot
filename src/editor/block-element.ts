@@ -2,6 +2,8 @@ import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Argument, ProgramBlock} from '../general/interfaces.ts'
 import { CondText } from '../general/cond-text.ts';
+import { consume} from '@lit/context';
+import { detailGeneralExport} from '../general/context';
 import './block-menu-element.ts'
 import './change-val-element.ts'
 import '../condition/cond-edit-element.ts'
@@ -21,6 +23,10 @@ export class BlockElement extends LitElement {
 
     @property()
     detail: boolean=false;
+
+    @consume({ context: detailGeneralExport, subscribe: true})
+      @property({attribute: false})
+      detailGeneral: boolean=false;
 
     private longPressTimeout: any = null;
 
@@ -122,6 +128,9 @@ export class BlockElement extends LitElement {
     .cycle-body { background-color: #d4f1c5; }
   `;
   render() {
+    if(!this.detailGeneral){
+      this.detail=false;
+    }
     let header: TemplateResult=html``;
     let hide: TemplateResult=html``;
     let body: TemplateResult=html``;
@@ -164,10 +173,10 @@ export class BlockElement extends LitElement {
     }
     if(!this.block.block.simple){
       if(this.block.hide){
-        hide=html`<button class="hide" @click=${this._hideBlock}>Show block contend</button>`
+        hide=html`<button class="hide" @click=${this._hideBlock}>▼ Show block contend</button>`
       }
       else{
-        hide=html`<button class="hide" @click=${this._hideBlock}>Hide block contend</button>`
+        hide=html`<button class="hide" @click=${this._hideBlock}>▲ Hide block contend</button>`
       }
       body=html`
       <div class="content ${this.block.block.type==='branch'? 'branch-body':'cycle-body'}">

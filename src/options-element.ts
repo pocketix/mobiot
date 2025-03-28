@@ -52,8 +52,8 @@ export class OptionsElement extends LitElement {
     @property({ attribute: false })
     detailGeneral: boolean=false;
 
-    @state()
-    private programStartIndex: number=-1;
+    @property()
+    programStartIndex: number=-1;
 
     render() {
         let listOptions: TemplateResult[]=[];
@@ -190,15 +190,17 @@ export class OptionsElement extends LitElement {
                     }));
                 }else{
                     if(!input.simple){
+                        if(this.programStartIndex===-1){
+                            this.programStartIndex=this.programIndex;
+                            console.log(this.programStartIndex);
+                        }
                         this.program = [
                             ...this.program.slice(0, this.programIndex),
                             { block: input, arguments: [], hide: false },
                             { block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false },
                             ...this.program.slice(this.programIndex)
                         ];
-                        if(this.programStartIndex===-1){
-                            this.programStartIndex=this.programIndex;
-                        }
+                        
                     }else{
                         this.program = [
                             ...this.program.slice(0, this.programIndex),
@@ -242,6 +244,9 @@ export class OptionsElement extends LitElement {
         let block: ProgramBlock|undefined;
         if (this.programIndex >= 0 && this.programIndex < this.program.length) {
             block = this.program.splice(this.programIndex, 1)[0]; 
+            if(!block.block.simple){
+                this.program.splice(this.programIndex+1, 1)[0];
+            }
         } else {
             block=this.program.pop();
         }
@@ -254,11 +259,14 @@ export class OptionsElement extends LitElement {
         }
     }
 
-    private _addParamsVal(value: string) {
+    private _addParamsVal(value: string) {//TODO clean code
         if(value){
             let block: ProgramBlock|undefined;
             if (this.programIndex >= 0 && this.programIndex < this.program.length) {
                 block = this.program.splice(this.programIndex, 1)[0]; 
+                if(!block.block.simple){
+                    this.program.splice(this.programIndex+1, 1)[0];
+                }
             } else {
                 block=this.program.pop();
             }
@@ -276,11 +284,19 @@ export class OptionsElement extends LitElement {
             this.program=[...this.program, updatedBlock];
         }else{
             if (this.programIndex > 0 && this.programIndex < this.program.length) {
-                this.program = [
-                    ...this.program.slice(0, this.programIndex),
-                    updatedBlock,
-                    ...this.program.slice(this.programIndex)
-                ];
+                if(updatedBlock.block.simple){
+                    this.program = [
+                        ...this.program.slice(0, this.programIndex),
+                        updatedBlock,
+                        ...this.program.slice(this.programIndex)
+                    ];
+                }else{
+                    this.program = [
+                        ...this.program.slice(0, this.programIndex),
+                        updatedBlock,{ block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false },
+                        ...this.program.slice(this.programIndex)
+                    ];
+                }
             }
         }
         
@@ -290,7 +306,6 @@ export class OptionsElement extends LitElement {
             this.menuParams=false;
             this.paramType='note';
             if(updatedBlock.block.simple && this.programStartIndex===-1 && !this.detailGeneral){
-                console.log(this.detailGeneral);
                 this.programIndex=-1;
             }else if(this.programIndex!==-1){
                 this.programIndex++;

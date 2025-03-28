@@ -49,7 +49,7 @@ export class CondBlockElement extends LitElement {
     }
     .header {
       background-color: #7da7d9;
-      padding: 8px;
+      padding: 4px;
       color: white;
       font-weight: bold;
       border-radius: 4px 4px 0 0;
@@ -65,7 +65,7 @@ export class CondBlockElement extends LitElement {
     .content {
       background-color: rgb(168, 168, 168);
       min-height: 50px;
-      padding: 8px;
+      padding: 2px;
       border-radius: 0 0 4px 4px;
       color: black;
     }

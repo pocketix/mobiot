@@ -1,7 +1,7 @@
 import { LitElement, TemplateResult, html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { ProgramBlock} from '../general/interfaces.ts'
-import { consume, provide } from '@lit/context';
+import { consume} from '@lit/context';
 import { programIndexExport, detailGeneralExport} from '../general/context';
 import './block-element.ts';
 
@@ -24,26 +24,19 @@ export class VPEditorElement extends LitElement {
     let item=stack_complex_name.pop();
     if(item){
       if(item.hide){
-        return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex)} .detail=${false}></block-element>`;
+        return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)} .detail=${false}></block-element>`;
       }else{
-        if(endIndex!==this.program.length){
-          return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex)} .detail=${false}>${programVP}</block-element>`;
-        }
-        else{
-          return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex)}>${programVP}</block-element>`;
-        }
+          return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)}>${programVP}</block-element>`;
       }
     }else{
       return programVP
     }
   }
 
-  private _changeDetail(index: number){//TODO clean code
-    this.detailGeneral=!this.detailGeneral;
-    console.log(this.detailGeneral);
-    if(this.detailGeneral){
-      this.dispatchEvent(new CustomEvent('replace-block', {
-        detail: { value: this.program[index] },
+  private _changeDetail(index: number, item: ProgramBlock){//TODO clean code
+    if(!this.detailGeneral){
+      this.dispatchEvent(new CustomEvent('detail-index', {
+        detail: { value: [index, this.program.indexOf(item)] },
         bubbles: true,
         composed: true
       }));
@@ -53,13 +46,13 @@ export class VPEditorElement extends LitElement {
   @property()
   program: ProgramBlock[] = [];
 
-  @consume({ context: programIndexExport,subscribe: true })
+  @consume({ context: programIndexExport, subscribe: true })
   @property({ attribute: false })
   programIndex: number=-1;
 
-  @provide({ context: detailGeneralExport})
+  @consume({ context: detailGeneralExport, subscribe: true})
   @property({attribute: false})
-  detailGeneral: boolean=false;//TODO move to my-element
+  detailGeneral: boolean=false;
 
   render() {
     if(this.program.length===0){

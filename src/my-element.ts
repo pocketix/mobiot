@@ -2,7 +2,7 @@ import { LitElement, css, html, TemplateResult} from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { VarObject, ProgramBlock } from './general/interfaces.ts'
 import { View } from './general/types.ts';
-import { varListExport, condListExport, programIndexExport } from './general/context.ts';
+import { varListExport, condListExport, programIndexExport, detailGeneralExport } from './general/context.ts';
 import { provide } from '@lit/context';
 import './editor/vp-editor-element.ts';
 import './editor/text-editor-element.ts';
@@ -22,8 +22,15 @@ export class MyElement extends LitElement {
     @property({attribute: false})
     programIndex: number = -1;
 
+    @provide({ context: detailGeneralExport})
+    @property({attribute: false})
+    detailGeneral: boolean=false;
+
     @state()
     private view: View=window.matchMedia('(max-width: 768px)').matches ? 'Graphical' : 'Both';
+
+    @property()
+    programStartIndex: number=-1;
 
     @provide({ context: condListExport })
     @property({attribute: false})
@@ -59,14 +66,17 @@ export class MyElement extends LitElement {
             { name: 'fee', value: {type: 'expr',value: 'a + b == 6', args: []}}
             ];
 
-  render() {
+  render() {//TODO clean code
     let editors: TemplateResult=html``;
     if(this.view==='Both'){
       editors=html`
           <vp-editor-element class="editor" 
             .program=${this.program} 
             @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
-            @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}></vp-editor-element>
+            @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
+            @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
+            @change-detail=${()=>this._changeDetail()}
+            @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}></vp-editor-element>
           <text-editor-element class="editor" 
             .program=${this.program}></text-editor-element>`
     }
@@ -76,7 +86,9 @@ export class MyElement extends LitElement {
           .program=${this.program} 
           @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
           @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
-          @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}></vp-editor-element>`
+          @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
+          @change-detail=${()=>this._changeDetail()}
+          @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}></vp-editor-element>`
     }else{
       editors=html`
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>`
@@ -97,15 +109,15 @@ export class MyElement extends LitElement {
         </div>
         </div>
         <options-element class="options"
-          .conditions=${this.conditions} .variables=${this.varList} .program=${this.program}
+          .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex}
           @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
           @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}></options-element>
       </div>
     `
   }
 
-  private _varList(newVar: VarObject[]) {
-    this.varList = [ ...newVar] ;
+private _varList(newVar: VarObject[]) {
+  this.varList = [ ...newVar] ;
 }
 
 private _updateView(newView: View) {
@@ -114,6 +126,21 @@ private _updateView(newView: View) {
 
 private _updateProgram(updatedProgram: ProgramBlock[]) {
   this.program = [ ...updatedProgram ];
+}
+
+private _detailBlock(indexes: number[]){
+  this.programStartIndex=indexes[1];
+  this.programIndex=indexes[0];
+  if(indexes[0]===this.program.length){
+    this.program=[...this.program, {block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false}]
+  }
+}
+
+private _changeDetail(){
+  this.detailGeneral=!this.detailGeneral;
+  if(!this.detailGeneral){
+    this.programIndex=-1;//TODO let potencial empty block or cancel escape detail button? 
+  }
 }
 
 private _saveText(newProgram: string) {
@@ -132,7 +159,10 @@ private _changeBlock(block: ProgramBlock){
 }
 
 private _updateIndex(newIndex: number){
-  this.programIndex=newIndex
+  this.programIndex=newIndex;
+  if(this.programIndex===-1){
+    this.detailGeneral=false;
+  }
 }
 
 private _replaceBlock(block: ProgramBlock){
