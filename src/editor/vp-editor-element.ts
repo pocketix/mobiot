@@ -26,7 +26,23 @@ export class VPEditorElement extends LitElement {
       if(item.hide){
         return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)} .detail=${false}></block-element>`;
       }else{
-          return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)}>${programVP}</block-element>`;
+          return html`${this.zoneAvailable ? html`<div class="drop-zone"
+          data-index="${this.program.indexOf(item)}" 
+          @dragover=${this._handleDragOver}
+          @dragleave=${this._handleDragLeave}
+          @drop=${this._handleDrop}
+          >Insert here. </div>`:''}
+          <block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)}
+          @dragstart=${(e: DragEvent) => { e.stopPropagation();item.hide=false; this._handleDragStart(e); }} 
+          @touchstart=${(e: TouchEvent) => { e.stopPropagation();e.preventDefault();; this._handleTouchStart(e); }} 
+          @touchmove=${(e: TouchEvent) => { e.stopPropagation();e.preventDefault(); this._handleTouchMove(e); }} 
+          @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), endIndex); }}>${programVP}
+          ${this.zoneAvailable ? html`<div class="drop-zone" 
+          data-index="${this.program.indexOf(item)+1}"
+          @dragover=${this._handleDragOver}
+          @dragleave=${this._handleDragLeave}
+          @drop=${this._handleDrop}
+          >Insert here. </div>`:''}</block-element>`;
       }
     }else{
       return programVP
@@ -54,6 +70,17 @@ export class VPEditorElement extends LitElement {
   @property({attribute: false})
   detailGeneral: boolean=false;
 
+  @property()
+  zoneAvailable: boolean=false;
+
+
+  private _startX = 0;
+  private _startY = 0;
+  private _offsetX = 0;
+  private _offsetY = 0;
+  private _draggedElement: HTMLElement | null = null;
+  private _dropZone: HTMLElement[] = [];
+
   render() {
     if(this.program.length===0){
       return html`
@@ -70,7 +97,19 @@ export class VPEditorElement extends LitElement {
         stack_program_body.push(this._createBlockElement(this.program.indexOf(item)))//TODO clean code
       }
       else if(item.block.simple==true){
-        stack_program_body.push(html`<block-element .block=${item}></block-element>`);
+        stack_program_body.push(html`${this.zoneAvailable ? html`<div class="drop-zone"
+          data-index="${this.program.indexOf(item)}"
+          @dragover=${this._handleDragOver}
+          @dragleave=${this._handleDragLeave}
+          @drop=${this._handleDrop}
+          >Insert here. </div>`:''}
+        <block-element .block=${item} 
+          @dragstart=${(e: DragEvent) => { e.stopPropagation(); this._handleDragStart(e); }} 
+          @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}
+          @touchmove=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchMove(e); }} 
+          @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), this.program.indexOf(item)); 
+  }}>
+        </block-element>`);
       }
       else{
         stack_complex_name.push(item);
@@ -80,7 +119,7 @@ export class VPEditorElement extends LitElement {
     let last:ProgramBlock=this.program[this.program.length-1];
     if(last.arguments.length===last.block.argTypes.length && this.programIndex===-1){
       stack_program_body.push(html`<div class="block"><div class="header">Insert next block of your program. </div></div>`);
-    }
+    }//TODO delete zone for end block
     while(stack_complex_name.length>=1){
       stack_program_body.push(this._createBlockElement())
     };
@@ -111,7 +150,139 @@ static styles = css`
     min-height: 80px;
     padding: 4px;
     border-radius: 0 0 4px 4px;
-  }`
+  }
+    
+  
+  .drop-zone {
+    height: 40px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e0e0e0;
+    margin: 4px ;
+    color: black;
+  }
+
+  .drop-zone.over {
+    background: gray;
+    color: white;
+  }
+  `
+
+  private _handleDragStart(event: DragEvent) {
+    event.dataTransfer?.setData('text/plain', 'dragged-item');
+    event.dataTransfer!.effectAllowed = 'move';
+    this.zoneAvailable=true;
+  }
+
+  private _handleTouchStart(event: TouchEvent) {
+    if(this._draggedElement!==null)return;
+    this.zoneAvailable=true;
+    const touch = event.touches[0];
+    this._draggedElement = event.currentTarget as HTMLElement;
+
+    this._startX = touch.clientX;
+    this._startY = touch.clientY;
+    this._offsetX = this._draggedElement.offsetLeft;
+    this._offsetY = this._draggedElement.offsetTop;
+
+    this._draggedElement.style.position = 'absolute';
+  }
+
+  private _handleTouchMove(event: TouchEvent) {
+    if (!this._draggedElement) return;
+
+    const touch = event.touches[0];
+    const newX = this._offsetX + (touch.clientX - this._startX);
+    const newY = this._offsetY + (touch.clientY - this._startY);
+
+    this._draggedElement.style.left = `${newX}px`;
+    this._draggedElement.style.top = `${newY}px`;
+
+    this._dropZone =  Array.from(this.renderRoot.querySelectorAll('.drop-zone'));
+    this._dropZone.forEach((zone)=>{
+      const touchOverDropZone = zone!.getBoundingClientRect();
+      const isOverDropZone =
+      touch.clientX > touchOverDropZone.left &&
+      touch.clientX < touchOverDropZone.right &&
+      touch.clientY > touchOverDropZone.top &&
+      touch.clientY < touchOverDropZone.bottom;
+
+    if (isOverDropZone) {
+      zone!.classList.add('over');
+    } else {
+      zone!.classList.remove('over');
+    }
+    })
+  }
+
+  private _handleTouchEnd(event: TouchEvent, fromIndexStart: number, fromIndexEnd: number) {
+    if (!this._draggedElement) return;
+
+    const touch = event.changedTouches[0];
+    let dropped = false;
+
+    this._dropZone.forEach((zone)=>{
+      zone.classList.remove('over');
+      const dropRect = zone.getBoundingClientRect();
+      const isDroppedInZone =
+        touch.clientX > dropRect.left &&
+        touch.clientX < dropRect.right &&
+        touch.clientY > dropRect.top &&
+        touch.clientY < dropRect.bottom;
+
+    if (isDroppedInZone) {
+      dropped=true;
+      const toIndex = Number(zone?.getAttribute('data-index'));
+      if(toIndex!==null){
+        this._changeProgram(fromIndexStart, fromIndexEnd, toIndex);
+      }
+    }
+    })
+    let newProgram=this.program;
+    if(!dropped){
+      this.program=[];
+    }
+    this._draggedElement = null;
+    this.zoneAvailable=false;
+
+    this.dispatchEvent(new CustomEvent('block-saved', {
+      detail: { value: newProgram},
+      bubbles: true,
+      composed: true
+  })); 
+  }
+
+  private _handleDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.dataTransfer!.dropEffect = 'move';
+    (event.currentTarget as HTMLElement).classList.add('over');
+  }
+
+  private _handleDragLeave(event: DragEvent) {
+    (event.currentTarget as HTMLElement).classList.remove('over');
+  }
+
+  private _handleDrop(event: DragEvent) {
+    event.preventDefault();
+    (event.currentTarget as HTMLElement).classList.remove('over');
+    this.zoneAvailable=false;
+    console.log('Položka úspěšně přetažena!');
+  }
+
+  private _changeProgram(fromIndexStart: number, fromIndexEnd: number, toIndex: number) {
+    if (fromIndexStart < 0 || fromIndexEnd >= this.program.length || toIndex < 0 || toIndex > this.program.length) return;
+    if (fromIndexStart === toIndex) return;
+
+    const items = this.program.splice(fromIndexStart, fromIndexEnd - fromIndexStart+1);
+    if (toIndex > fromIndexStart) {
+      toIndex -= items.length;
+    }
+    // console.log(fromIndexStart, fromIndexEnd, toIndex);
+    this.program.splice(toIndex, 0, ...items); 
+}
 }
 
 declare global {

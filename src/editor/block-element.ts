@@ -61,7 +61,15 @@ export class BlockElement extends LitElement {
     }
 
     .header .right {
-      margin-left: auto;
+        display: flex;
+  justify-content: flex-end;
+    }
+
+    .header .left {
+      display: flex;
+      justify-content: flex-start;
+      padding: 8px 4px;
+      margin: 5px;
     }
 
     .content {
@@ -195,6 +203,9 @@ export class BlockElement extends LitElement {
       <div class="header ${this.block.block.type}" 
           @pointerdown=${() => this._handleLongPress()}
           @pointerup=${() => this._cancelLongPress()}>
+        <button class="left ${this.block.block.type}" draggable="true"
+          @pointerdown=${(e: PointerEvent) => e.stopPropagation()} 
+          @pointerup=${(e: PointerEvent) => e.stopPropagation()}>Drag</button>
         <div class="center">${header}</div> ${this.detail ? html`<div class="right">
         <button class="${this.block.block.type}" @click=${()=>this._detailBlock()}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -207,8 +218,6 @@ export class BlockElement extends LitElement {
       </div>
       ${hide}
       ${body}
-      </div>
-      </div>
     `;
   }
 

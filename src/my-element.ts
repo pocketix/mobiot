@@ -76,7 +76,8 @@ export class MyElement extends LitElement {
             @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
             @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
             @change-detail=${()=>this._changeDetail()}
-            @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}></vp-editor-element>
+            @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}
+            @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>
           <text-editor-element class="editor" 
             .program=${this.program}></text-editor-element>`
     }
@@ -88,7 +89,8 @@ export class MyElement extends LitElement {
           @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
           @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
           @change-detail=${()=>this._changeDetail()}
-          @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}></vp-editor-element>`
+          @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}
+          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>`
     }else{
       editors=html`
         <text-editor-element class="editor" .program=${this.program}></text-editor-element>`
