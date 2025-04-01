@@ -1,5 +1,5 @@
 import { LitElement, TemplateResult, html, css } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { ProgramBlock} from '../general/interfaces.ts'
 import { consume} from '@lit/context';
 import { programIndexExport, detailGeneralExport} from '../general/context';
@@ -24,25 +24,40 @@ export class VPEditorElement extends LitElement {
     let item=stack_complex_name.pop();
     if(item){
       if(item.hide){
-        return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)} .detail=${false}></block-element>`;
-      }else{
-          return html`${this.zoneAvailable ? html`<div class="drop-zone"
-          data-index="${this.program.indexOf(item)}" 
-          @dragover=${this._handleDragOver}
-          @dragleave=${this._handleDragLeave}
-          @drop=${this._handleDrop}
-          >Insert here. </div>`:''}
-          <block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)}
-          @dragstart=${(e: DragEvent) => { e.stopPropagation();item.hide=false; this._handleDragStart(e); }} 
-          @touchstart=${(e: TouchEvent) => { e.stopPropagation();e.preventDefault();; this._handleTouchStart(e); }} 
+        return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)} .detail=${false}
+          @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
+          @dragstart=${(e: DragEvent) => { e.stopPropagation();this._setZone(item);this._handleDragStart(e); }} 
+          @touch-start=${(e: CustomEvent) => {e.stopPropagation();this.dragItem=item;this._setZone(item);this._handleTouchStart(e);}} 
           @touchmove=${(e: TouchEvent) => { e.stopPropagation();e.preventDefault(); this._handleTouchMove(e); }} 
-          @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), endIndex); }}>${programVP}
-          ${this.zoneAvailable ? html`<div class="drop-zone" 
-          data-index="${this.program.indexOf(item)+1}"
-          @dragover=${this._handleDragOver}
-          @dragleave=${this._handleDragLeave}
-          @drop=${this._handleDrop}
-          >Insert here. </div>`:''}</block-element>`;
+          @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), endIndex); }}></block-element>
+        ${(this.zoneAvailable && this._zoneFilter(item, endIndex)) ? html`<div class="drop-zone"
+            data-index="${endIndex+1}" 
+            @dragover=${this._handleDragOver}
+            @dragleave=${this._handleDragLeave}
+            @drop=${this._handleDrop}
+          >Insert here. </div>`:''}`;
+      }else{
+          return html`<block-element .block=${item} 
+            @change-detail=${() => this._changeDetail(endIndex, item)}
+            @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._setZone(item);this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
+            @dragstart=${(e: DragEvent) => { e.stopPropagation();this._setZone(item);this._handleDragStart(e); }} 
+            @touch-start=${(e: CustomEvent) => {e.stopPropagation();this.dragItem=item;this._setZone(item);this._handleTouchStart(e);}} 
+            @touchmove=${(e: TouchEvent) => { e.stopPropagation();e.preventDefault(); this._handleTouchMove(e); }} 
+            @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), endIndex); }}>
+          ${item===this.dragItem? '':html`
+          ${(this.zoneAvailable && this._zoneFilter(item, -1, true))? html`<div class="drop-zone" 
+            data-index="${this.program.indexOf(item)+1}"
+            @dragover=${this._handleDragOver}
+            @dragleave=${this._handleDragLeave}
+            @drop=${this._handleDrop}
+          >Insert here. </div>`:''}`}
+          ${programVP}</block-element>
+          ${(this.zoneAvailable && this._zoneFilter(item, endIndex) && endIndex!==this.program.length) ? html`<div class="drop-zone"
+            data-index="${endIndex+1}" 
+            @dragover=${this._handleDragOver}
+            @dragleave=${this._handleDragLeave}
+            @drop=${this._handleDrop}
+          >Insert here. </div>`:''}`;
       }
     }else{
       return programVP
@@ -73,6 +88,12 @@ export class VPEditorElement extends LitElement {
   @property()
   zoneAvailable: boolean=false;
 
+  private elseZone: boolean=false;
+
+  private elseIfZone: boolean=false;
+
+  private caseZone: boolean=false;
+
 
   private _startX = 0;
   private _startY = 0;
@@ -80,6 +101,9 @@ export class VPEditorElement extends LitElement {
   private _offsetY = 0;
   private _draggedElement: HTMLElement | null = null;
   private _dropZone: HTMLElement[] = [];
+
+  @state()
+  private dragItem: ProgramBlock | null=null;
 
   render() {
     if(this.program.length===0){
@@ -89,6 +113,12 @@ export class VPEditorElement extends LitElement {
         <div class="content" />
         </div>`
     }
+    stack_program_body.push(html`${(this.zoneAvailable && this._zoneFilter()) ? html`<div class="drop-zone"
+      data-index="${0}"
+      @dragover=${this._handleDragOver}
+      @dragleave=${this._handleDragLeave}
+      @drop=${this._handleDrop}
+    >Insert here. </div>`:''}`);
     this.program.forEach((item)=>{
       if(this.program.indexOf(item)===this.programIndex && item.arguments.length===item.block.argTypes.length){
         stack_program_body.push(html`<div class="block"><div class="header">Insert next block of your program. </div></div>`);
@@ -97,20 +127,20 @@ export class VPEditorElement extends LitElement {
         stack_program_body.push(this._createBlockElement(this.program.indexOf(item)))//TODO clean code
       }
       else if(item.block.simple==true){
-        stack_program_body.push(html`${this.zoneAvailable ? html`<div class="drop-zone"
-          data-index="${this.program.indexOf(item)}"
+        stack_program_body.push(html`<block-element .block=${item} 
+          @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), this.program.indexOf(item))}}
+          @dragstart=${(e: DragEvent) => { e.stopPropagation(); this._handleDragStart(e); }} 
+          @touch-start=${(e: CustomEvent) => {e.stopPropagation();this.dragItem=item;this._handleTouchStart(e);}}
+          @touchmove=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchMove(e); }} 
+          @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), this.program.indexOf(item)); }}>
+        </block-element>
+        ${(this.zoneAvailable && this._zoneFilter(item)) ? html`<div class="drop-zone"
+          data-index="${this.program.indexOf(item)+1}"
           @dragover=${this._handleDragOver}
           @dragleave=${this._handleDragLeave}
           @drop=${this._handleDrop}
-          >Insert here. </div>`:''}
-        <block-element .block=${item} 
-          @dragstart=${(e: DragEvent) => { e.stopPropagation(); this._handleDragStart(e); }} 
-          @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}
-          @touchmove=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchMove(e); }} 
-          @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), this.program.indexOf(item)); 
-  }}>
-        </block-element>`);
-      }
+          >Insert here. </div>`:''}`);
+      }//TODO clean code
       else{
         stack_complex_name.push(item);
         stack_program_body.push(BREAKPOINT);
@@ -171,17 +201,17 @@ static styles = css`
   }
   `
 
-  private _handleDragStart(event: DragEvent) {
+  private _handleDragStart(event: DragEvent) {//TODO repair drag and drop for desktop
     event.dataTransfer?.setData('text/plain', 'dragged-item');
     event.dataTransfer!.effectAllowed = 'move';
     this.zoneAvailable=true;
   }
 
-  private _handleTouchStart(event: TouchEvent) {
-    if(this._draggedElement!==null)return;
+  private _handleTouchStart(event: CustomEvent) {
     this.zoneAvailable=true;
-    const touch = event.touches[0];
+    const touch = event.detail.value.touches[0];
     this._draggedElement = event.currentTarget as HTMLElement;
+    // this.dragItem=dragItem;
 
     this._startX = touch.clientX;
     this._startY = touch.clientY;
@@ -222,7 +252,7 @@ static styles = css`
     if (!this._draggedElement) return;
 
     const touch = event.changedTouches[0];
-    let dropped = false;
+    // let dropped = false;
 
     this._dropZone.forEach((zone)=>{
       zone.classList.remove('over');
@@ -234,7 +264,7 @@ static styles = css`
         touch.clientY < dropRect.bottom;
 
     if (isDroppedInZone) {
-      dropped=true;
+      // dropped=true;
       const toIndex = Number(zone?.getAttribute('data-index'));
       if(toIndex!==null){
         this._changeProgram(fromIndexStart, fromIndexEnd, toIndex);
@@ -242,14 +272,26 @@ static styles = css`
     }
     })
     let newProgram=this.program;
-    if(!dropped){
+    // if(!dropped){
       this.program=[];
-    }
+    // }
     this._draggedElement = null;
+    this.dragItem=null;
     this.zoneAvailable=false;
+    this.elseZone=this.elseIfZone=this.caseZone=false;
 
     this.dispatchEvent(new CustomEvent('block-saved', {
       detail: { value: newProgram},
+      bubbles: true,
+      composed: true
+  })); 
+  }
+
+  private _moveBlock(up: boolean, fromIndexStart: number, fromIndexEnd: number){
+    let toIndex=up ? (fromIndexStart-1) : (fromIndexEnd+2);
+    this._changeProgram(fromIndexStart, fromIndexEnd, toIndex);
+    this.dispatchEvent(new CustomEvent('block-saved', {
+      detail: { value: this.program},
       bubbles: true,
       composed: true
   })); 
@@ -269,20 +311,55 @@ static styles = css`
     event.preventDefault();
     (event.currentTarget as HTMLElement).classList.remove('over');
     this.zoneAvailable=false;
-    console.log('Položka úspěšně přetažena!');
+    this.elseZone=this.elseIfZone=this.caseZone=false;//TODO
+    // console.log('Item moved!');
   }
 
   private _changeProgram(fromIndexStart: number, fromIndexEnd: number, toIndex: number) {
-    if (fromIndexStart < 0 || fromIndexEnd >= this.program.length || toIndex < 0 || toIndex > this.program.length) return;
+    // console.log(fromIndexStart, fromIndexEnd, toIndex);
+    if (fromIndexStart < 0 || fromIndexEnd > this.program.length || toIndex < 0 || toIndex > this.program.length) return;
     if (fromIndexStart === toIndex) return;
+    if(fromIndexEnd===this.program.length){
+      this.program.push({ block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false });
+    }
 
     const items = this.program.splice(fromIndexStart, fromIndexEnd - fromIndexStart+1);
     if (toIndex > fromIndexStart) {
       toIndex -= items.length;
     }
-    // console.log(fromIndexStart, fromIndexEnd, toIndex);
     this.program.splice(toIndex, 0, ...items); 
-}
+  }
+
+  private _zoneFilter(block: ProgramBlock|null=null, endIndex: number=-1, inBlock: boolean=false): boolean{
+    // console.log(this.dragItem?.block.id, block.block.id)
+    if(block===this.dragItem)return false;
+    if(this.elseIfZone || this.elseZone){
+      if(block===null ||endIndex===-1)return false;
+      if(this.elseZone){
+        if(endIndex===this.program.length-1){
+          endIndex-=1;
+        }
+        if((block.block.id==='if'|| block.block.id==='elseif') && this.program[endIndex+1].block.id!=='elseif')return true;
+        else return false;
+      }
+      else if(this.elseIfZone){
+        if(block.block.id==='if'|| block.block.id==='elseif')return true;
+        else return false;
+      }
+    }
+    if(this.caseZone){
+      if(block===null)return false;
+      if((block.block.id==='case' && !inBlock)|| (block.block.id==='switch' && inBlock))return true;
+        else return false;
+    }
+    return true;
+  }
+
+  private _setZone(block: ProgramBlock){
+    if(block.block.id==='else')this.elseZone=true;
+    if(block.block.id==='elseif')this.elseIfZone=true;
+    if(block.block.id==='case')this.caseZone=true;
+  }
 }
 
 declare global {

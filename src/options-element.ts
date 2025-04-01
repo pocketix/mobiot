@@ -152,6 +152,7 @@ export class OptionsElement extends LitElement {
             if (deepCounter===0){
                 if(['if','elseif'].includes(this.program[i].block.id) && this.program[endIndex].block.id==='end'){
                     filterElse=false;
+                    break;
                 }
                 if(this.program[i].block.id==='case'){
                     return filteredBlocks.filter(item => item.id === 'case'||item.id==='end');
@@ -167,7 +168,7 @@ export class OptionsElement extends LitElement {
         if(filterElse)filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
         if(filterEnd)filteredBlocks=filteredBlocks.filter(item => item.id != 'end');
         filteredBlocks=filteredBlocks.filter(item => item.id != 'case');
-
+        // console.log(filteredBlocks);
         return filteredBlocks;
     }
 

@@ -68,8 +68,8 @@ export class BlockElement extends LitElement {
     .header .left {
       display: flex;
       justify-content: flex-start;
-      padding: 8px 4px;
-      margin: 5px;
+      padding: 8px 8px;
+      margin: 2px 8px;
     }
 
     .content {
@@ -205,7 +205,15 @@ export class BlockElement extends LitElement {
           @pointerup=${() => this._cancelLongPress()}>
         <button class="left ${this.block.block.type}" draggable="true"
           @pointerdown=${(e: PointerEvent) => e.stopPropagation()} 
-          @pointerup=${(e: PointerEvent) => e.stopPropagation()}>Drag</button>
+          @pointerup=${(e: PointerEvent) => e.stopPropagation()}
+          @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}>
+           <svg width="16" height="16" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 1L3 0L4 1" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="0" y1="2" x2="6" y2="2" stroke="white" stroke-width="0.5" stroke-linecap="round"/>
+              <line x1="0" y1="4" x2="6" y2="4" stroke="white" stroke-width="0.5" stroke-linecap="round"/>
+              <path d="M2 5L3 6L4 5" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         <div class="center">${header}</div> ${this.detail ? html`<div class="right">
         <button class="${this.block.block.type}" @click=${()=>this._detailBlock()}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -227,7 +235,7 @@ export class BlockElement extends LitElement {
         detail: { value: this.block },
         bubbles: true,
         composed: true
-    }));  
+    }));
   }
 
   private _changeBlock(updated: Argument){
@@ -260,8 +268,17 @@ export class BlockElement extends LitElement {
   private _cancelLongPress() {
       clearTimeout(this.longPressTimeout);
   }
+
   private _showArguments(){
     this.args=!this.args;
+  }
+
+  private _handleTouchStart(event: TouchEvent) {
+    this.dispatchEvent(new CustomEvent('touch-start', {
+      detail: { value: event},
+      bubbles: true,
+      composed: true
+    }));  
   }
 }
 

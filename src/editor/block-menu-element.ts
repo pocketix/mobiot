@@ -25,7 +25,7 @@ export class BlockMenuElement extends LitElement {
     }
     
     button {
-        padding: 8px 16px;
+        padding: 8px 8px;
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -82,6 +82,8 @@ export class BlockMenuElement extends LitElement {
             <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>Delete</button>
             <button @click=${this._replaceBlock}>Replace</button>
             <button class="save">Save as procedure</button>
+            <button @click=${()=>this._moveBlock(true)}>△</button>
+            <button @click=${()=>this._moveBlock(false)}>▽</button>
           </div>
         </div>
       `//buttons save as procedure function is not part of this thesis
@@ -113,15 +115,23 @@ export class BlockMenuElement extends LitElement {
         this._openCloseModal()
     }
 
-    private _detailBlock() {
-      this.dispatchEvent(new CustomEvent('detail-block', {
-          bubbles: true,
-          composed: true
-      }));
-      this._openCloseModal()
+  private _detailBlock() {
+    this.dispatchEvent(new CustomEvent('detail-block', {
+        bubbles: true,
+        composed: true
+    }));
+    this._openCloseModal()
   }
 
-  
+  private _moveBlock(up: boolean) {//TODO disable if it is not possible
+    this.dispatchEvent(new CustomEvent('move-block', {
+        detail: { value: up },
+        bubbles: true,
+        composed: true
+    }));
+    this._openCloseModal()
+  }
+
 }
 
 declare global {
