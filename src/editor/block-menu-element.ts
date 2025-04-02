@@ -14,6 +14,12 @@ export class BlockMenuElement extends LitElement {
     @property({ type: Object })
     block: ProgramBlock = {block: {name: '', simple: false, id: '', type: 'all', argTypes: []}, arguments: [], hide: false};
 
+    @property()
+    startIndex: boolean=false;
+
+    @property()
+    endIndex: boolean=false;
+
     @consume({ context: detailGeneralExport, subscribe: true })
     @property({ attribute: false })
     detailGeneral: boolean=false;
@@ -66,11 +72,10 @@ export class BlockMenuElement extends LitElement {
   `;
 
   render() {
-    //TODO do not able whole menu in detail mode and use it for replace menu too? 
     return html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
-            ${!this.block.block.simple && !this.detailGeneral ? html`
+            ${!this.block.block.simple ? html`
             <button @click=${this._detailBlock}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 3H3v5"/>
@@ -82,8 +87,9 @@ export class BlockMenuElement extends LitElement {
             <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>Delete</button>
             <button @click=${this._replaceBlock}>Replace</button>
             <button class="save">Save as procedure</button>
-            <button @click=${()=>this._moveBlock(true)}>△</button>
-            <button @click=${()=>this._moveBlock(false)}>▽</button>
+            ${this._availableMove(true) ? html`<button @click=${()=>this._moveBlock(true)}>△</button>` : ''}
+            ${this._availableMove()  ? html`<button @click=${()=>this._moveBlock(false)}>▽</button>` : ''}
+            
           </div>
         </div>
       `//buttons save as procedure function is not part of this thesis
@@ -123,13 +129,30 @@ export class BlockMenuElement extends LitElement {
     this._openCloseModal()
   }
 
-  private _moveBlock(up: boolean) {//TODO disable if it is not possible
+  private _moveBlock(up: boolean) {
+    if(this.block.block.id==='if'){
+      const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ");
+      if (!confirmMove) {
+        this._openCloseModal()
+        return;
+      }
+    }
+
     this.dispatchEvent(new CustomEvent('move-block', {
         detail: { value: up },
         bubbles: true,
         composed: true
     }));
-    this._openCloseModal()
+    this._openCloseModal();
+    }
+
+  private _availableMove(up: boolean=false): boolean{
+    if(this.block.block.id==='else' || this.block.block.id==='elseif')return false;
+    if(up && this.startIndex) {
+      return false;
+    }
+    if(!up && this.endIndex) return false;
+    return true;
   }
 
 }

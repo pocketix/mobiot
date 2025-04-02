@@ -123,7 +123,7 @@ export class OperandChooseElement extends LitElement {
   }
 
 
-  private _addArg(operand: TypeOption) {//TODO edit exist operand 4th phase
+  private _addArg(operand: TypeOption) {
     this.dispatchEvent(new CustomEvent('oper-choose', {
       detail: { value: operand},
       bubbles: true,

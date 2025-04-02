@@ -5,7 +5,7 @@ import '../icons/table-icon.ts'
 import '../icons/delete-icon.ts'
 import { VarObject} from '../general/interfaces.ts'
 
-@customElement('var-list-element')//TODO sort table 3rd phase
+@customElement('var-list-element')
 export class VarListElement extends LitElement {
 
     @state()

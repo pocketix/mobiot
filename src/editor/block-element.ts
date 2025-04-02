@@ -22,7 +22,13 @@ export class BlockElement extends LitElement {
     private args: boolean=false;
 
     @property()
-    detail: boolean=false;
+    detail: boolean=true;
+
+    @property()
+    startIndex: boolean=false;
+
+    @property()
+    endIndex: boolean=false;
 
     @consume({ context: detailGeneralExport, subscribe: true})
       @property({attribute: false})
@@ -194,7 +200,7 @@ export class BlockElement extends LitElement {
     return html`
     ${this.menu === true ? html`
       <block-menu-element class="menu" 
-        isOpen=${this.menu} .block=${this.block} 
+        isOpen=${this.menu} .block=${this.block} .startIndex=${this.startIndex} .endIndex=${this.endIndex}
         @block-menu=${(e: CustomEvent) => this._blockMenu(e.detail.value)}
         @detail-block=${() => this._detailBlock()}></block-menu-element>
       ` : ''}
@@ -203,17 +209,18 @@ export class BlockElement extends LitElement {
       <div class="header ${this.block.block.type}" 
           @pointerdown=${() => this._handleLongPress()}
           @pointerup=${() => this._cancelLongPress()}>
-        <button class="left ${this.block.block.type}" draggable="true"
+        ${!this.detailGeneral ? html`<button class="left ${this.block.block.type}" draggable="true"
           @pointerdown=${(e: PointerEvent) => e.stopPropagation()} 
           @pointerup=${(e: PointerEvent) => e.stopPropagation()}
-          @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}>
+          @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}
+          @click=${() => this._showZone()}>
            <svg width="16" height="16" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M2 1L3 0L4 1" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
               <line x1="0" y1="2" x2="6" y2="2" stroke="white" stroke-width="0.5" stroke-linecap="round"/>
               <line x1="0" y1="4" x2="6" y2="4" stroke="white" stroke-width="0.5" stroke-linecap="round"/>
               <path d="M2 5L3 6L4 5" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-          </button>
+          </button>`:''}
         <div class="center">${header}</div> ${this.detail ? html`<div class="right">
         <button class="${this.block.block.type}" @click=${()=>this._detailBlock()}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -248,7 +255,7 @@ export class BlockElement extends LitElement {
   }
 
   private _blockMenu(menu: boolean){
-    this.menu=menu
+    this.menu=menu;
   }
 
   private _detailBlock(){
@@ -259,9 +266,16 @@ export class BlockElement extends LitElement {
   })); 
   }
 
+  private _showZone(){
+    this.dispatchEvent(new CustomEvent('show-zone', {
+      bubbles: true,
+      composed: true
+  })); 
+  }
+
   private _handleLongPress() {
       this.longPressTimeout = setTimeout(() => {
-          this.menu=true;
+        if(!this.detailGeneral)this.menu=true;
       }, 500);
   }
 

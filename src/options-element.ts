@@ -17,7 +17,7 @@ export class OptionsElement extends LitElement {
         {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
         {name: "If ... do ...", simple: false, id: "if", argTypes: ['boolean_expression'], type: 'branch'},
         {name: "Else do ...", simple: false, id: "else", argTypes: [], type: 'branch'},
-        {name: "Else If ... do ...", simple: false, id: "elseif", argTypes: [], type: 'branch'},
+        {name: "Else If ... do ...", simple: false, id: "elseif", argTypes: ['boolean_expression'], type: 'branch'},
         {name: "Switch according ...", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},
         {name: "Case", simple: false, id: "case", argTypes: ['num'], type: 'branch'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
