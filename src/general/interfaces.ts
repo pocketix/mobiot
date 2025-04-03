@@ -16,7 +16,7 @@ export interface ProgramBlock {
 
 export interface VarObject {
     name: string;
-    value: Argument
+    value: Argument;
 }
 
 export interface Argument {

@@ -154,17 +154,17 @@ export class BlockElement extends LitElement {
     }
     else{
       if(this.block.arguments.length!=this.block.block.argTypes.length){
-        this.block.arguments.forEach((item)=>{
-          header=html`${header}<div class="condition">${item.type==='boolean_expression'? CondText(item.args[0]):item.value}</div>`
+        this.block.arguments.forEach((item)=>{//TODO check correction
+          header=html`${header}<div class="condition">${item.value==='' ? CondText(item):item.value}</div>`
         })
         for(let i=this.block.arguments.length;i<this.block.block.argTypes.length;i++){
           header=html`${header}<div class="${i===this.block.arguments.length ? 'focus-arg':'condition'}">Add argument: ${this.block.block.argTypes[i]}</div>`
         }
         header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name} ${header}`
       }else if(this.block.arguments.length===1){
-        if(this.block.arguments[0].type==='boolean_expression'){
+        if(this.block.block.argTypes[0]==='boolean_expression'){
           header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<cond-edit-element 
-            .newMode=${false} .block=${this.block.arguments[0]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0].args[0])}
+            .newMode=${false} .args=${[this.block.arguments[0]]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0])}
             @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
             @cond-clean=${() => this._changeBlock(original.arguments[0])}></cond-edit-element>`
         }else{

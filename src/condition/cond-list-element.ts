@@ -47,6 +47,7 @@ export class CondListElement extends LitElement {
         }
 
         .delete {
+            margin: 0.2em;
             background-color:rgb(255, 64, 64);
         }
         
@@ -117,12 +118,12 @@ export class CondListElement extends LitElement {
                     ${this.table.map(item => html`
                         <tr @click=${(e: Event) => this._handleRowClick(e, item)}>
                         <td>${item.name}</td>
-                        <td>${CondText(item.value.args[0])}</td>
+                        <td>${CondText(item.value)}</td>
                         <div>
                         ${this.selectedRow === item ? (() => {
                             const original = structuredClone(item.value); return html`
                             <cond-edit-element 
-                                .newMode=${false} .block=${item.value} .selectedBlock=${item.value} .title=${'✎ Edit'}
+                                .newMode=${false} .args=${[item.value]} .selectedBlock=${item.value} .title=${'✎ Edit'}
                                 @click=${(e: Event) => e.stopPropagation()}
                                 @cond-update=${(e: CustomEvent) => this._updateCond(e.detail.value, item)}
                                 @cond-clean=${() => this._updateCond(original, item)}>

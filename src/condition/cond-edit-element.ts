@@ -40,7 +40,10 @@ export class CondEditElement extends LitElement {
     newArg: Argument={type: 'note',value:'', args: []};
 
     @property()
-    block: Argument={type: 'boolean_expression',value:'', args: []}//TODO delete boolean expression
+    args: Argument[]=[];
+    
+    @property()
+    block: Argument={type: 'boolean_expression',value:'', args: this.args}//TODO delete boolean expression
 
     @property()
     condEdit: VarObject={name: '', value: this.block}
@@ -133,7 +136,7 @@ export class CondEditElement extends LitElement {
         border-radius: 8px;
         border: 1px solid transparent;
         padding: 0.5em 1em;
-        margin: 0.2em 0.4em;
+        margin: 0.2em;
         font-size: 1em;
         font-weight: 500;
         font-family: inherit;
@@ -164,10 +167,11 @@ export class CondEditElement extends LitElement {
       `;
     
       render() {
+        this.block.args=this.args;//TODO clean code
         let cond: TemplateResult=html``;
         if(!this.newMode && this.title!=='✎ Edit'){
           this.condList.forEach((item)=>{
-            cond=html`${cond}<button @click=${()=>{this.block=structuredClone(item.value);this._updateCond()}}>${CondText(item.value.args[0])}</button>`
+            cond=html`${cond}<button @click=${()=>{this.block.args[0]=structuredClone(item.value);this._updateCond()}}>${CondText(item.value)}</button>`
           })
           cond=html`<h2>Select one from exist</h2>
             <div>${cond}</div>`;
@@ -260,7 +264,7 @@ export class CondEditElement extends LitElement {
       }
 
       private _saveCond() {
-        this.condEdit.value={ ...this.block};
+        this.condEdit.value={ ...this.block.args[0]};
         this.dispatchEvent(new CustomEvent('cond-saved', {
           detail: { value: this.condEdit },
           bubbles: true,
@@ -273,7 +277,7 @@ export class CondEditElement extends LitElement {
 
       private _updateCond() {
         this.dispatchEvent(new CustomEvent('cond-update', {
-          detail: { value: this.block },
+          detail: { value: this.block.args[0] },
           bubbles: true,
           composed: true
         }));

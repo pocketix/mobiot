@@ -30,16 +30,17 @@ export class VPEditorElement extends LitElement {
     let item=stack_complex_name.pop();
     if(item){
       if(item.hide){
-        return html`<block-element .block=${item} @change-detail=${() => this._changeDetail(endIndex, item)} .detail=${false}
+        return html`<block-element .block=${item} .detail=${false}
           .startIndex=${this.program.indexOf(item)===0}
           .endIndex=${this._endIndex(endIndex, item.block.id==='if')}
+          @change-detail=${() => this._changeDetail(endIndex, item)}
           @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
           @show-zone=${(e: CustomEvent)=>{e.stopPropagation();this.zoneAvailable=!this.zoneAvailable; this.dragItem===null ? this.dragItem=item : this.dragItem=null;}}
           @dragstart=${(e: DragEvent) => { e.stopPropagation();this._setZone(item);this._handleDragStart(e, endIndex); }} 
           @touch-start=${(e: CustomEvent) => {e.stopPropagation();this.dragItem=item;this._setZone(item);this._handleTouchStart(e);}} 
           @touchmove=${(e: TouchEvent) => { e.stopPropagation();e.preventDefault(); this._handleTouchMove(e); }} 
           @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), endIndex); }}></block-element>
-        ${(this.zoneAvailable && this._zoneFilter(item, endIndex)) ? html`<div class="drop-zone"
+        ${(this.zoneAvailable && this._zoneFilter(item, endIndex ) && endIndex!==this.program.length) ? html`<div class="drop-zone"
             data-index="${endIndex+1}" 
             @dragover=${this._handleDragOver}
             @dragleave=${this._handleDragLeave}
@@ -50,7 +51,7 @@ export class VPEditorElement extends LitElement {
             .startIndex=${this.program.indexOf(item)===0}
             .endIndex=${this._endIndex(endIndex, item.block.id==='if')}
             @change-detail=${() => this._changeDetail(endIndex, item)}
-            @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._setZone(item);this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
+            @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
             @show-zone=${(e: CustomEvent)=>{e.stopPropagation(); this.zoneAvailable=!this.zoneAvailable; this.dragItem===null ? this.dragItem=item : this.dragItem=null}}
             @dragstart=${(e: DragEvent) => { e.stopPropagation();this._setZone(item);this._handleDragStart(e, endIndex); }} 
             @touch-start=${(e: CustomEvent) => {e.stopPropagation();this.dragItem=item;this._setZone(item);this._handleTouchStart(e);}} 

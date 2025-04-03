@@ -47,6 +47,17 @@ export class CondBlockElement extends LitElement {
       background-color: #e0e0e0;
       margin: 8px;
     }
+
+    .main{
+        display: block;
+        border: 2px solid #333;
+        border-radius: 8px;
+        min-height: 150px;
+        min-width: 300px;
+        background-color: #e0e0e0;
+        margin: 8px;
+    }
+
     .header {
       background-color: #7da7d9;
       padding: 4px;
@@ -56,6 +67,7 @@ export class CondBlockElement extends LitElement {
       display: flex;
       justify-content: center;
       align-items: center;
+      min-height: 50px;
     }
 
     .header.selected {
@@ -79,6 +91,13 @@ export class CondBlockElement extends LitElement {
     
     .edit.selected {
       background:rgb(66, 63, 255);
+    }
+
+    .value {
+        background-color: rgb(168, 168, 168);
+        padding: 10px;
+        border-radius: 4px;
+        color: black;
     }
 
   `;
@@ -105,9 +124,9 @@ export class CondBlockElement extends LitElement {
         element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operand-choose-element>`
     }
 
-    if(this.block.args.length===0){
+    if(this.block.args.length===0 && this.block.value!==''){
       element=html`
-        <p>${this.block.value}
+        <p class="value">${this.block.value}
             ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
                 html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)}>` : ''}
         </p>
@@ -130,13 +149,13 @@ export class CondBlockElement extends LitElement {
             </cond-block-element>
         `
         })
-        element=html`
+        element= this.block.type!='boolean_expression'? html`
             <div class="block">
                 <div 
                     class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleClick}
                 >
-                    ${this.block.type!='boolean_expression'? html`<button class="edit ${this.selectedBlock === this.block ? 'selected' : ''}" 
-                        @click=${(e: Event) => {this.changeOperand=true;e.stopPropagation()}}>✎</button>`:''}
+                    <button class="edit ${this.selectedBlock === this.block ? 'selected' : ''}" 
+                        @click=${(e: Event) => {this.changeOperand=true;e.stopPropagation()}}>✎</button>
                     <p @click=${this._handleClick}>${this.block.type}</p>
                     ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
                         html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)} @click=${(e: Event) => e.stopPropagation()}>` : ''}
@@ -145,7 +164,14 @@ export class CondBlockElement extends LitElement {
                     ${element}
                 </div>
             </div>
-        `
+        ` : html`<div class="main">
+                <div 
+                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleClick}>
+                </div>
+                <div>
+                    ${element}
+                </div>
+            </div>`
     }
     return element;
   }

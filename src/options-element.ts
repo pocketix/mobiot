@@ -92,7 +92,7 @@ export class OptionsElement extends LitElement {
         let list: TemplateResult[]=[];
         if(this.paramType==='boolean_expression'){
             this.conditions.forEach((condition)=>{
-                list.push(html`<button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value.args[0])}</button>`);
+                list.push(html`<button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value)}</button>`);
             });
         }else if(this.paramType==='variable'){
             this.variables.forEach((item)=>{

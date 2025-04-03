@@ -3,7 +3,6 @@ import { Argument} from '../general/interfaces'
 
 
 export function CondText(cond: Argument): string{
-    // console.log(cond)
     if(cond.args.length>0){
         let result: string='(';
         cond.args.forEach((item)=>{
