@@ -4,6 +4,7 @@ import '../variable/var-edit-element.ts'
 import '../icons/table-icon.ts'
 import '../icons/delete-icon.ts'
 import { VarObject} from '../general/interfaces.ts'
+import { CondText } from '../general/cond-text.ts'
 
 @customElement('var-list-element')
 export class VarListElement extends LitElement {
@@ -115,7 +116,7 @@ export class VarListElement extends LitElement {
                         <tr @click=${(e: Event) => this._handleRowClick(e, item)}>
                         <td>${item.value.type}</td>
                         <td>${item.name}</td>
-                        <td>${item.value.value}</td>
+                        ${item.value.type==='expr' ? html`<td>${CondText(item.value.args[0])}</td>` : html`<td>${item.value.value}</td>`}
                         <div>
                         ${this.selectedRow === item ? html`
                             <var-edit-element 

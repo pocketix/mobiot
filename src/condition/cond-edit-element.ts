@@ -34,6 +34,9 @@ export class CondEditElement extends LitElement {
     newMode: boolean=true;
 
     @property()
+    exprMode: boolean=false;
+
+    @property()
     title: string='+ New condition'
 
     @property()
@@ -43,7 +46,7 @@ export class CondEditElement extends LitElement {
     args: Argument[]=[];
     
     @property()
-    block: Argument={type: 'boolean_expression',value:'', args: this.args}//TODO delete boolean expression
+    block: Argument={type: 'cond',value:'', args: this.args}
 
     @property()
     condEdit: VarObject={name: '', value: this.block}
@@ -167,7 +170,9 @@ export class CondEditElement extends LitElement {
       `;
     
       render() {
-        this.block.args=this.args;//TODO clean code
+        if(this.block.args.length===0 && this.args.length!==0){
+          this.block.args=this.args;//TODO clean code
+        }
         let cond: TemplateResult=html``;
         if(!this.newMode && this.title!=='✎ Edit'){
           this.condList.forEach((item)=>{
@@ -249,6 +254,7 @@ export class CondEditElement extends LitElement {
 
       private _newArgClean() {
         this.newArg = {type: 'note',value:'', args: []};
+        this._saveCheck();
       }
 
       private _saveUpdate(newItem: boolean){//TODO clean code 3rd phase
@@ -258,7 +264,8 @@ export class CondEditElement extends LitElement {
 
       private _saveCheck(){
         if(this.block.args.length===1 && 
-          (!['num', 'str', 'bool', 'expr','variable','+','-','*','/'].includes(this.block.args[0].type) &&
+          ((!['num', 'str', 'bool', 'expr','variable','+','-','*','/'].includes(this.block.args[0].type) || 
+          (this.exprMode && !['num', 'str', 'bool', 'expr','variable'].includes(this.block.args[0].type)))&&
           (!this.newMode || this.condEdit.name)))this.canSave=true;
         else this.canSave=false;
       }

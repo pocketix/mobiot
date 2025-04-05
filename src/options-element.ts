@@ -13,11 +13,11 @@ export class OptionsElement extends LitElement {
     @state()
     private blocks: Block[] = [
         {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
-        {name: "While ... do ...", simple: false, id: "while", argTypes: ['boolean_expression'], type: 'cycle'},
+        {name: "While ... do ...", simple: false, id: "while", argTypes: ['cond'], type: 'cycle'},
         {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
-        {name: "If ... do ...", simple: false, id: "if", argTypes: ['boolean_expression'], type: 'branch'},
+        {name: "If ... do ...", simple: false, id: "if", argTypes: ['cond'], type: 'branch'},
         {name: "Else do ...", simple: false, id: "else", argTypes: [], type: 'branch'},
-        {name: "Else If ... do ...", simple: false, id: "elseif", argTypes: ['boolean_expression'], type: 'branch'},
+        {name: "Else If ... do ...", simple: false, id: "elseif", argTypes: ['cond'], type: 'branch'},
         {name: "Switch according ...", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},
         {name: "Case", simple: false, id: "case", argTypes: ['num'], type: 'branch'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
@@ -90,7 +90,7 @@ export class OptionsElement extends LitElement {
 
     private _filterParams(): TemplateResult[]{
         let list: TemplateResult[]=[];
-        if(this.paramType==='boolean_expression'){
+        if(this.paramType==='cond'){
             this.conditions.forEach((condition)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value)}</button>`);
             });
@@ -99,12 +99,24 @@ export class OptionsElement extends LitElement {
                 list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button>`);
             });
         }else{
-            let varList: VarObject[]=this.variables;
+            let varList: VarObject[]=[];
             if(this.paramType!='note'){
-                varList=this.variables.filter(item => item.value.type === this.paramType)
+                this.variables.forEach(item => {
+                    if(item.value.type===this.paramType)varList.push(item);
+                    else if(item.value.type==='expr'){
+                        if(['+','-','*','/'].includes(item.value.args[0].type)){
+                            if(this.paramType==='num')varList.push(item);
+                        }else{
+                            if(this.paramType==='bool')varList.push(item);
+                        }
+                    }
+                })
+            }else{
+                varList=this.variables;
             }
             varList.forEach((item)=>{
-                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button>`);
+                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: 
+                    ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`);
             });
             if(this.paramType==='bool'){
                 list.push(html`<li><button @click=${() => this._addParamsVal('true')}>true</button></li>`);
@@ -168,7 +180,6 @@ export class OptionsElement extends LitElement {
         if(filterElse)filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
         if(filterEnd)filteredBlocks=filteredBlocks.filter(item => item.id != 'end');
         filteredBlocks=filteredBlocks.filter(item => item.id != 'case');
-        // console.log(filteredBlocks);
         return filteredBlocks;
     }
 
@@ -253,7 +264,7 @@ export class OptionsElement extends LitElement {
         }
         if(block){
             let arg: Argument=param.value
-            if(param.value.type!='boolean_expression'){
+            if(param.value.type!='cond'){
                 arg = {type: 'variable', value:param.name, args: []};
             }
             this._addParams(block, arg)

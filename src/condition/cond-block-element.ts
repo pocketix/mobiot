@@ -102,35 +102,20 @@ export class CondBlockElement extends LitElement {
 
   `;
   render() {
-    if(!this.block.args.includes(this.newArg) && this.selectedBlock === this.block && this.newArg.type != 'note'){
-        this.block.args.push(this.newArg);
-        this.newArg={type: 'note',value:'', args: []};
-        this.dispatchEvent(new CustomEvent('new-arg-clean',{
-            bubbles: true, composed: true
-        }
-        ));
-    }
+    this._addArg();
 
     if(this.deleteAction && this.selectedBlock === this.block){
         this._deleteArgs()
     }
 
-    let element: TemplateResult=html``;
-    if(this.groupAction && this.selectedBlock === this.block){
-        element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operand-choose-element>`
-    }
-
-    if(this.changeOperand){
-        element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operand-choose-element>`
-    }
+    let element: TemplateResult=html`${this._drawOperandWindow()}`;
 
     if(this.block.args.length===0 && this.block.value!==''){
       element=html`
         <p class="value">${this.block.value}
             ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
-                html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)}>` : ''}
-        </p>
-        `
+                html`<input type="checkbox" @change=${(e: Event) => this._chooseArgsChanged(e)}>` : ''}
+        </p>`
     }
     else{
         this.block.args.forEach((item)=>{
@@ -149,16 +134,35 @@ export class CondBlockElement extends LitElement {
             </cond-block-element>
         `
         })
-        element= this.block.type!='boolean_expression'? html`
+        if(this.block.args.length===0 && this.block.value==='')return element
+        element= this._drawBlock(element);
+    }
+    return element;
+  }
+
+    private _drawOperandWindow(): TemplateResult{
+        let element: TemplateResult=html``;
+        if(this.groupAction && this.selectedBlock === this.block){
+            element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operand-choose-element>`
+        }
+
+        if(this.changeOperand){
+            element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operand-choose-element>`
+        }
+        return element;
+    }
+
+    private _drawBlock(element: TemplateResult): TemplateResult{
+        element= this.block.type!='cond'? html`
             <div class="block">
                 <div 
-                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleClick}
+                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleHeaderClick}
                 >
                     <button class="edit ${this.selectedBlock === this.block ? 'selected' : ''}" 
                         @click=${(e: Event) => {this.changeOperand=true;e.stopPropagation()}}>✎</button>
-                    <p @click=${this._handleClick}>${this.block.type}</p>
+                    <p @click=${this._handleHeaderClick}>${this.block.type}</p>
                     ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
-                        html`<input type="checkbox" @change=${(e: Event) => this._toggleSelection(e)} @click=${(e: Event) => e.stopPropagation()}>` : ''}
+                        html`<input type="checkbox" @change=${(e: Event) => this._chooseArgsChanged(e)} @click=${(e: Event) => e.stopPropagation()}>` : ''}
                 </div>
                 <div class="content">
                     ${element}
@@ -166,40 +170,49 @@ export class CondBlockElement extends LitElement {
             </div>
         ` : html`<div class="main">
                 <div 
-                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleClick}>
+                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleHeaderClick}>
                 </div>
                 <div>
                     ${element}
                 </div>
             </div>`
+        return element;
     }
-    return element;
-  }
-
-  private _toggleSelection(event: Event) {
-    const checkbox = event.target as HTMLInputElement; 
-    if (checkbox.checked) {
-        this.chooseArgs = [...this.chooseArgs, this.block];
-    } else {
-        this.chooseArgs = this.chooseArgs.filter(item => item !== this.block);
+  
+    private _addArg(){
+        if(!this.block.args.includes(this.newArg) && this.selectedBlock === this.block && this.newArg.type != 'note'){
+            this.block.args.push(this.newArg);
+            this.newArg={type: 'note',value:'', args: []};
+            this.dispatchEvent(new CustomEvent('new-arg-clean',{
+                bubbles: true, composed: true
+            }
+            ));
+        }
     }
 
-    this.dispatchEvent(new CustomEvent('choose-args-changed', {
-        detail: { value: this.chooseArgs },
-        bubbles: true,
-        composed: true
-    }));
-}
+    private _chooseArgsChanged(event: Event) {
+        const checkbox = event.target as HTMLInputElement; 
+        if (checkbox.checked) {
+            this.chooseArgs = [...this.chooseArgs, this.block];
+        } else {
+            this.chooseArgs = this.chooseArgs.filter(item => item !== this.block);
+        }
 
-    private _handleClick() {
+        this.dispatchEvent(new CustomEvent('choose-args-changed', {
+            detail: { value: this.chooseArgs },
+            bubbles: true,
+            composed: true
+        }));
+    }
+
+    private _handleHeaderClick() {
         this.selectedBlock = this.block;
 
         this.dispatchEvent(new CustomEvent('cond-changed', {
             detail: { value: this.selectedBlock },
             bubbles: true,
             composed: true
-        }
-    ));
+        }));
     }
 
     private _groupArgs(type: TypeOption){
@@ -213,7 +226,7 @@ export class CondBlockElement extends LitElement {
             bubbles: true,
             composed: true}
         ));
-      }
+    }
 
     private _changeOper(type: TypeOption){
         this.block.type=type;
@@ -234,7 +247,7 @@ export class CondBlockElement extends LitElement {
         this.block.args.forEach((item)=>{
             if(['AND','OR','NOT','==','!=','>','<','>=','<=','+','-','*','/'].includes(item.type) && item.args.length===0){
                 this.block.args=this.block.args.filter(filtered=> filtered!=item);
-                this._handleClick();
+                this._handleHeaderClick();
             }
         })
     }

@@ -94,7 +94,7 @@ export class OperandChooseElement extends LitElement {
         else operandList=['+','-','*','/'];
         operandList.forEach((item)=>{
             listOperand.push(html`<button @click=${() => this._addArg(item)}>${item}</button>`);
-  });//<button @click=${this._openCloseModal}>Add Operand (variable)</button>
+  });
     return html`
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>

@@ -1,7 +1,8 @@
 import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { VarObject} from '../general/interfaces'
+import { VarObject, Argument} from '../general/interfaces'
 import { TypeOption } from '../general/types';
+import { CondText } from '../general/cond-text.ts';
 
 @customElement('var-edit-element')
 export class VarEditElement extends LitElement {
@@ -30,6 +31,11 @@ export class VarEditElement extends LitElement {
 
     h2{
         color: black;
+    }
+
+    p {
+      font-size: 1em;
+      color: black;
     }
     
     button {
@@ -64,7 +70,8 @@ export class VarEditElement extends LitElement {
     button:disabled {
       background-color: grey;
       cursor: not-allowed;
-      opacity: 0.5;
+      background-color: #c4c4c4; /* světle šedá */
+      color: #6e6e6e;
     }
 
     .cancel {
@@ -116,9 +123,16 @@ export class VarEditElement extends LitElement {
       <button class=${'false' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
     }else if(this.var.value.type==='num'){
       valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
+    }else if(this.var.value.type==='expr'){
+      valueType=html`<cond-edit-element 
+                        .newMode=${false} .args=${this.var.value.args} .exprMode=${true}
+                        .title=${this.var.value.args.length===0 ? 'Click here to create expression. ' : CondText(this.var.value.args[0])}
+                        @click=${(e: Event) => e.stopPropagation()}
+                        @cond-update=${(e: CustomEvent) => this._updateExpr(e.detail.value)}>
+                    </cond-edit-element>`
     }else{
       valueType=html`<input type="text" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
-    }//TODO add expression editor 4th phase
+    }
     return html`
       <button class="menu" @click=${this._openCloseModal}>${title}</button>
 
@@ -131,8 +145,10 @@ export class VarEditElement extends LitElement {
                 <button class=${item === this.var.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
                 `)}
             </div>
-            <h2>Name: </h2>
-             <input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Add variable name..." />
+            <h2>Name: </h2>${this.original.name==='' ? 
+              html`<input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Add variable name..." />`
+              : html`<p>${this.var.name}</p>`}
+             
             <h2>Value: </h2>
             <div>${valueType}</div>
             <button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveChanges()}}>Save</button>
@@ -161,6 +177,13 @@ export class VarEditElement extends LitElement {
     this._saveBut();
   }
 
+  private _updateExpr(updatedCond: Argument) {
+    this.var = {...this.var, 
+      value: { ...this.var.value, args: [updatedCond] }, 
+    };
+    this._saveBut();
+  }
+
   private _handleBoolInput(input: string) {
     this.var = {...this.var, 
       value: { ...this.var.value, value: input }, 
@@ -175,8 +198,9 @@ export class VarEditElement extends LitElement {
     this._saveBut();
   }
 
-  private _saveBut() {
-    if (this.var.name && this.var.value.value && this.var.value.type!='note' && 
+  private _saveBut() {//TODO clean code
+    if (this.var.name && this.var.value.type!='note' && 
+      (this.var.value.value || (this.var.value.type==='expr' && this.var.value.args.length!==0) )&&
       (this.var.value.type!='bool' || this.var.value.value==='true' || this.var.value.value==='false'))this.canSave=true;
     else this.canSave=false;
   }

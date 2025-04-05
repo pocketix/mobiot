@@ -44,7 +44,7 @@ export class MyElement extends LitElement {
 
   @property()
   program: ProgramBlock[]=[
-    {block: {name: "If ...do ...", simple: false, id: "if", type: 'branch', argTypes: ['boolean_expression']}, 
+    {block: {name: "If ...do ...", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
       arguments: [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}], hide: false},
     {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['str']}, 
       arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
@@ -58,7 +58,8 @@ export class MyElement extends LitElement {
             { name: 'name', value: {type: 'str',value: 'John', args: []}},
             { name: 'age', value: {type: 'num',value: '40', args: []}},
             { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
-            { name: 'fee', value: {type: 'expr',value: 'a + b == 6', args: []}}
+            { name: 'fee', value: {type: 'expr',value: '', args: [{type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'a', args: []},
+             {type: 'num', value: 'b', args: []}]},{type: 'num', value: '6', args: []}]}]}}
             ];
 
   render() {//TODO clean code
@@ -183,7 +184,7 @@ private _deleteBlock(block: ProgramBlock){
 
       this.program = [...this.program.slice(0, index), ...this.program.slice(endIndex)];
     }
-  }//TODO syntax control 4th phase
+  }//TODO syntax control 5th phase
 }
 
   static styles = css`
