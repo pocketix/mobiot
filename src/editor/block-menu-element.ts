@@ -4,6 +4,7 @@ import {ProgramBlock} from '../general/interfaces'
 import { consume } from '@lit/context';
 import { detailGeneralExport} from '../general/context';
 import '../icons/delete-icon'
+import '../icons/detail-start-icon'
 
 @customElement('block-menu-element')
 export class BlockMenuElement extends LitElement {
@@ -76,20 +77,12 @@ export class BlockMenuElement extends LitElement {
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             ${!this.block.block.simple ? html`
-            <button @click=${this._detailBlock}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 3H3v5"/>
-              <path d="M3 16v5h5"/>
-              <path d="M16 3h5v5"/>
-              <path d="M21 16v5h-5"/>
-              </svg>
-            Detail</button>` :''}
+            <button @click=${this._detailBlock}><detail-start-icon></detail-start-icon>Detail</button>` :''}
             <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>Delete</button>
             <button @click=${this._replaceBlock}>Replace</button>
             <button class="save">Save as procedure</button>
             ${this._availableMove(true) ? html`<button @click=${()=>this._moveBlock(true)}>△</button>` : ''}
             ${this._availableMove()  ? html`<button @click=${()=>this._moveBlock(false)}>▽</button>` : ''}
-            
           </div>
         </div>
       `//buttons save as procedure function is not part of this thesis
@@ -103,22 +96,22 @@ export class BlockMenuElement extends LitElement {
         }));
     }
 
-    private _replaceBlock(){//TODO clean code
+    private _replaceBlock(){
       this.dispatchEvent(new CustomEvent('replace-block', {
         detail: { value: this.block },
         bubbles: true,
         composed: true
-    }));
-    this._deleteBlock();
+      }));
+      this._deleteBlock();
     }
 
     private _deleteBlock() {
-        this.dispatchEvent(new CustomEvent('delete-block', {
-            detail: { value: this.block },
-            bubbles: true,
-            composed: true
-        }));
-        this._openCloseModal()
+      this.dispatchEvent(new CustomEvent('delete-block', {
+        detail: { value: this.block },
+        bubbles: true,
+        composed: true
+      }));
+      this._openCloseModal()
     }
 
   private _detailBlock() {
@@ -142,15 +135,13 @@ export class BlockMenuElement extends LitElement {
         detail: { value: up },
         bubbles: true,
         composed: true
-    }));
-    this._openCloseModal();
+      }));
+      this._openCloseModal();
     }
 
   private _availableMove(up: boolean=false): boolean{
     if(this.block.block.id==='else' || this.block.block.id==='elseif')return false;
-    if(up && this.startIndex) {
-      return false;
-    }
+    if(up && this.startIndex) return false;
     if(!up && this.endIndex) return false;
     return true;
   }

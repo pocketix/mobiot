@@ -48,17 +48,17 @@ export class VarListElement extends LitElement {
         }
         
         .modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: white;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-          gap: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 16px;
         }
 
         table {
@@ -172,7 +172,6 @@ export class VarListElement extends LitElement {
         event.preventDefault();
         this.selectedRow = this.selectedRow === item ? null : item;
     }
-
 }
 declare global {
   interface HTMLElementTagNameMap {

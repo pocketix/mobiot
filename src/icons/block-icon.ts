@@ -22,16 +22,16 @@ export class BlockIcon extends LitElement {
   }
 
   private imageMap: Record<string, string> = {
-    'if': this.getImageUrl('if-icon.png'),
-    'else': this.getImageUrl('else-icon.png'),
-    'elseif': this.getImageUrl('elseif-icon.png'),
-    'switch': this.getImageUrl('switch-icon.png'),
-    'case': this.getImageUrl('case-icon.png'),
-    'while': this.getImageUrl('while-icon.png'),
-    'repeat': this.getImageUrl('repeat-icon.png'),
-    'alert': this.getImageUrl('alert-icon.png'),
-    'setvar': this.getImageUrl('setvar-icon.png'),
-    'str_opt': this.getImageUrl('stropt-icon.png'),
+    'if': this.getImageUrl('img/if-icon.png'),
+    'else': this.getImageUrl('img/else-icon.png'),
+    'elseif': this.getImageUrl('img/elseif-icon.png'),
+    'switch': this.getImageUrl('img/switch-icon.png'),
+    'case': this.getImageUrl('img/case-icon.png'),
+    'while': this.getImageUrl('img/while-icon.png'),
+    'repeat': this.getImageUrl('img/repeat-icon.png'),
+    'alert': this.getImageUrl('img/alert-icon.png'),
+    'setvar': this.getImageUrl('img/setvar-icon.png'),
+    'str_opt': this.getImageUrl('img/stropt-icon.png'),
   };
 
   render() {

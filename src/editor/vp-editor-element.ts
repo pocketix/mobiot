@@ -184,7 +184,7 @@ export class VPEditorElement extends LitElement {
     }
   }
 
-  private _changeDetail(index: number, item: ProgramBlock){//TODO clean code
+  private _changeDetail(index: number, item: ProgramBlock){
     if(!this.detailGeneral){
       this.dispatchEvent(new CustomEvent('detail-index', {
         detail: { value: [index, this.program.indexOf(item)] },

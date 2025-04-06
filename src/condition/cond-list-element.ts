@@ -2,11 +2,12 @@ import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { condListExport} from '../general/context';
 import { consume } from '@lit/context';
+import { VarObject, Argument} from '../general/interfaces.ts';
+import { CondText } from '../general/cond-text.ts';
 import './cond-edit-element.ts';
 import '../icons/table-icon.ts'
 import '../icons/delete-icon.ts'
-import { VarObject, Argument} from '../general/interfaces.ts';
-import { CondText } from '../general/cond-text.ts';
+
 
 @customElement('cond-list-element')
 export class CondListElement extends LitElement {
@@ -97,10 +98,9 @@ export class CondListElement extends LitElement {
         thead tr {
             background-color:white;
         }
-      `;
+    `;
     
-      render() {
-
+    render() {
         return html`
           <button @click=${this._openCloseModal}><table-icon></table-icon>Conditions</button>
     
@@ -129,7 +129,7 @@ export class CondListElement extends LitElement {
                                 @cond-clean=${() => this._updateCond(original, item)}>
                             </cond-edit-element>
                             <button class="delete" @click=${(e: Event) => this._deleteCond(e, item)}><delete-icon></delete-icon>Delete</button>
-                        ` ;})(): ''}
+                        `})(): ''}
                         </div>
                         </tr>
                     `)}
@@ -142,10 +142,10 @@ export class CondListElement extends LitElement {
             </div>
           ` : ''}
         `;
-      }
+    }
 
     private _openCloseModal() {
-    this.isOpen = !this.isOpen;
+        this.isOpen = !this.isOpen;
     }
 
     private _addCond(newCond: VarObject){

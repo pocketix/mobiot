@@ -87,14 +87,17 @@ export class OperandChooseElement extends LitElement {
   `;
 
   render() {
-        const listOperand: TemplateResult[]=[];
-        let operandList: TypeOption[]=[];
-        if(this.selected==='Compare')operandList=['==','!=','>','<','>=','<='];
-        else if(this.selected==='Logical')operandList=['AND','OR','NOT'];
-        else operandList=['+','-','*','/'];
-        operandList.forEach((item)=>{
-            listOperand.push(html`<button @click=${() => this._addArg(item)}>${item}</button>`);
-  });
+    const listOperand: TemplateResult[]=[];
+    let operandList: TypeOption[]=[];
+
+    if(this.selected==='Compare')operandList=['==','!=','>','<','>=','<='];
+    else if(this.selected==='Logical')operandList=['AND','OR','NOT'];
+    else operandList=['+','-','*','/'];
+    
+    operandList.forEach((item)=>{
+      listOperand.push(html`<button @click=${() => this._addArg(item)}>${item}</button>`);
+    });
+    
     return html`
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
@@ -119,9 +122,7 @@ export class OperandChooseElement extends LitElement {
 
   private _selectType(cat: string){
     this.selected=cat
-    this.requestUpdate();
   }
-
 
   private _addArg(operand: TypeOption) {
     this.dispatchEvent(new CustomEvent('oper-choose', {
@@ -131,7 +132,6 @@ export class OperandChooseElement extends LitElement {
     }));
     this._openCloseModal()
   }
-
 }
 
 declare global {

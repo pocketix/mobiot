@@ -12,25 +12,25 @@ export class VarEditElement extends LitElement {
     value: {type: 'note', value: '', args: []}
   };
 
-    @state()
-    private isOpen: boolean = false;
+  @state()
+  private isOpen: boolean = false;
 
-    @state()
-    private canSave: boolean = false;
+  @state()
+  private canSave: boolean = false;
 
-    @state()
-    private type: TypeOption[] = ['num', 'str', 'bool', 'expr'];
+  @state()
+  private type: TypeOption[] = ['num', 'str', 'bool', 'expr'];
 
-    @property({ type: Object })
-    var: VarObject = {
-        name: '',
-        value: {type: 'note', value: '', args: []}
-    };
+  @property({ type: Object })
+  var: VarObject = {
+      name: '',
+      value: {type: 'note', value: '', args: []}
+  };
 
     static styles = css`
 
     h2{
-        color: black;
+      color: black;
     }
 
     p {
@@ -39,27 +39,27 @@ export class VarEditElement extends LitElement {
     }
     
     button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: #ddd;
-            transition: background-color 0.2s, color 0.2s;
-            color: black;
-        }
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #ddd;
+      transition: background-color 0.2s, color 0.2s;
+      color: black;
+    }
 
     .menu {
-            border-radius: 8px;
-            border: 1px solid transparent;
-            padding: 0.4em 0.8em;
-            margin: 0.2em 0.4em;
-            font-size: 1em;
-            font-weight: 500;
-            font-family: inherit;
-            background-color: #7da7d9;
-            cursor: pointer;
-            transition: border-color 0.25s;
-            color: white;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      padding: 0.4em 0.8em;
+      margin: 0.2em 0.4em;
+      font-size: 1em;
+      font-weight: 500;
+      font-family: inherit;
+      background-color: #7da7d9;
+      cursor: pointer;
+      transition: border-color 0.25s;
+      color: white;
     }
 
     .save {
@@ -80,7 +80,7 @@ export class VarEditElement extends LitElement {
     }
         
     button.selected {
-        background-color: #7da7d9;
+      background-color: #7da7d9;
     }
 
     input {
@@ -125,11 +125,11 @@ export class VarEditElement extends LitElement {
       valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
     }else if(this.var.value.type==='expr'){
       valueType=html`<cond-edit-element 
-                        .newMode=${false} .args=${this.var.value.args} .exprMode=${true}
-                        .title=${this.var.value.args.length===0 ? 'Click here to create expression. ' : CondText(this.var.value.args[0])}
-                        @click=${(e: Event) => e.stopPropagation()}
-                        @cond-update=${(e: CustomEvent) => this._updateExpr(e.detail.value)}>
-                    </cond-edit-element>`
+        .newMode=${false} .args=${this.var.value.args} .exprMode=${true}
+        .title=${this.var.value.args.length===0 ? 'Click here to create expression. ' : CondText(this.var.value.args[0])}
+        @click=${(e: Event) => e.stopPropagation()}
+        @cond-update=${(e: CustomEvent) => this._updateExpr(e.detail.value)}>
+      </cond-edit-element>`
     }else{
       valueType=html`<input type="text" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
     }
@@ -143,7 +143,7 @@ export class VarEditElement extends LitElement {
             <div>
              ${this.type.map(item=>html`
                 <button class=${item === this.var.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
-                `)}
+              `)}
             </div>
             <h2>Name: </h2>${this.original.name==='' ? 
               html`<input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Add variable name..." />`
@@ -198,7 +198,7 @@ export class VarEditElement extends LitElement {
     this._saveBut();
   }
 
-  private _saveBut() {//TODO clean code
+  private _saveBut() {
     if (this.var.name && this.var.value.type!='note' && 
       (this.var.value.value || (this.var.value.type==='expr' && this.var.value.args.length!==0) )&&
       (this.var.value.type!='bool' || this.var.value.value==='true' || this.var.value.value==='false'))this.canSave=true;
@@ -207,9 +207,9 @@ export class VarEditElement extends LitElement {
 
     private _saveChanges() {
       this.dispatchEvent(new CustomEvent('var-saved', {
-          detail: { value: this.var },
-          bubbles: true,
-          composed: true
+        detail: { value: this.var },
+        bubbles: true,
+        composed: true
       }));
       this._openCloseModal()
     }

@@ -13,7 +13,7 @@ export class NewValElement extends LitElement {
     private canSave: boolean = false;
 
     @state()
-    private type: TypeOption[] = ['num', 'str', 'bool', 'expr'];
+    private type: TypeOption[] = ['num', 'str', 'bool'];
 
     @property({ type: Object })
     value: Argument = {
@@ -25,18 +25,18 @@ export class NewValElement extends LitElement {
     static styles = css`
 
     h2{
-        color: black;
+      color: black;
     }
     
     button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: rgb(168, 168, 168);
-            transition: background-color 0.2s, color 0.2s;
-            color: black;
-        }
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: rgb(168, 168, 168);
+      transition: background-color 0.2s, color 0.2s;
+      color: black;
+    }
         
     button.selected {
       background-color: #7da7d9;
@@ -108,15 +108,15 @@ export class NewValElement extends LitElement {
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             <h2>Type of variable: </h2>
             <div>
-             ${this.type.map(item=>html`
+              ${this.type.map(item=>html`
                 <button class=${item === this.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
                 `)}
             </div>
             <h2>Value: </h2>
-             ${valueType}
+              ${valueType}
             <div>
-            <button class="save" ?disabled=${!this.canSave} @click=${this._addNew}>Save</button>
-            <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
+              <button class="save" ?disabled=${!this.canSave} @click=${this._addNew}>Save</button>
+              <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
             </div>
           </div>
         </div>
@@ -125,14 +125,13 @@ export class NewValElement extends LitElement {
   }
   private _openCloseModal() {
     if(!this.isOpen){
-        this.value.type='note'
-        this.value.value=''
+      this.value.type='note';
+      this.value.value='';
     }
     this.isOpen = !this.isOpen;
-
   }
 
-  private _handleValueInput(event: InputEvent) {//TODO clean code 3rd phase
+  private _handleValueInput(event: InputEvent) {
     const target = event.target as HTMLInputElement;
     this.value.value = target.value;
     this._saveBut();
@@ -144,15 +143,15 @@ export class NewValElement extends LitElement {
   }
 
   private _selectTypeInput(option: TypeOption) {
-    this.value = { ...this.value, type: option };
+    this.value = { ...this.value, type: option, value: ''};
     this._saveBut();
   }
 
   private _addNew() {
     this.dispatchEvent(new CustomEvent('val-saved', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true
+      detail: { value: this.value },
+      bubbles: true,
+      composed: true
     }));
     this._openCloseModal()
   }
@@ -161,7 +160,6 @@ export class NewValElement extends LitElement {
     if(this.value.value && (this.value.type!='bool' || this.value.value==='true' || this.value.value==='false'))this.canSave=true;
     else this.canSave=false
   }
-
 }
 
 declare global {

@@ -8,6 +8,8 @@ import './block-menu-element.ts'
 import './change-val-element.ts'
 import '../condition/cond-edit-element.ts'
 import '../icons/block-icon.ts'
+import '../icons/drag-drop-icon.ts'
+import '../icons/detail-end-icon.ts'
 
 @customElement('block-element')
 export class BlockElement extends LitElement {
@@ -31,8 +33,8 @@ export class BlockElement extends LitElement {
     endIndex: boolean=false;
 
     @consume({ context: detailGeneralExport, subscribe: true})
-      @property({attribute: false})
-      detailGeneral: boolean=false;
+    @property({attribute: false})
+    detailGeneral: boolean=false;
 
     private longPressTimeout: any = null;
 
@@ -67,8 +69,8 @@ export class BlockElement extends LitElement {
     }
 
     .header .right {
-        display: flex;
-  justify-content: flex-end;
+      display: flex;
+      justify-content: flex-end;
     }
 
     .header .left {
@@ -142,61 +144,29 @@ export class BlockElement extends LitElement {
     .cycle-body { background-color: #d4f1c5; }
   `;
   render() {
-    if(!this.detailGeneral){
-      this.detail=false;
-    }
+    this._endDetail();
     let header: TemplateResult=html``;
     let hide: TemplateResult=html``;
     let body: TemplateResult=html``;
-    const original: ProgramBlock=structuredClone(this.block)
+
     if(this.block.block.argTypes.length===0){
       header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}`;
     }
-    else{
-      if(this.block.arguments.length!=this.block.block.argTypes.length){
-        this.block.arguments.forEach((item)=>{
-          header=html`${header}<div class="condition">${item.value==='' ? CondText(item):item.value}</div>`
-        })
-        for(let i=this.block.arguments.length;i<this.block.block.argTypes.length;i++){
-          header=html`${header}<div class="${i===this.block.arguments.length ? 'focus-arg':'condition'}">Add argument: ${this.block.block.argTypes[i]}</div>`
-        }
-        header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name} ${header}`
-      }else if(this.block.arguments.length===1){
-        if(this.block.block.argTypes[0]==='cond'){
-          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<cond-edit-element 
-            .newMode=${false} .args=${[this.block.arguments[0]]} .selectedBlock=${this.block.arguments[0]} .title=${CondText(this.block.arguments[0])}
-            @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
-            @cond-clean=${() => this._changeBlock(original.arguments[0])}></cond-edit-element>`
-        }else{
-          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<change-val-element 
-            .val=${this.block.arguments[0]} .type=${this.block.block.argTypes[0]}
-            @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}></change-val-element>`
-        }
-      }else{
-        if(this.args){
-          this.block.arguments.forEach((item)=>{
-            header=html`${header}<change-val-element 
-              .val=${item} .type=${this.block.block.argTypes[0]}
-              @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value)}>`
-          })
-          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<div>${header}</div><div class="condition" @click=${this._showArguments}>Hide</div>`
-        }else{
-          header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<span class="condition" @click=${this._showArguments}>Arguments...</span>`
-        }
-      }
-    }
+    else header=this._drawHeader();
+      
     if(!this.block.block.simple){
       if(this.block.hide){
-        hide=html`<button class="hide" @click=${this._hideBlock}>▼ Show block contend</button>`
+        hide=html`<button class="hide" @click=${()=>this._changeBlock()}>▼ Show block contend</button>`
       }
       else{
-        hide=html`<button class="hide" @click=${this._hideBlock}>▲ Hide block contend</button>`
+        hide=html`<button class="hide" @click=${()=>this._changeBlock()}>▲ Hide block contend</button>`
       }
       body=html`
       <div class="content ${this.block.block.type==='branch'? 'branch-body':'cycle-body'}">
-      <slot></slot>
-    </div>`
+        <slot></slot>
+      </div>`
     }
+    
     return html`
     ${this.menu === true ? html`
       <block-menu-element class="menu" 
@@ -206,47 +176,79 @@ export class BlockElement extends LitElement {
       ` : ''}
       <div class="${this.menu===true ? 'focus-block' : ''}">
       <div class="${this.detail ? 'detail' : ''}">
-      <div class="header ${this.block.block.type}" 
-          @pointerdown=${() => this._handleLongPress()}
-          @pointerup=${() => this._cancelLongPress()}>
-        ${!this.detailGeneral ? html`<button class="left ${this.block.block.type}" draggable="true"
-          @pointerdown=${(e: PointerEvent) => e.stopPropagation()} 
-          @pointerup=${(e: PointerEvent) => e.stopPropagation()}
-          @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}
-          @click=${() => this._showZone()}>
-           <svg width="16" height="16" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 1L3 0L4 1" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <line x1="0" y1="2" x2="6" y2="2" stroke="white" stroke-width="0.5" stroke-linecap="round"/>
-              <line x1="0" y1="4" x2="6" y2="4" stroke="white" stroke-width="0.5" stroke-linecap="round"/>
-              <path d="M2 5L3 6L4 5" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>`:''}
-        <div class="center">${header}</div> ${this.detail ? html`<div class="right">
-        <button class="${this.block.block.type}" @click=${()=>this._detailBlock()}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="4 14 9 14 9 19"></polyline>
-          <polyline points="14 4 14 9 19 9"></polyline>
-          <polyline points="14 19 14 14 19 14"></polyline>
-          <polyline points="4 9 9 9 9 4"></polyline>
-          </svg>
-        </button></div>`:''}
-      </div>
+        <div class="header ${this.block.block.type}" @pointerdown=${() => this._handleLongPress()} @pointerup=${() => this._cancelLongPress()}>
+          ${!this.detailGeneral ? html`<button class="left ${this.block.block.type}" draggable="true"
+            @pointerdown=${(e: PointerEvent) => e.stopPropagation()} @pointerup=${(e: PointerEvent) => e.stopPropagation()}
+            @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}
+            @click=${() => this._showZone()}><drag-drop-icon></drag-drop-icon></button>`:''}
+          <div class="center">${header}</div> ${this.detail ? html`<div class="right">
+          <button class="${this.block.block.type}" @click=${()=>this._detailBlock()}><detail-end-icon></detail-end-icon> </button></div>`:''}
+        </div>
       ${hide}
       ${body}
     `;
   }
 
-  private _hideBlock(){
-    this.block.hide=!this.block.hide;
-    this.dispatchEvent(new CustomEvent('change-block', {
-        detail: { value: this.block },
-        bubbles: true,
-        composed: true
-    }));
+  private _endDetail(){
+    if(!this.detailGeneral){
+      this.detail=false;
+    }
   }
 
-  private _changeBlock(updated: Argument){
-    this.block.arguments[0]=updated;
+  private _drawHeader(): TemplateResult{
+    if(this.block.arguments.length!=this.block.block.argTypes.length) return this._notCompleteArgs();
+    else return this._completeArgs();
+  }
+
+  private _notCompleteArgs(): TemplateResult{
+    let header: TemplateResult=html``;
+    this.block.arguments.forEach((item)=>{
+      header=html`${header}<div class="condition">${item.value==='' ? CondText(item):item.value}</div>`
+    })
+
+    for(let i=this.block.arguments.length;i<this.block.block.argTypes.length;i++){
+      header=html`${header}<div class="${i===this.block.arguments.length ? 'focus-arg':'condition'}">
+        Add argument: ${this.block.block.argTypes[i]==='note' ? 'all' : this.block.block.argTypes[i]}</div>`
+    }
+
+    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<div> ${header}</div>`
+    return header;
+  }
+
+  private _completeArgs(): TemplateResult{
+    const original: ProgramBlock=structuredClone(this.block);
+    let header: TemplateResult=html``;
+
+    this.block.arguments.forEach((item)=>{
+      let argType=this.block.block.argTypes[this.block.arguments.indexOf(item)];
+      let index=this.block.arguments.indexOf(item)
+
+      if(argType==='cond'){
+        header=html`${header}<cond-edit-element 
+          .newMode=${false} .args=${[item]} .selectedBlock=${item} .title=${CondText(item)}
+          @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value, index)}
+          @cond-clean=${() => this._changeBlock(original.arguments[index], index)}></cond-edit-element>`
+      }else{
+        header=html`${header}<change-val-element 
+          .val=${item} .type=${argType}
+          @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value, index)}></change-val-element>`
+      }
+    });
+
+    if(this.block.arguments.length>1){
+      if(this.args) header=html`<div>${header}<div class="condition" @click=${this._showArguments}>Hide</div></div>`
+      else header=html`<span class="condition" @click=${this._showArguments}>Arguments...</span>`
+    }
+
+    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name} ${header}`
+    return header;
+  }
+
+  private _changeBlock(updated: Argument|null=null, index: number=-1){
+    if(updated && index!=-1) this.block.arguments[index]=updated;
+    else{
+      this.block.hide=!this.block.hide;
+    }
     this.dispatchEvent(new CustomEvent('change-block', {
         detail: { value: this.block },
         bubbles: true,
@@ -263,14 +265,14 @@ export class BlockElement extends LitElement {
     this.dispatchEvent(new CustomEvent('change-detail', {
       bubbles: true,
       composed: true
-  })); 
+    })); 
   }
 
   private _showZone(){
     this.dispatchEvent(new CustomEvent('show-zone', {
       bubbles: true,
       composed: true
-  })); 
+    })); 
   }
 
   private _handleLongPress() {

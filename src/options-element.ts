@@ -96,8 +96,8 @@ export class OptionsElement extends LitElement {
             });
         }else if(this.paramType==='variable'){
             this.variables.forEach((item)=>{
-                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.value}</button>`);
-            });
+                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`);
+            });//TODO clean code
         }else{
             let varList: VarObject[]=[];
             if(this.paramType!='note'){
@@ -264,7 +264,7 @@ export class OptionsElement extends LitElement {
         }
         if(block){
             let arg: Argument=param.value
-            if(param.value.type!='cond'){
+            if(['num', 'str', 'bool', 'expr'].includes(param.value.type)){
                 arg = {type: 'variable', value:param.name, args: []};
             }
             this._addParams(block, arg)

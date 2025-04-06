@@ -4,6 +4,7 @@ import { Argument, VarObject} from '../general/interfaces'
 import { consume } from '@lit/context';
 import { TypeOption } from '../general/types';
 import { varListExport } from '../general/context';
+import { CondText } from '../general/cond-text';
 
 @customElement('change-val-element')
 export class ChangeValElement extends LitElement {
@@ -83,23 +84,38 @@ export class ChangeValElement extends LitElement {
   render() {
     let valueType: TemplateResult=html``
     let varBlock: TemplateResult=html`<h2>Use variable</h2>`
-    let filteredList: VarObject[]=this.varList
+    let filteredList: VarObject[]=[];
+
     if(this.type==='bool'){
       valueType=html`
-      <button class=${'true' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
-      <button class=${'false' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+        <button class=${'true' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
+        <button class=${'false' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
     }else if(this.type==='num'){
-      valueType=html`<input type="number" .value=${this.val.type === 'variable' ? '' : this.val.value} @input=${this._handleValueInput} inputmode="decimal" step="any" placeholder="Enter a number">`
+      valueType=html`<input type="number" .value=${this.val.type === 'variable' ? '' : this.val.value}
+       @input=${this._handleValueInput} inputmode="decimal" step="any" placeholder="Enter a number">`
     }else{
       valueType=html`<input type="text" .value=${this.val.type === 'variable' ? '' : this.val.value} @input=${this._handleValueInput} placeholder="Add value" />`
     }
-    if(this.type!='variable'){
-      filteredList=filteredList.filter(item=>item.value.type===this.type)
+
+    if(this.type!='variable' && this.type!=='note'){
+      this.varList.forEach(item => {
+        if(item.value.type===this.type)filteredList.push(item);
+        else if(item.value.type==='expr'){
+          if(['+','-','*','/'].includes(item.value.args[0].type)){
+            if(this.type==='num')filteredList.push(item);
+          }else{
+            if(this.type==='bool')filteredList.push(item);
+          }
+      }})
+    }else{
+      filteredList=this.varList;
     }
+
     filteredList.forEach((item)=>{
         varBlock=html`${varBlock}
-        <button @click=${() => this._saveChanges(item.name)}>${item.name}: ${item.value.value}</button>`
+        <button @click=${() => this._saveChanges(item.name)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`
     })
+
     return html`
       <button class="back" @click=${this._openCloseModal}>${this.val.value}</button>
 
@@ -117,6 +133,7 @@ export class ChangeValElement extends LitElement {
       ` : ''}
     `;
   }
+
   private _openCloseModal() {
     this.isOpen = !this.isOpen;
   }
@@ -130,24 +147,21 @@ export class ChangeValElement extends LitElement {
     this.val = {...this.val, value: input }
   }
 
-
-    private _saveChanges(item: string='') {
-      if(item){
-        this.val.type='variable';
-        this.val.value=item;
-      }
-      else{
-        this.val.type=this.type
-      }
-        this.dispatchEvent(new CustomEvent('val-changed', {
-            detail: { value: this.val },
-            bubbles: true,
-            composed: true
-        }));
-        this._openCloseModal()
-
+  private _saveChanges(item: string='') {
+    if(item){
+      this.val.type='variable';
+      this.val.value=item;
     }
-
+    else{
+      this.val.type=this.type
+    }
+    this.dispatchEvent(new CustomEvent('val-changed', {
+      detail: { value: this.val },
+      bubbles: true,
+      composed: true
+    }));
+    this._openCloseModal()
+  }
 }
 
 declare global {
