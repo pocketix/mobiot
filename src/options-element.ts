@@ -12,14 +12,14 @@ export class OptionsElement extends LitElement {
 
     @state()
     private blocks: Block[] = [
-        {name: "Repeat", simple: false, id: "repeat", argTypes: ['num'], type: 'cycle'},
+        {name: "Repeat", simple: false, id: "repeat", argTypes: ['number'], type: 'cycle'},
         {name: "While ... do ...", simple: false, id: "while", argTypes: ['cond'], type: 'cycle'},
-        {name: "Send notification", simple: true, id: "alert", argTypes: ['str'], type: 'alert'},
+        {name: "Send notification", simple: true, id: "alert", argTypes: ['string'], type: 'alert'},
         {name: "If ... do ...", simple: false, id: "if", argTypes: ['cond'], type: 'branch'},
         {name: "Else do ...", simple: false, id: "else", argTypes: [], type: 'branch'},
         {name: "Else If ... do ...", simple: false, id: "elseif", argTypes: ['cond'], type: 'branch'},
-        {name: "Switch according ...", simple: false, id: "switch", argTypes: ['num'], type: 'branch'},
-        {name: "Case", simple: false, id: "case", argTypes: ['num'], type: 'branch'},
+        {name: "Switch according ...", simple: false, id: "switch", argTypes: ['number'], type: 'branch'},
+        {name: "Case", simple: false, id: "case", argTypes: ['number'], type: 'branch'},
         {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'},
         {name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'note'], type: 'set_var'},
         {name: "LED 1.setLedColor", simple: true, id: "str_opt", argTypes: ['bool'], type: 'dev'},
@@ -94,6 +94,12 @@ export class OptionsElement extends LitElement {
             this.conditions.forEach((condition)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value)}</button>`);
             });
+            list.push(html`<cond-edit-element "
+                .newMode=${false}
+                .title=${'Click here to create expression. '}
+                @click=${(e: Event) => e.stopPropagation()}
+                @cond-update=${(e: CustomEvent) => this._addParamsVar({name: '', value: e.detail.value})}>
+              </cond-edit-element>`)
         }else if(this.paramType==='variable'){
             this.variables.forEach((item)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`);
@@ -105,7 +111,7 @@ export class OptionsElement extends LitElement {
                     if(item.value.type===this.paramType)varList.push(item);
                     else if(item.value.type==='expr'){
                         if(['+','-','*','/'].includes(item.value.args[0].type)){
-                            if(this.paramType==='num')varList.push(item);
+                            if(this.paramType==='number')varList.push(item);
                         }else{
                             if(this.paramType==='bool')varList.push(item);
                         }
@@ -121,7 +127,7 @@ export class OptionsElement extends LitElement {
             if(this.paramType==='bool'){
                 list.push(html`<li><button @click=${() => this._addParamsVal('true')}>true</button></li>`);
                 list.push(html`<li><button @click=${() => this._addParamsVal('false')}>false</button></li>`);
-            }else if(this.paramType==='num'){
+            }else if(this.paramType==='number'){
                 let paramInput: string='';
                 list.push(html`
                     <li>

@@ -19,7 +19,7 @@ export class VarEditElement extends LitElement {
   private canSave: boolean = false;
 
   @state()
-  private type: TypeOption[] = ['num', 'str', 'bool', 'expr'];
+  private type: TypeOption[] = ['number', 'string', 'bool', 'expr'];
 
   @property({ type: Object })
   var: VarObject = {
@@ -121,7 +121,7 @@ export class VarEditElement extends LitElement {
       valueType=html`
       <button class=${'true' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
       <button class=${'false' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
-    }else if(this.var.value.type==='num'){
+    }else if(this.var.value.type==='number'){
       valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
     }else if(this.var.value.type==='expr'){
       valueType=html`<cond-edit-element 

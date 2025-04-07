@@ -32,21 +32,24 @@ export class MyElement extends LitElement {
     @property()
     programStartIndex: number=-1;
 
+    @property()
+    condOpen: boolean=false;
+
     @provide({ context: condListExport })
     @property({attribute: false})
   conditions: VarObject[] = [
-    {name: 'cond_1', value: {type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}
-      ,{type: 'num', value: '8', args: []}]}},//x+5==8
+    {name: 'cond_1', value: {type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}
+      ,{type: 'number', value: '8', args: []}]}},//x+5==8
     {name: 'cond_2', value: {type: '!=', value:'', args: [{type: '*', value: '', args: [{type: 'variable', value: 'a', args: []}, {type: 'variable', value: 'b', args: []}]}
-      ,{type: 'num', value: '8', args: []}]}},//a*b!=8
+      ,{type: 'number', value: '8', args: []}]}},//a*b!=8
     {name: 'cond_3', value: {type: 'AND', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'variable', value: 'y', args: []}]}},//x AND y
   ];
 
   @property()
   program: ProgramBlock[]=[
     {block: {name: "If ...do ...", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
-      arguments: [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'num', value: '5', args: []}]}], hide: false},
-    {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['str']}, 
+      arguments: [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}], hide: false},
+    {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['string']}, 
       arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
     {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
     {block: {name: "Else do ...", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
@@ -55,11 +58,11 @@ export class MyElement extends LitElement {
   @provide({ context: varListExport })
   @property({attribute: false})
     varList: VarObject[] = [
-            { name: 'name', value: {type: 'str',value: 'John', args: []}},
-            { name: 'age', value: {type: 'num',value: '40', args: []}},
+            { name: 'name', value: {type: 'string',value: 'John', args: []}},
+            { name: 'age', value: {type: 'number',value: '40', args: []}},
             { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
             { name: 'fee', value: {type: 'expr',value: '', args: [{type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'a', args: []},
-             {type: 'num', value: 'b', args: []}]},{type: 'num', value: '6', args: []}]}]}}
+             {type: 'number', value: 'b', args: []}]},{type: 'number', value: '6', args: []}]}]}}
             ];
 
   render() {//TODO clean code
@@ -106,10 +109,11 @@ export class MyElement extends LitElement {
           ${editors}
         </div>
         </div>
-        <options-element class="options"
+        <options-element class="options" style="z-index: ${this.condOpen ? 100 : 10};"
           .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex}
           @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
-          @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}></options-element>
+          @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}
+          @cond-open=${(e: CustomEvent) => this._condOpen(e.detail.value)}></options-element>
       </div>
     `
   }
@@ -120,6 +124,10 @@ private _varList(newVar: VarObject[]) {
 
 private _updateView(newView: View) {
   this.view = newView ;
+}
+
+private _condOpen(condOpen: boolean) {
+  this.condOpen = condOpen ;
 }
 
 private _updateProgram(updatedProgram: ProgramBlock[]) {

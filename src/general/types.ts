@@ -1,4 +1,4 @@
-export type TypeOption = 'num' | 'str' | 'bool' | 'expr'|'cond'|'note'|'variable'|
+export type TypeOption = 'number' | 'string' | 'bool' | 'expr'|'cond'|'note'|'variable'|
                         'AND'|'OR'|'NOT'|'=='|'!='|'>'|'<'|'>='|'<='|'+'|'-'|'*'|'/';
 
 export type View = 'Graphical' | 'Text' | 'Both' ;

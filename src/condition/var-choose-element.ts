@@ -64,7 +64,7 @@ export class VarChooseElement extends LitElement {
 
   render() {
     const listCode: TemplateResult[]=[];
-    let filteredList=this.varList.filter(item=>item.value.type!=='str' && item.value.type!=='expr')//TODO consult this decesion
+    let filteredList=this.varList.filter(item=>item.value.type!=='string' && item.value.type!=='expr')//TODO consult this decesion
     filteredList.forEach((item)=>{
       listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button>`);
     });

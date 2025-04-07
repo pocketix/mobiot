@@ -90,7 +90,7 @@ export class ChangeValElement extends LitElement {
       valueType=html`
         <button class=${'true' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
         <button class=${'false' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
-    }else if(this.type==='num'){
+    }else if(this.type==='number'){
       valueType=html`<input type="number" .value=${this.val.type === 'variable' ? '' : this.val.value}
        @input=${this._handleValueInput} inputmode="decimal" step="any" placeholder="Enter a number">`
     }else{
@@ -102,7 +102,7 @@ export class ChangeValElement extends LitElement {
         if(item.value.type===this.type)filteredList.push(item);
         else if(item.value.type==='expr'){
           if(['+','-','*','/'].includes(item.value.args[0].type)){
-            if(this.type==='num')filteredList.push(item);
+            if(this.type==='number')filteredList.push(item);
           }else{
             if(this.type==='bool')filteredList.push(item);
           }

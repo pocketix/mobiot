@@ -233,6 +233,11 @@ export class CondEditElement extends LitElement {
 
   private _openCloseModal() {
     this.isOpen = !this.isOpen;
+    this.dispatchEvent(new CustomEvent('cond-open', {
+      detail: { value: this.isOpen },
+      bubbles: true,
+      composed: true
+    }));
     this._saveCheck();
   }
 

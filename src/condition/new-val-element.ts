@@ -13,7 +13,7 @@ export class NewValElement extends LitElement {
     private canSave: boolean = false;
 
     @state()
-    private type: TypeOption[] = ['num', 'str', 'bool'];
+    private type: TypeOption[] = ['number', 'string', 'bool'];
 
     @property({ type: Object })
     value: Argument = {
@@ -95,7 +95,7 @@ export class NewValElement extends LitElement {
       valueType=html`
       <button class=${'true' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
       <button class=${'false' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
-    }else if(this.value.type==='num'){
+    }else if(this.value.type==='number'){
       valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
     }else{
       valueType=html`<input type="text" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
