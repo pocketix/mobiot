@@ -2,6 +2,7 @@ import { LitElement, css, html} from 'lit'
 import { customElement, property, state} from 'lit/decorators.js'
 import { VarObject} from './general/interfaces.ts'
 import { View } from './general/types.ts';
+import { ExportText } from './general/export.ts';
 import './variable/var-list-element.ts';
 import './options-element.ts';
 import './condition/cond-edit-element.ts'
@@ -83,7 +84,8 @@ export class MenuElement extends LitElement {
       }
 
     private _exportText() {
-        const blob = new Blob([this.programText], { type: "application/json" });
+        const exportText=ExportText(this.programText, this.varList);
+        const blob = new Blob([exportText], { type: "application/json" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = "JSONprogram.json";

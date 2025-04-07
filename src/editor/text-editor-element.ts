@@ -33,6 +33,7 @@ export class TextEditorElement extends LitElement {
     this.program.forEach((item)=>{
       let tabs: string=''
       if(item.block.id==="end"){
+        this.value=this._removeComma(this.value);
         this.value = this.value + this.stack.pop();
         this.deepCounter-=2
       }else{
@@ -40,14 +41,19 @@ export class TextEditorElement extends LitElement {
           tabs=tabs+'  ';
         }
         this.value=this.value + tabs + '{\n'
-        this.value=this.value + tabs + '  "id": "' + item.block.id + '",\n'
-        let blockEnd=this._addArgs(item.arguments, tabs + '  ')
-        blockEnd=blockEnd + tabs + '}\n'
+        this.value=this.value + tabs + '  "id": "' + item.block.id + '",\n';
+        let blockEnd=this._addArgs(item.arguments, tabs + '  ', 'arguments');
+        blockEnd=this._removeComma(blockEnd);
+        blockEnd=blockEnd + tabs + '},\n';
 
 
         if(!item.block.simple){
-          this.value=this.value + tabs + '  "block": [\n'
-          blockEnd=tabs + '  ],\n' + blockEnd
+          if(this.program.indexOf(item)===this.program.length-1 || this.program[this.program.indexOf(item)+1].block.id==='end'){
+            this.value=this.value + tabs + '  "block": [],\n'
+          }else{
+            this.value=this.value + tabs + '  "block": [\n';
+            blockEnd=tabs + '  ],\n' + blockEnd
+          }
           this.stack.push(blockEnd)
           this.deepCounter+=2
         }
@@ -58,8 +64,10 @@ export class TextEditorElement extends LitElement {
     }
   )
     while(this.stack.length>=1){
+      this.value=this._removeComma(this.value);
       this.value = this.value + this.stack.pop();
     }
+    this.value=this._removeComma(this.value);
     this.value=this.value + ']'
     this.deepCounter=1
     return html`
@@ -67,15 +75,14 @@ export class TextEditorElement extends LitElement {
         type="text" 
         .value=${this.value} 
         @input=${this._handleInput} 
-        placeholder="Napiš něco..."
       />
     `;
   }
 
-  private _addArgs(args: Argument[], tabs: string): string{
+  private _addArgs(args: Argument[], tabs: string, title: string='value'): string{
     let blockEnd: string=''
     if(args.length!=0){
-      blockEnd=tabs + '"arguments": [\n';//TODO add commas, spaces, 4th phase
+      blockEnd=tabs + '  "' + title + '": [\n';//TODO import export
       args.forEach((argument)=>{
         blockEnd=blockEnd + tabs + '  {\n';
         blockEnd=blockEnd + tabs + '    "type": "' + argument.type + '",\n'
@@ -84,11 +91,20 @@ export class TextEditorElement extends LitElement {
         }else{
           blockEnd=blockEnd + this._addArgs(argument.args, tabs + '  ')
         }
-        blockEnd=blockEnd + tabs + '  }\n';
+        blockEnd=this._removeComma(blockEnd);
+        blockEnd=blockEnd + tabs + '  },\n';
       })
-      blockEnd=blockEnd + tabs + ']\n';
+      blockEnd=this._removeComma(blockEnd);
+      blockEnd=blockEnd + tabs + '],\n';
     }
     return blockEnd
+  }
+
+  private _removeComma(text: string): string {
+    if (text.length >= 2 && text[text.length - 2] === ',') {
+      return text.slice(0, text.length - 2) + text[text.length - 1];
+    }
+    return text;
   }
 
   private _handleInput(event: InputEvent) {
