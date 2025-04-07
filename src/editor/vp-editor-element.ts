@@ -256,6 +256,11 @@ export class VPEditorElement extends LitElement {
       if (isDroppedInZone) {
         const toIndex = Number(zone?.getAttribute('data-index'));
         if(toIndex!==null){
+          if(this.program[fromIndexStart].block.id==='if'){
+            fromIndexEnd=this._ifElseBlock(fromIndexEnd);
+            const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ");
+            if (!confirmMove) return;
+          }
           this._changeProgram(fromIndexStart, fromIndexEnd, toIndex);
         }
       }
@@ -279,6 +284,11 @@ export class VPEditorElement extends LitElement {
 
     const toIndex = Number((event.currentTarget as HTMLElement)?.getAttribute('data-index'));
     if(toIndex!==null && this.dragItem!==null && this.dragEndIndex!==null){
+      if(this.program[this.program.indexOf(this.dragItem)].block.id==='if'){
+        this.dragEndIndex=this._ifElseBlock(this.dragEndIndex);
+        const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ");
+        if (!confirmMove) return;
+      }
       this._changeProgram(this.program.indexOf(this.dragItem), this.dragEndIndex, toIndex);
     }
     this._saveProgram();
@@ -300,7 +310,11 @@ export class VPEditorElement extends LitElement {
   }
 
   private _changeProgram(fromIndexStart: number, fromIndexEnd: number, toIndex: number) {
-    if (fromIndexStart < 0 || fromIndexEnd > this.program.length || toIndex < 0 || toIndex > this.program.length || fromIndexStart === toIndex) return;
+    if (fromIndexStart < 0 || fromIndexEnd > this.program.length || toIndex < 0 || toIndex > this.program.length || fromIndexStart === toIndex || 
+      (fromIndexEnd>=toIndex && fromIndexStart<=toIndex)){
+      window.alert("Invalid drag and drop action. ");
+      return;
+    }
 
     if(fromIndexEnd===this.program.length){
       this.program.push({ block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false });
@@ -315,7 +329,7 @@ export class VPEditorElement extends LitElement {
 
   private _zoneFilter(block: ProgramBlock|null=null, endIndex: number=-1, inBlock: boolean=false): boolean{
     if(block===this.dragItem)return false;
-    
+
     if(this.elseIfZone || this.elseZone){
       if(block===null ||endIndex===-1)return false;
       if(this.elseZone){
@@ -329,6 +343,9 @@ export class VPEditorElement extends LitElement {
         if(block.block.id==='if'|| block.block.id==='elseif')return true;
         else return false;
       }
+    }else{
+      if((block?.block.id==='if' || block?.block.id==='elseif') && !inBlock && 
+      (this.program[endIndex+1].block.id!=='elseif' || this.program[endIndex+1].block.id!=='else'))return false;
     }
     if(this.caseZone){
       if(block===null)return false;
