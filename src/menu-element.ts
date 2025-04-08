@@ -78,7 +78,7 @@ export class MenuElement extends LitElement {
                 composed: true
             }));
           } catch (error) {
-            console.error("Error in JSON import:", error);
+            window.alert("Import program cannot be used. There is some mistake in imported JSON. ");
           }
         }
       }

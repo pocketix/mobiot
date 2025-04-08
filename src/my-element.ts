@@ -4,6 +4,10 @@ import { VarObject, ProgramBlock } from './general/interfaces.ts'
 import { View } from './general/types.ts';
 import { varListExport, condListExport, programIndexExport, detailGeneralExport } from './general/context.ts';
 import { provide } from '@lit/context';
+import { vpToText } from './convert/vp-to-text.ts';
+import { TextToVp } from './convert/text-to-vp.ts';
+import { UpdateVarList } from './convert/update-var-list.ts';
+import { TextSyntax } from './convert/text-syntax.ts';
 import './editor/vp-editor-element.ts';
 import './editor/text-editor-element.ts';
 import './variable/var-list-element.ts';
@@ -15,8 +19,8 @@ import './menu-element.ts'
 @customElement('my-element')
 export class MyElement extends LitElement {
 
-    @property()
-    programText: string=''
+    // @property()
+    // programText: string=''
 
     @provide({ context: programIndexExport})
     @property({attribute: false})
@@ -78,7 +82,7 @@ export class MyElement extends LitElement {
             @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}
             @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>
           <text-editor-element class="editor" 
-            .program=${this.program} @value-changed=${(e: CustomEvent) => this._textChange(e.detail.value)}></text-editor-element>`
+            .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {}}></text-editor-element>`
     }
     else if(this.view==='Graphical'){
       editors=html`
@@ -92,13 +96,13 @@ export class MyElement extends LitElement {
           @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>`
     }else{
       editors=html`
-        <text-editor-element class="editor" .program=${this.program} @value-changed=${(e: CustomEvent) => this._textChange(e.detail.value)}></text-editor-element>`
+        <text-editor-element class="editor" .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {}}></text-editor-element>`
     }
     return html`
       <div class="container">
         <div class="body">
         <menu-element class="menu"
-          .programText=${this.programText} 
+          .programText=${vpToText(this.program)} 
           @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
           .varList=${this.varList}
           @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
@@ -126,9 +130,9 @@ private _updateView(newView: View) {
   this.view = newView ;
 }
 
-private _textChange(newText: string) {
-  this.programText=newText;
-}
+// private _textChange(newText: string) {
+//   this.programText=newText;
+// }
 
 private _condOpen(condOpen: boolean) {
   this.condOpen = condOpen ;
@@ -154,7 +158,17 @@ private _changeDetail(){
 }
 
 private _saveText(newProgram: string) {
-  this.programText=newProgram ;
+  const result = TextSyntax(newProgram);
+  if(result.program){
+    if('header' in result.program){
+      this.varList=UpdateVarList(result.program.header);
+    }
+    if('block' in result.program){
+      this.program = TextToVp(result.program.block);
+    }
+  }else{
+    window.alert("Import program cannot be used. There is some mistake in imported JSON");
+  }
 }
 
 private _condList(newCond: VarObject[]){
@@ -196,7 +210,7 @@ private _deleteBlock(block: ProgramBlock){
 
       this.program = [...this.program.slice(0, index), ...this.program.slice(endIndex)];
     }
-  }//TODO syntax control 5th phase
+  }
 }
 
   static styles = css`
