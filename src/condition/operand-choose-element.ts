@@ -16,6 +16,7 @@ export class OperandChooseElement extends LitElement {
 
     @state()
     private selected: string='Compare';
+    
     static styles = css`
 
     h2{

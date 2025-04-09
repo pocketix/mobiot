@@ -82,7 +82,7 @@ export class MyElement extends LitElement {
             @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}
             @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>
           <text-editor-element class="editor" 
-            .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {}}></text-editor-element>`
+            .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {this._updateProgram(e.detail.value)}}></text-editor-element>`
     }
     else if(this.view==='Graphical'){
       editors=html`
@@ -96,7 +96,7 @@ export class MyElement extends LitElement {
           @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>`
     }else{
       editors=html`
-        <text-editor-element class="editor" .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {}}></text-editor-element>`
+        <text-editor-element class="editor" .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {this._updateProgram(e.detail.value)}}></text-editor-element>`
     }
     return html`
       <div class="container">
@@ -129,10 +129,6 @@ private _varList(newVar: VarObject[]) {
 private _updateView(newView: View) {
   this.view = newView ;
 }
-
-// private _textChange(newText: string) {
-//   this.programText=newText;
-// }
 
 private _condOpen(condOpen: boolean) {
   this.condOpen = condOpen ;

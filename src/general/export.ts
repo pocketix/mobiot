@@ -1,5 +1,6 @@
 import { VarObject} from '../general/interfaces'
-import { CondText } from './cond-text';
+import { removeComma } from '../convert/remove-comma';
+import { addArgsText } from '../convert/add-args-text';
 
 
 export function ExportText(block: string, varList: VarObject[]): string{
@@ -7,7 +8,8 @@ export function ExportText(block: string, varList: VarObject[]): string{
     varList.forEach((item)=>{
         exportText=exportText + `      "` + item.name + `": {\n        "type": "` + item.value.type + `",\n`;
         if(item.value.value===''){
-            exportText=exportText + `        "value": "` + CondText(item.value.args[0]) + `"\n`;
+            exportText = exportText + addArgsText(item.value.args,'        ' );
+            exportText=removeComma(exportText);
         }else{
             exportText=exportText + `        "value": "` + item.value.value + `"\n`;
         }

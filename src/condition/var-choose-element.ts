@@ -1,12 +1,19 @@
 import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Argument, VarObject} from '../general/interfaces'
+import { Argument, VarObject} from '../general/interfaces';
+import { sensors } from '../general/sensors';
 
 @customElement('var-choose-element')
 export class VarChooseElement extends LitElement {
 
     @state()
     private isOpen: boolean = false;
+
+    @state()
+    private varTypes: string[]=['User', 'Device'];
+
+    @state()
+    private selected: string='User';
 
     @property({ type: Object })
     arg: Argument = {
@@ -60,14 +67,39 @@ export class VarChooseElement extends LitElement {
       display: flex;
       flex-direction: column;
     }
+
+    button.selected {
+      background-color: #7da7d9;
+      margin 0px;
+      color: white;
+    }
+
+    .menu-container {
+      border-radius: 12px;
+      padding: 2px 4px;
+      background: rgb(168, 168, 168);
+    }
+
+    .menu {
+      background: rgb(168, 168, 168);
+      margin 0px;
+    }
   `;
 
   render() {
     const listCode: TemplateResult[]=[];
-    let filteredList=this.varList.filter(item=>item.value.type!=='string' && item.value.type!=='expr')//TODO consult this decesion
-    filteredList.forEach((item)=>{
-      listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button>`);
-    });
+    if(this.selected==='User'){
+      let filteredList=this.varList.filter(item=>item.value.type!=='string' && item.value.type!=='expr')//TODO consult this decesion
+      filteredList.forEach((item)=>{
+        listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button>`);
+      });
+    }
+    else {
+      let filteredList=sensors.filter(item=>item.value.type!=='string')
+      filteredList.forEach((item)=>{
+        listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}</button>`);
+      });
+    }
     
     return html`
       <button @click=${this._openCloseModal}>Add variable</button>
@@ -75,6 +107,11 @@ export class VarChooseElement extends LitElement {
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
+            <div class="menu-container">
+              ${this.varTypes.map(item=>html`
+              <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${item} variable</button>
+              `)}
+            </div>
             ${listCode}
             <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
           </div>
@@ -95,6 +132,10 @@ export class VarChooseElement extends LitElement {
       composed: true
     }));
     this._openCloseModal()
+  }
+
+  private _selectType(cat: string){
+    this.selected=cat
   }
 }
 

@@ -6,6 +6,7 @@ import { CondText } from './general/cond-text';
 import { consume } from '@lit/context';
 import { programIndexExport, detailGeneralExport} from './general/context';
 import { blockTypes } from './general/blocks.ts';
+import { sensors } from './general/sensors.ts';
 import './icons/block-icon.ts';
 
 @customElement('options-element')//TODO clean code 3rd phase
@@ -111,6 +112,10 @@ export class OptionsElement extends LitElement {
             varList.forEach((item)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: 
                     ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`);
+            });
+            let sensorsList: VarObject[]=sensors.filter(item => item.value.type===this.paramType);
+            sensorsList.forEach((item)=>{
+                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}</button>`);
             });
             if(this.paramType==='bool'){
                 list.push(html`<li><button @click=${() => this._addParamsVal('true')}>true</button></li>`);
