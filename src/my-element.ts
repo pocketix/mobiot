@@ -19,9 +19,6 @@ import './menu-element.ts'
 @customElement('my-element')
 export class MyElement extends LitElement {
 
-    // @property()
-    // programText: string=''
-
     @provide({ context: programIndexExport})
     @property({attribute: false})
     programIndex: number = -1;
@@ -42,31 +39,31 @@ export class MyElement extends LitElement {
     @provide({ context: condListExport })
     @property({attribute: false})
   conditions: VarObject[] = [
-    {name: 'cond_1', value: {type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}
-      ,{type: 'number', value: '8', args: []}]}},//x+5==8
-    {name: 'cond_2', value: {type: '!=', value:'', args: [{type: '*', value: '', args: [{type: 'variable', value: 'a', args: []}, {type: 'variable', value: 'b', args: []}]}
-      ,{type: 'number', value: '8', args: []}]}},//a*b!=8
-    {name: 'cond_3', value: {type: 'AND', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'variable', value: 'y', args: []}]}},//x AND y
+    // {name: 'cond_1', value: {type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}
+    //   ,{type: 'number', value: '8', args: []}]}},//x+5==8
+    // {name: 'cond_2', value: {type: '!=', value:'', args: [{type: '*', value: '', args: [{type: 'variable', value: 'a', args: []}, {type: 'variable', value: 'b', args: []}]}
+    //   ,{type: 'number', value: '8', args: []}]}},//a*b!=8
+    // {name: 'cond_3', value: {type: 'AND', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'variable', value: 'y', args: []}]}},//x AND y
   ];
 
   @property()
   program: ProgramBlock[]=[
-    {block: {name: "If ...do ...", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
-      arguments: [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}], hide: false},
-    {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['string']}, 
-      arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
-    {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
-    {block: {name: "Else do ...", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
+    // {block: {name: "If ...do ...", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
+    //   arguments: [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}], hide: false},
+    // {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['string']}, 
+    //   arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
+    // {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
+    // {block: {name: "Else do ...", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
   ];
 
   @provide({ context: varListExport })
   @property({attribute: false})
     varList: VarObject[] = [
-            { name: 'name', value: {type: 'string',value: 'John', args: []}},
-            { name: 'age', value: {type: 'number',value: '40', args: []}},
-            { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
-            { name: 'fee', value: {type: 'expr',value: '', args: [{type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'a', args: []},
-             {type: 'number', value: 'b', args: []}]},{type: 'number', value: '6', args: []}]}]}}
+            // { name: 'name', value: {type: 'string',value: 'John', args: []}},
+            // { name: 'age', value: {type: 'number',value: '40', args: []}},
+            // { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
+            // { name: 'fee', value: {type: 'expr',value: '', args: [{type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'a', args: []},
+            //  {type: 'number', value: 'b', args: []}]},{type: 'number', value: '6', args: []}]}]}}
             ];
 
   render() {//TODO clean code
@@ -198,7 +195,7 @@ private _deleteBlock(block: ProgramBlock){
       this.program=this.program.filter(item=>item!=block)
     }else{
       let endIndex = index + 1;
-      while (endIndex < this.program.length && deepCounter>0) {
+      while (endIndex < this.program.length && (deepCounter>0 || this.program[endIndex].block.id==='elseif' || this.program[endIndex].block.id==='else')) {
         if(!this.program[endIndex].block.simple)deepCounter++;
         if(this.program[endIndex].block.id==='end')deepCounter--;
         endIndex++;

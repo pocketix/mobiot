@@ -163,7 +163,7 @@ export class OptionsElement extends LitElement {
             if (deepCounter===0){
                 if(['if','elseif'].includes(this.program[i].block.id) && this.program[endIndex].block.id==='end'){
                     filterElse=false;
-                    break;
+                    // break;
                 }
                 if(this.program[i].block.id==='case'){
                     return filteredBlocks.filter(item => item.id === 'case'||item.id==='end');
@@ -203,7 +203,7 @@ export class OptionsElement extends LitElement {
                     if(!input.simple){
                         if(this.programStartIndex===-1){
                             this.programStartIndex=this.programIndex;
-                            console.log(this.programStartIndex);
+                            // console.log(this.programStartIndex);
                         }
                         this.program = [
                             ...this.program.slice(0, this.programIndex),
@@ -263,7 +263,7 @@ export class OptionsElement extends LitElement {
         }
         if(block){
             let arg: Argument=param.value
-            if(['num', 'str', 'bool', 'expr'].includes(param.value.type)){
+            if(['number', 'string', 'bool', 'expr'].includes(param.value.type)){
                 arg = {type: 'variable', value:param.name, args: []};
             }
             this._addParams(block, arg)

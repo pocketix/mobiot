@@ -106,6 +106,14 @@ export class BlockMenuElement extends LitElement {
     }
 
     private _deleteBlock() {
+      if(this.block.block.id==='if'){
+        const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be deleted too. ");
+        if (!confirmMove) {
+          this._openCloseModal()
+          return;
+        }
+      }
+
       this.dispatchEvent(new CustomEvent('delete-block', {
         detail: { value: this.block },
         bubbles: true,

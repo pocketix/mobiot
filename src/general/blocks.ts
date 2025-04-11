@@ -11,5 +11,7 @@ export const blockTypes: Block[] = [
     { name: "Case", simple: false, id: "case", argTypes: ['number'], type: 'branch' },
     { name: "End of block", simple: true, id: "end", argTypes: [], type: 'end' },
     { name: "Set Variable", simple: true, id: "setvar", argTypes: ['variable', 'note'], type: 'set_var' },
-    { name: "LED 1.setLedColor", simple: true, id: "str_opt", argTypes: ['bool'], type: 'dev' },
+    { name: "LED1.setLedColor", simple: true, id: "LED1.setLedColor", argTypes: ['bool'], type: 'dev' },
+    { name: "waterGreen1.setWater", simple: true, id: "waterGreen1.setWater", argTypes: [], type: 'dev' },
+    { name: "vacuumCleaner1.cleanRoom", simple: true, id: "vacuumCleaner1.cleanRoom", argTypes: [], type: 'dev' }
 ];
