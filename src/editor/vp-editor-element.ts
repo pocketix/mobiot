@@ -345,7 +345,7 @@ export class VPEditorElement extends LitElement {
       }
     }else{
       if((block?.block.id==='if' || block?.block.id==='elseif') && !inBlock && 
-      (this.program[endIndex+1].block.id!=='elseif' || this.program[endIndex+1].block.id!=='else'))return false;
+      ((endIndex<this.program.length-1) && (this.program[endIndex+1].block.id!=='elseif' || this.program[endIndex+1].block.id!=='else')))return false;
     }
     if(this.caseZone){
       if(block===null)return false;
