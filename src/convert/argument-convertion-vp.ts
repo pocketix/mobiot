@@ -1,4 +1,5 @@
 import { Argument } from "../general/interfaces";
+import { TypeOption } from "../general/types";
 
 export function argumentConvertionVP(arg: any): Argument|null{
     if('type' in arg){
@@ -9,11 +10,23 @@ export function argumentConvertionVP(arg: any): Argument|null{
                     let newArg = argumentConvertionVP(item);
                     if(newArg) newArgs.push(newArg);
                 })
-                return {type: arg.type, value: '', args: newArgs};
+                return {type: convertType(arg.type), value: '', args: newArgs};
             }else{
-                return {type: arg.type, value: arg.value, args: []};
+                return {type: convertType(arg.type), value: arg.value, args: []};
             }
         }
     }
     return null;
   }
+
+function convertType(typeText: any): TypeOption{
+    switch(typeText){
+        case('string'): return 'text';
+        case('==='): return '=';
+        case('!==='): return '≠';
+        case('&&'): return 'AND';
+        case('||'): return 'OR';
+        case('!'): return 'NOT';
+        default: return typeText;
+    }
+}

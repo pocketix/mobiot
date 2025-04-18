@@ -5,6 +5,7 @@ import { consume } from '@lit/context';
 import { TypeOption } from '../general/types';
 import { varListExport } from '../general/context';
 import { CondText } from '../general/cond-text';
+import { sensors } from '../general/sensors';
 
 @customElement('change-val-element')
 export class ChangeValElement extends LitElement {
@@ -116,6 +117,17 @@ export class ChangeValElement extends LitElement {
         <button @click=${() => this._saveChanges(item.name)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`
     })
 
+    let filteredSensors=sensors;
+    if(this.type!=='variable'){
+      if(this.type!=='note'){
+        filteredSensors=sensors.filter(item => item.value.type===this.type);
+      }
+      filteredSensors.forEach((item)=>{
+        varBlock=html`${varBlock}
+        <button @click=${() => this._saveChanges(item.name)}>${item.name}</button>`
+      })
+    }
+
     return html`
       <button class="back" @click=${this._openCloseModal}>${this.val.value}</button>
 
@@ -126,7 +138,7 @@ export class ChangeValElement extends LitElement {
             <h2>Change value: </h2>
             <div>${valueType} <button class="save" @click=${() => this._saveChanges()}>Save</button></div>
             ` : ''}
-            ${filteredList.length != 0 ? html`${varBlock}` : ''}
+            ${filteredList.length != 0 || filteredSensors.length!==0 ? html`${varBlock}` : ''}
             <div><button class="back" @click=${this._openCloseModal}>Back</button></div>
           </div>
         </div>

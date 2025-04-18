@@ -49,7 +49,7 @@ export class VPEditorElement extends LitElement {
   static styles = css`
   .block {
     display: block;
-    border: 2px solid #333;
+    border: 2px dashed #333;
     border-radius: 8px;
     background-color: #e0e0e0;
     margin: 4px ;
@@ -59,7 +59,7 @@ export class VPEditorElement extends LitElement {
     color: white;
     font-weight: bold;
     border-radius: 4px 4px 0 0;
-    background-color: gray;
+    background: linear-gradient(to bottom, gray, #e0e0e0);
   }
 
   .content {

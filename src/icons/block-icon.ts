@@ -31,7 +31,7 @@ export class BlockIcon extends LitElement {
     'repeat': this.getImageUrl('img/repeat-icon.png'),
     'alert': this.getImageUrl('img/alert-icon.png'),
     'setvar': this.getImageUrl('img/setvar-icon.png'),
-    'str_opt': this.getImageUrl('img/stropt-icon.png'),
+    'dev': this.getImageUrl('img/dev-icon.png'),
   };
 
   render() {

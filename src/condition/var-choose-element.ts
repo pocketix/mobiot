@@ -89,13 +89,13 @@ export class VarChooseElement extends LitElement {
   render() {
     const listCode: TemplateResult[]=[];
     if(this.selected==='User'){
-      let filteredList=this.varList.filter(item=>item.value.type!=='string' && item.value.type!=='expr')//TODO consult this decesion
+      let filteredList=this.varList.filter(item=>item.value.type!=='text' && item.value.type!=='expr')//TODO consult this decesion
       filteredList.forEach((item)=>{
         listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button>`);
       });
     }
     else {
-      let filteredList=sensors.filter(item=>item.value.type!=='string')
+      let filteredList=sensors.filter(item=>item.value.type!=='text')
       filteredList.forEach((item)=>{
         listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}</button>`);
       });

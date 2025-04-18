@@ -182,7 +182,7 @@ export class CondEditElement extends LitElement {
 
       ${this.isOpen ? html`
         <div class="modal">
-          <h1>Condition editor</h1>
+          <h1>Condition Editor</h1>
           ${this.newMode ? html`<h2>Fill name of new condition</h2>
             <input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />`:''}
           ${this.block.args.length===0? EMPTYBLOCK:''}
@@ -221,7 +221,7 @@ export class CondEditElement extends LitElement {
 
   private _drawExistOptions(): TemplateResult{
     let cond: TemplateResult=html``;
-    if(!this.newMode && this.title!=='✎ Edit'){
+    if(!this.newMode && this.title!=='✎ Edit' && this.condList.length!=0){
       this.condList.forEach((item)=>{
         cond=html`${cond}<button @click=${()=>{this.block.args[0]=structuredClone(item.value);this._updateCond()}}>${CondText(item.value)}</button>`
       })

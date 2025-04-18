@@ -245,7 +245,7 @@ export class CondBlockElement extends LitElement {
 
     private _cleanGroups(){
         this.block.args.forEach((item)=>{
-            if(['AND','OR','NOT','==','!=','>','<','>=','<=','+','-','*','/'].includes(item.type) && item.args.length===0){
+            if(['AND','OR','NOT','=','≠','>','<','>=','<=','+','-','*','/'].includes(item.type) && item.args.length===0){
                 this.block.args=this.block.args.filter(filtered=> filtered!=item);
                 this._handleHeaderClick();
             }

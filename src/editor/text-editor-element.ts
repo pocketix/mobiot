@@ -6,7 +6,7 @@ import { TextToVp } from '../convert/text-to-vp';
 @customElement('text-editor-element')
 export class TextEditorElement extends LitElement {
 
-  @property({ type: String })//TODO connect with syntax control
+  @property({ type: String })
   value: string = '';
 
   @state()

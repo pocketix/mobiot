@@ -13,7 +13,7 @@ export class NewValElement extends LitElement {
     private canSave: boolean = false;
 
     @state()
-    private type: TypeOption[] = ['number', 'string', 'bool'];
+    private type: TypeOption[] = ['number', 'text', 'bool'];
 
     @property({ type: Object })
     value: Argument = {

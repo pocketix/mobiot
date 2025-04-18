@@ -54,7 +54,8 @@ export class OptionsElement extends LitElement {
                 filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
             }
             filteredBlocks.forEach((block)=>{
-            listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}><block-icon type=${block.id}></block-icon> ${block.name}</button>`);
+            listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}>
+                ${block.type==='dev' ? html`<block-icon type="dev"></block-icon>` : html`<block-icon type=${block.id}></block-icon>`} ${block.name}${this.addText(block.id)}</button>`);
         });
         }else{
             listOptions=this._filterParams();
@@ -77,13 +78,24 @@ export class OptionsElement extends LitElement {
                 
     }
 
+    private addText(id: string):string{
+        if(['while', 'if', 'elseif'].includes(id)){
+            return " ...do ...";
+        }else if(id==='else'){
+            return ' do...'
+        }else if(id==='switch'){
+            return ' ...'
+        }
+        return'';
+    }
+
     private _filterParams(): TemplateResult[]{
         let list: TemplateResult[]=[];
         if(this.paramType==='cond'){
             this.conditions.forEach((condition)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value)}</button>`);
             });
-            list.push(html`<cond-edit-element "
+            list.push(html`<cond-edit-element " class="button"
                 .newMode=${false}
                 .title=${'Click here to create expression. '}
                 @click=${(e: Event) => e.stopPropagation()}
@@ -203,7 +215,6 @@ export class OptionsElement extends LitElement {
                     if(!input.simple){
                         if(this.programStartIndex===-1){
                             this.programStartIndex=this.programIndex;
-                            // console.log(this.programStartIndex);
                         }
                         this.program = [
                             ...this.program.slice(0, this.programIndex),

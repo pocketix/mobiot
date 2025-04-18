@@ -16,8 +16,8 @@ import './condition/cond-edit-element.ts'
 import './menu-element.ts'
 
 
-@customElement('my-element')
-export class MyElement extends LitElement {
+@customElement('main-element')
+export class MainElement extends LitElement {
 
     @provide({ context: programIndexExport})
     @property({attribute: false})
@@ -39,32 +39,47 @@ export class MyElement extends LitElement {
     @provide({ context: condListExport })
     @property({attribute: false})
   conditions: VarObject[] = [
-    // {name: 'cond_1', value: {type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}
-    //   ,{type: 'number', value: '8', args: []}]}},//x+5==8
-    // {name: 'cond_2', value: {type: '!=', value:'', args: [{type: '*', value: '', args: [{type: 'variable', value: 'a', args: []}, {type: 'variable', value: 'b', args: []}]}
-    //   ,{type: 'number', value: '8', args: []}]}},//a*b!=8
-    // {name: 'cond_3', value: {type: 'AND', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'variable', value: 'y', args: []}]}},//x AND y
+    {name: 'cond_1', value: {type: '=', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}
+      ,{type: 'number', value: '8', args: []}]}},//x+5==8
+    {name: 'cond_2', value: {type: '≠', value:'', args: [{type: '*', value: '', args: [{type: 'variable', value: 'a', args: []}, {type: 'variable', value: 'b', args: []}]}
+      ,{type: 'number', value: '8', args: []}]}},//a*b!=8
+    {name: 'cond_3', value: {type: 'AND', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'variable', value: 'y', args: []}]}},//x AND y
   ];
 
   @property()
   program: ProgramBlock[]=[
-    // {block: {name: "If ...do ...", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
-    //   arguments: [{type: '==', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}], hide: false},
-    // {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['string']}, 
-    //   arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
-    // {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
-    // {block: {name: "Else do ...", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
+    {block: {name: "If", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
+      arguments: [{type: '=', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}], hide: false},
+    {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['text']}, 
+      arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
+    {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
+    // {block: {name: "Otherwise", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
   ];
 
   @provide({ context: varListExport })
   @property({attribute: false})
     varList: VarObject[] = [
-            // { name: 'name', value: {type: 'string',value: 'John', args: []}},
-            // { name: 'age', value: {type: 'number',value: '40', args: []}},
-            // { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
-            // { name: 'fee', value: {type: 'expr',value: '', args: [{type: '==', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'a', args: []},
-            //  {type: 'number', value: 'b', args: []}]},{type: 'number', value: '6', args: []}]}]}}
+            { name: 'name', value: {type: 'text',value: 'John', args: []}},
+            { name: 'age', value: {type: 'number',value: '40', args: []}},
+            { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
+            { name: 'fee', value: {type: 'expr',value: '', args: [{type: '=', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'a', args: []},
+             {type: 'number', value: 'b', args: []}]},{type: 'number', value: '6', args: []}]}]}}
             ];
+  
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('beforeunload', this._handleUnload);
+  }
+  
+  disconnectedCallback() {
+    window.removeEventListener('beforeunload', this._handleUnload);
+    super.disconnectedCallback();
+  }
+  
+  private _handleUnload(event: BeforeUnloadEvent) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
 
   render() {//TODO clean code
     let editors: TemplateResult=html``;
@@ -208,7 +223,7 @@ private _deleteBlock(block: ProgramBlock){
 
   static styles = css`
     :host {
-      max-width: 1280px;
+      width: 1280px;
       margin: 0 auto;
       padding: 0.5rem;
       text-align: center;
@@ -298,6 +313,6 @@ private _deleteBlock(block: ProgramBlock){
 
 declare global {
   interface HTMLElementTagNameMap {
-    'my-element': MyElement
+    'my-element': MainElement
   }
 }

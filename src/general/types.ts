@@ -1,5 +1,5 @@
-export type TypeOption = 'number' | 'string' | 'bool' | 'expr'|'cond'|'note'|'variable'|
-                        'AND'|'OR'|'NOT'|'=='|'!='|'>'|'<'|'>='|'<='|'+'|'-'|'*'|'/';
+export type TypeOption = 'number' | 'text' | 'bool' | 'expr'|'cond'|'note'|'variable'|
+                        'AND'|'OR'|'NOT'|'='|'≠'|'>'|'<'|'>='|'<='|'+'|'-'|'*'|'/';
 
 export type View = 'Graphical' | 'Text' | 'Both' ;
 

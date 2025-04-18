@@ -152,7 +152,11 @@ export class BlockElement extends LitElement {
     if(this.block.block.argTypes.length===0){
       header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}`;
     }
-    else header=this._drawHeader();
+    else {
+      header=this._drawHeader();
+    }
+    header=html`${header}${this._addText(this.block.block.id)}`;
+
       
     if(!this.block.block.simple){
       if(this.block.hide){
@@ -176,7 +180,8 @@ export class BlockElement extends LitElement {
       ` : ''}
       <div class="${this.menu===true ? 'focus-block' : ''}">
       <div class="${this.detail ? 'detail' : ''}">
-        <div class="header ${this.block.block.type}" @pointerdown=${() => this._handleLongPress()} @pointerup=${() => this._cancelLongPress()}>
+        <div class="header ${this.block.block.type}" @pointerdown=${() => this._handleLongPress()} @pointerup=${() => this._cancelLongPress()} 
+          @contextmenu=${(e: MouseEvent) => this._handleRightClick(e)}>
           ${!this.detailGeneral ? html`<button class="left ${this.block.block.type}" draggable="true"
             @pointerdown=${(e: PointerEvent) => e.stopPropagation()} @pointerup=${(e: PointerEvent) => e.stopPropagation()}
             @touchstart=${(e: TouchEvent) => {e.stopPropagation(); this._handleTouchStart(e);}}
@@ -193,6 +198,13 @@ export class BlockElement extends LitElement {
     if(!this.detailGeneral){
       this.detail=false;
     }
+  }
+
+  private _addText(id: string): string{
+    if(['while', 'if', 'elseif', 'else'].includes(id)){
+      return " do: ";
+    }
+    return'';
   }
 
   private _drawHeader(): TemplateResult{
@@ -283,6 +295,11 @@ export class BlockElement extends LitElement {
 
   private _cancelLongPress() {
       clearTimeout(this.longPressTimeout);
+  }
+
+  private _handleRightClick(e: MouseEvent) {
+    e.preventDefault();
+    if(!this.detailGeneral)this.menu=true;
   }
 
   private _showArguments(){

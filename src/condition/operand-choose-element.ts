@@ -91,7 +91,7 @@ export class OperandChooseElement extends LitElement {
     const listOperand: TemplateResult[]=[];
     let operandList: TypeOption[]=[];
 
-    if(this.selected==='Compare')operandList=['==','!=','>','<','>=','<='];
+    if(this.selected==='Compare')operandList=['=','≠','>','<','>=','<='];
     else if(this.selected==='Logical')operandList=['AND','OR','NOT'];
     else operandList=['+','-','*','/'];
     

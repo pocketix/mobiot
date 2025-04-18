@@ -19,7 +19,7 @@ export class VarEditElement extends LitElement {
   private canSave: boolean = false;
 
   @state()
-  private type: TypeOption[] = ['number', 'string', 'bool', 'expr'];
+  private type: TypeOption[] = ['number', 'text', 'bool', 'expr'];
 
   @property({ type: Object })
   var: VarObject = {
