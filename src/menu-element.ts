@@ -110,24 +110,25 @@ export class MenuElement extends LitElement {
     }
 
     h2 {
-      font-size: 1.2em;
+      font-size: 1.1em;
       font-weight: 500;
       font-family: inherit;
       color: #1a1a1a;
-      margin: 0 auto;
+      margin-left: auto;
     }
 
     .view-container {
       display: flex;
       align-items: center;
-      margin: 0 auto;
+      margin: 0px;
+      gap: 0;
     }
 
     button {
       border-radius: 8px;
       border: 1px solid transparent;
-      padding: 0.5em 1em;
-      margin: 0.2em 0.4em;
+      padding: 0.4em 0.8em;
+      margin: 0.2em 0.2em;
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
@@ -154,7 +155,8 @@ export class MenuElement extends LitElement {
       border-radius: 12px;
       padding: 4px;
       background: gray;
-      margin: 2px auto;
+      margin: 2px;
+      margin-right: auto;
     }
   `
 }

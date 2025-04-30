@@ -65,8 +65,9 @@ export class CondBlockElement extends LitElement {
       font-weight: bold;
       border-radius: 4px 4px 0 0;
       display: flex;
-      justify-content: center;
+
       align-items: center;
+      justify-content: space-between; 
       min-height: 50px;
     }
 
@@ -87,6 +88,8 @@ export class CondBlockElement extends LitElement {
         border: 2px solid #fff;
         margin: 5px;
         border-radius: 8px;
+        display: flex;
+        justify-content: flex-start;
     }
     
     .edit.selected {
@@ -98,9 +101,67 @@ export class CondBlockElement extends LitElement {
         padding: 10px;
         border-radius: 4px;
         color: black;
+        display: flex;
+        justify-content: space-between; 
+        align-items: center; 
     }
 
-  `;
+    .value .center {
+      flex: 1; 
+      display: flex;
+      justify-content: center;
+    }
+
+    .header .center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+    }
+
+    .custom-checkbox {
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .custom-checkbox input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+    }
+
+    .custom-checkbox .checkmark {
+        height: 16px;
+        width: 16px;
+        background-color: white;
+        border-radius: 4px;
+        display: inline-block;
+        border: 2px solid black;
+    }
+
+    .custom-checkbox input:checked + .checkmark::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid black;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .custom-checkbox input:checked + .checkmark {
+        background-color: #7da7d9;
+    }
+
+  `;   
+
   render() {
     this._addArg();
 
@@ -112,10 +173,16 @@ export class CondBlockElement extends LitElement {
 
     if(this.block.args.length===0 && this.block.value!==''){
       element=html`
-        <p class="value">${this.block.value}
+      <div class="value">
+        <p class="center">${this.block.value}</p>
             ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
-                html`<input type="checkbox" @change=${(e: Event) => this._chooseArgsChanged(e)}>` : ''}
-        </p>`
+                html`
+                <label class="custom-checkbox">
+                    <input type="checkbox" @change=${(e: Event) => this._chooseArgsChanged(e)} />
+                    <span class="checkmark"></span>
+                </label>
+                `:''
+                }</div>`
     }
     else{
         this.block.args.forEach((item)=>{
@@ -160,9 +227,14 @@ export class CondBlockElement extends LitElement {
                 >
                     <button class="edit ${this.selectedBlock === this.block ? 'selected' : ''}" 
                         @click=${(e: Event) => {this.changeOperand=true;e.stopPropagation()}}>✎</button>
-                    <p @click=${this._handleHeaderClick}>${this.block.type}</p>
+                    <p class="center" @click=${this._handleHeaderClick}>${this.block.type}</p>
                     ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
-                        html`<input type="checkbox" @change=${(e: Event) => this._chooseArgsChanged(e)} @click=${(e: Event) => e.stopPropagation()}>` : ''}
+                    html`
+                    <label class="custom-checkbox">
+                        <input type="checkbox" @change=${(e: Event) => this._chooseArgsChanged(e)} />
+                        <span class="checkmark"></span>
+                    </label>
+                    ` : ''}
                 </div>
                 <div class="content">
                     ${element}
@@ -170,7 +242,8 @@ export class CondBlockElement extends LitElement {
             </div>
         ` : html`<div class="main">
                 <div 
-                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleHeaderClick}>
+                    class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleHeaderClick} >
+                    <p class="center" @click=${this._handleHeaderClick}>Your condition: </p>
                 </div>
                 <div>
                     ${element}

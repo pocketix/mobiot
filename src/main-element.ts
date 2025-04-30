@@ -66,20 +66,19 @@ export class MainElement extends LitElement {
              {type: 'number', value: 'b', args: []}]},{type: 'number', value: '6', args: []}]}]}}
             ];
   
-  connectedCallback() {
-    super.connectedCallback();
-    window.addEventListener('beforeunload', this._handleUnload);
-  }
+  // connectedCallback() {
+  //   super.connectedCallback();
+  //   window.addEventListener('beforeunload', this._handleUnload);
+  // }
   
-  disconnectedCallback() {
-    window.removeEventListener('beforeunload', this._handleUnload);
-    super.disconnectedCallback();
-  }
+  // disconnectedCallback() {
+  //   window.removeEventListener('beforeunload', this._handleUnload);
+  //   super.disconnectedCallback();
+  // }
   
-  private _handleUnload(event: BeforeUnloadEvent) {
-    event.preventDefault();
-    event.returnValue = '';
-  }
+  // private _handleUnload(event: BeforeUnloadEvent) {
+  //   event.preventDefault();
+  // }
 
   render() {//TODO clean code
     let editors: TemplateResult=html``;
@@ -112,7 +111,7 @@ export class MainElement extends LitElement {
     }
     return html`
       <div class="container">
-        <div class="body">
+        <div class="body ${this.view==='Text'?"text":''}">
         <menu-element class="menu"
           .programText=${vpToText(this.program)} 
           @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
@@ -125,12 +124,15 @@ export class MainElement extends LitElement {
           ${editors}
         </div>
         </div>
-        <options-element class="options" style="z-index: ${this.condOpen ? 100 : 10};"
-          .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex}
-          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
-          @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}
-          @cond-open=${(e: CustomEvent) => this._condOpen(e.detail.value)}></options-element>
+          ${this.view==='Text'? '':html`
+          <options-element class="options" style="z-index: ${this.condOpen ? 100 : 10};"
+            .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex}
+            @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
+            @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}
+            @cond-open=${(e: CustomEvent) => this._condOpen(e.detail.value)}></options-element>
       </div>
+
+          `}
     `
   }
 
@@ -161,7 +163,7 @@ private _detailBlock(indexes: number[]){
 private _changeDetail(){
   this.detailGeneral=!this.detailGeneral;
   if(!this.detailGeneral){
-    this.programIndex=-1;//TODO let potencial empty block or cancel escape detail button? 
+    this.programIndex=-1;
   }
 }
 
@@ -223,7 +225,7 @@ private _deleteBlock(block: ProgramBlock){
 
   static styles = css`
     :host {
-      width: 1280px;
+      width: 1200px;
       margin: 0 auto;
       padding: 0.5rem;
       text-align: center;
@@ -257,6 +259,10 @@ private _deleteBlock(block: ProgramBlock){
       position: relative;
       z-index: 100;
       overflow-y: auto;
+    }
+
+    .body.text{
+      flex: 0 0 100vh;;
     }
 
     .editor{

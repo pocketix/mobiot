@@ -17,8 +17,6 @@ export class TextEditorElement extends LitElement {
       border: 2px solid #ccc;
       border-radius: 4px;
       padding: 8px;
-      width: 500px;
-      height: 500px;
       font-size: 16px;
       font-family: sans-serif;
       color: black;
@@ -32,6 +30,8 @@ export class TextEditorElement extends LitElement {
       color: red;
     }
   `;
+  // width: 500px;
+  // height: 500px;
 
   render() {
     const lines = this.value.split('\n');

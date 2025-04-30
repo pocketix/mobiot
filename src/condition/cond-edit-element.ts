@@ -78,7 +78,6 @@ export class CondEditElement extends LitElement {
     }
 
     .save {
-      margin: 16px 4px;
       background-color:rgb(79, 255, 108);
     }
 
@@ -89,11 +88,11 @@ export class CondEditElement extends LitElement {
     }
 
     .delete {
-      margin: 16px 4px;
       background-color:rgb(255, 104, 104);
     }
         
     .group {
+      padding: 10px 30px;
       background-color: #7da7d9;
     }
 
@@ -183,6 +182,7 @@ export class CondEditElement extends LitElement {
       ${this.isOpen ? html`
         <div class="modal">
           <h1>Condition Editor</h1>
+          ${cond}
           ${this.newMode ? html`<h2>Fill name of new condition</h2>
             <input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />`:''}
           ${this.block.args.length===0? EMPTYBLOCK:''}
@@ -211,9 +211,8 @@ export class CondEditElement extends LitElement {
             <div>
                 ${this.newMode ? html`<button ?disabled=${!this.canSave} class="save" @click=${()=>{this._saveUpdate(true)}}>Save condition</button>`:
                   html`<button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}
-                <button @click=${this._backAction}>Back</button>
+                <button @click=${this._backAction}>← Back</button>
             </div>
-          ${cond}
         </div>
       ` : ''}
     `;

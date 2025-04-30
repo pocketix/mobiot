@@ -27,9 +27,19 @@ export class NewValElement extends LitElement {
     h2{
       color: black;
     }
+
+    h3 {
+      margin: 0;
+      padding: 0;
+    }
+
+    p {
+      margin: 0;
+    }
     
     button {
       padding: 8px 16px;
+      margin: 0px 4px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -44,7 +54,8 @@ export class NewValElement extends LitElement {
     }
 
     .save {
-      margin: 16px 1px;
+      margin: 16px 3px;
+      padding: 8px 24px;
       background-color:rgb(79, 255, 108);
     }
 
@@ -55,7 +66,7 @@ export class NewValElement extends LitElement {
     }
 
     .cancel {
-      margin: 16px 1px;
+      margin: 16px 3px;
       background-color:rgb(255, 104, 104);
     }
 
@@ -87,6 +98,12 @@ export class NewValElement extends LitElement {
       max-width: 400px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
   `;
 
   render() {
@@ -101,7 +118,7 @@ export class NewValElement extends LitElement {
       valueType=html`<input type="text" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
     }
     return html`
-      <button @click=${this._openCloseModal}>Add value</button>
+      <button @click=${this._openCloseModal}><div class="icon"><h3>+</h3> <p>Add value</p></div></button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>

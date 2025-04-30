@@ -380,7 +380,7 @@ export class OptionsElement extends LitElement {
             top: 0;
             background-color: gray;
             width: 100%;
-            max-width: 1040px;
+
         }
 
         .menu-item {

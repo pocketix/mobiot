@@ -25,7 +25,7 @@ export class OperandChooseElement extends LitElement {
     
     button {
       max-width: fit-content;
-      margin: 8px 0px;
+      margin: 8px 4px;
       padding: 8px 16px;
       border: none;
       border-radius: 8px;
@@ -82,7 +82,7 @@ export class OperandChooseElement extends LitElement {
       background: white;
       padding: 24px;
       border-radius: 8px;
-      max-width: 400px;
+      max-width: 250px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
   `;
@@ -108,7 +108,7 @@ export class OperandChooseElement extends LitElement {
               <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${item}</button>
               `)}
             </div>
-            <div class="button-container">
+            <div >
               ${listOperand}
             </div>
             <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>

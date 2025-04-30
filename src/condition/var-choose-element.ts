@@ -29,10 +29,19 @@ export class VarChooseElement extends LitElement {
     h2{
       color: black;
     }
+
+    h3 {
+      margin: 0;
+      padding: 0;
+    }
+
+    p {
+      margin: 0;
+    }
     
     button {
       padding: 8px 16px;
-      margin: 6px 0px;
+      margin: 4px 4px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -84,6 +93,12 @@ export class VarChooseElement extends LitElement {
       background: rgb(168, 168, 168);
       margin 0px;
     }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
   `;
 
   render() {
@@ -102,7 +117,7 @@ export class VarChooseElement extends LitElement {
     }
     
     return html`
-      <button @click=${this._openCloseModal}>Add variable</button>
+      <button @click=${this._openCloseModal}><div class="icon"><h3>+</h3> <p>Add variable</p></div></button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
