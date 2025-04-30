@@ -274,7 +274,7 @@ export class OptionsElement extends LitElement {
         }
         if(block){
             let arg: Argument=param.value
-            if(['number', 'string', 'bool', 'expr'].includes(param.value.type)){
+            if(['number', 'text', 'bool', 'expr'].includes(param.value.type)){
                 arg = {type: 'variable', value:param.name, args: []};
             }
             this._addParams(block, arg)
@@ -384,7 +384,7 @@ export class OptionsElement extends LitElement {
         }
 
         .menu-item {
-            padding: 0.6em 1.2em;
+            padding: 0.6em 0.8em;
             background-color: gray;
             margin: 0px;
         }

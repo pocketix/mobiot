@@ -136,7 +136,7 @@ export class CondListElement extends LitElement {
                     </tbody>
                 </table>
                 <div>
-                    <button @click=${this._saveChanges}>Back</button>
+                    <button @click=${this._saveChanges}>← Back</button>
                     <cond-edit-element @click=${(e: Event) => e.stopPropagation()} @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}>></cond-edit-element>
                 </div>
             </div>

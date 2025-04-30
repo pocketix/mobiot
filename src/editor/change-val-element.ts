@@ -55,9 +55,14 @@ export class ChangeValElement extends LitElement {
       background-color:rgb(79, 255, 108);
     }
 
-    .back {
+    .but {
       margin: 0px;
       background-color: #ddd;
+    }
+
+    .cancel{
+    margin: 0px;
+      background-color:rgb(255, 104, 104)
     }
 
     .overlay {
@@ -129,7 +134,7 @@ export class ChangeValElement extends LitElement {
     }
 
     return html`
-      <button class="back" @click=${this._openCloseModal}>${this.val.value}</button>
+      <button class="but" @click=${this._openCloseModal}>${this.val.value}</button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
@@ -139,7 +144,7 @@ export class ChangeValElement extends LitElement {
             <div>${valueType} <button class="save" @click=${() => this._saveChanges()}>Save</button></div>
             ` : ''}
             ${filteredList.length != 0 || filteredSensors.length!==0 ? html`${varBlock}` : ''}
-            <div><button class="back" @click=${this._openCloseModal}>Back</button></div>
+            <div><button class="cancel" @click=${this._openCloseModal}>X Cancel</button></div>
           </div>
         </div>
       ` : ''}

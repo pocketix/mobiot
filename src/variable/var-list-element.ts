@@ -5,6 +5,8 @@ import '../icons/table-icon.ts'
 import '../icons/delete-icon.ts'
 import { VarObject} from '../general/interfaces.ts'
 import { CondText } from '../general/cond-text.ts'
+import { consume } from '@lit/context';
+import { varListExport } from '../general/context.ts'
 
 @customElement('var-list-element')
 export class VarListElement extends LitElement {
@@ -12,7 +14,8 @@ export class VarListElement extends LitElement {
     @state()
     private isOpen: boolean = false;
 
-    @property()
+    @consume({ context: varListExport })
+    @property({ attribute: false })
     table: VarObject[] = []
 
     @state()
