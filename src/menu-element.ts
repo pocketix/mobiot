@@ -2,14 +2,18 @@ import { LitElement, css, html} from 'lit'
 import { customElement, property, state} from 'lit/decorators.js'
 import { VarObject} from './general/interfaces.ts'
 import { View } from './general/types.ts';
+import { transl, LangCode } from './general/language.ts';
 import './variable/var-list-element.ts';
 import './options-element.ts';
 import './condition/cond-edit-element.ts'
 import './condition/cond-list-element.ts'
-import './setting-element.ts'
+import './setting-element.ts';
 
 @customElement('menu-element')
 export class MenuElement extends LitElement {
+  @property({ attribute: false })
+  currentLang: LangCode = 'en';
+
     @property()
     varList: VarObject[] = [];
 
@@ -23,14 +27,18 @@ export class MenuElement extends LitElement {
     view: View='Both'
 
   render() {
+    // console.log(this.currentLang);
+    // if(this.currentLang==='cs'){
+      
+    // }
     return html`
         <div class="content">
         <div class="view-container">
         <setting-element class="setting" .programText=${this.programText} .varList=${this.varList}></setting-element>
-          <h2>Choose editor: </h2>
+          <h2>${transl('chooseEditor')}</h2>
           <div class="view">
             ${this.viewList.map(item=>html`
-            <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
+            <button class=${item === this.view ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${transl(item)}</button>
             `)}
           </div>
         </div>

@@ -4,6 +4,7 @@ import { Argument, ProgramBlock} from '../general/interfaces.ts'
 import { CondText } from '../general/cond-text.ts';
 import { consume} from '@lit/context';
 import { detailGeneralExport} from '../general/context';
+import { LangCode, transl } from '../general/language.ts';
 import './block-menu-element.ts'
 import './change-val-element.ts'
 import '../condition/cond-edit-element.ts'
@@ -35,6 +36,9 @@ export class BlockElement extends LitElement {
     @consume({ context: detailGeneralExport, subscribe: true})
     @property({attribute: false})
     detailGeneral: boolean=false;
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     private longPressTimeout: any = null;
 
@@ -150,7 +154,7 @@ export class BlockElement extends LitElement {
     let body: TemplateResult=html``;
 
     if(this.block.block.argTypes.length===0){
-      header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}`;
+      header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${transl(this.block.block.name)}`;
     }
     else {
       header=this._drawHeader();
@@ -160,10 +164,10 @@ export class BlockElement extends LitElement {
       
     if(!this.block.block.simple){
       if(this.block.hide){
-        hide=html`<button class="hide" @click=${()=>this._changeBlock()}>▼ Show block contend</button>`
+        hide=html`<button class="hide" @click=${()=>this._changeBlock()}>▼ ${transl('showBlock')}</button>`
       }
       else{
-        hide=html`<button class="hide" @click=${()=>this._changeBlock()}>▲ Hide block contend</button>`
+        hide=html`<button class="hide" @click=${()=>this._changeBlock()}>▲ ${transl('hideBlock')}</button>`
       }
       body=html`
       <div class="content ${this.block.block.type==='branch'? 'branch-body':'cycle-body'}">
@@ -173,7 +177,7 @@ export class BlockElement extends LitElement {
     
     return html`
     ${this.menu === true ? html`
-      <block-menu-element class="menu" 
+      <block-menu-element class="menu" .currentLang=${this.currentLang}
         isOpen=${this.menu} .block=${this.block} .startIndex=${this.startIndex} .endIndex=${this.endIndex}
         @block-menu=${(e: CustomEvent) => this._blockMenu(e.detail.value)}
         @detail-block=${() => this._detailBlock()}></block-menu-element>
@@ -202,7 +206,7 @@ export class BlockElement extends LitElement {
 
   private _addText(id: string): string{
     if(['while', 'if', 'elseif', 'else'].includes(id)){
-      return " do: ";
+      return transl('do') + ": ";
     }
     return'';
   }
@@ -220,10 +224,10 @@ export class BlockElement extends LitElement {
 
     for(let i=this.block.arguments.length;i<this.block.block.argTypes.length;i++){
       header=html`${header}<div class="${i===this.block.arguments.length ? 'focus-arg':'condition'}">
-        Add argument: ${this.block.block.argTypes[i]==='note' ? 'all' : this.block.block.argTypes[i]}</div>`
+        ${transl('addArgument')} ${this.block.block.argTypes[i]==='note' ? 'all' : transl(this.block.block.argTypes[i])}</div>`
     }
 
-    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name}<div> ${header}</div>`
+    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${transl(this.block.block.name)}<div> ${header}</div>`
     return header;
   }
 
@@ -236,23 +240,23 @@ export class BlockElement extends LitElement {
       let index=this.block.arguments.indexOf(item)
 
       if(argType==='cond'){
-        header=html`${header}<cond-edit-element 
+        header=html`${header}<cond-edit-element .currentLang=${this.currentLang}
           .newMode=${false} .args=${[item]} .selectedBlock=${item} .title=${CondText(item)}
           @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value, index)}
           @cond-clean=${() => this._changeBlock(original.arguments[index], index)}></cond-edit-element>`
       }else{
-        header=html`${header}<change-val-element 
+        header=html`${header}<change-val-element .currentLang=${this.currentLang}
           .val=${item} .type=${argType}
           @val-changed=${(e: CustomEvent) => this._changeBlock(e.detail.value, index)}></change-val-element>`
       }
     });
 
     if(this.block.arguments.length>1){
-      if(this.args) header=html`<div>${header}<div class="condition" @click=${this._showArguments}>Hide</div></div>`
-      else header=html`<span class="condition" @click=${this._showArguments}>Arguments...</span>`
+      if(this.args) header=html`<div>${header}<div class="condition" @click=${this._showArguments}>${transl('hide')}</div></div>`
+      else header=html`<span class="condition" @click=${this._showArguments}>${transl('arguments')}</span>`
     }
 
-    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${this.block.block.name} ${header}`
+    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${transl(this.block.block.name)} ${header}`
     return header;
   }
 

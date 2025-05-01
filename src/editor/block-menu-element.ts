@@ -3,6 +3,7 @@ import { customElement, property} from 'lit/decorators.js';
 import {ProgramBlock} from '../general/interfaces'
 import { consume } from '@lit/context';
 import { detailGeneralExport} from '../general/context';
+import { LangCode, transl } from '../general/language';
 import '../icons/delete-icon'
 import '../icons/detail-start-icon'
 
@@ -24,6 +25,9 @@ export class BlockMenuElement extends LitElement {
     @consume({ context: detailGeneralExport, subscribe: true })
     @property({ attribute: false })
     detailGeneral: boolean=false;
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     static styles = css`
 
@@ -78,9 +82,9 @@ export class BlockMenuElement extends LitElement {
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             ${!this.block.block.simple ? html`
             <button @click=${this._detailBlock}><detail-start-icon></detail-start-icon>Detail</button>` :''}
-            <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>Delete</button>
-            <button @click=${this._replaceBlock}>Replace</button>
-            <button class="save">Save as procedure</button>
+            <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>${transl('delete')}</button>
+            <button @click=${this._replaceBlock}>${transl('replace')}</button>
+            <button class="save">${transl('saveAsProcedure')}</button>
             ${this._availableMove(true) ? html`<button @click=${()=>this._moveBlock(true)}>△</button>` : ''}
             ${this._availableMove()  ? html`<button @click=${()=>this._moveBlock(false)}>▽</button>` : ''}
           </div>

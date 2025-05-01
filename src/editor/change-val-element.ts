@@ -6,6 +6,7 @@ import { TypeOption } from '../general/types';
 import { varListExport } from '../general/context';
 import { CondText } from '../general/cond-text';
 import { sensors } from '../general/sensors';
+import { LangCode, transl } from '../general/language';
 
 @customElement('change-val-element')
 export class ChangeValElement extends LitElement {
@@ -23,6 +24,9 @@ export class ChangeValElement extends LitElement {
     @consume({ context: varListExport })
     @property({ attribute: false })
     varList: VarObject[]=[];
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     static styles = css`
 
@@ -89,18 +93,18 @@ export class ChangeValElement extends LitElement {
 
   render() {
     let valueType: TemplateResult=html``
-    let varBlock: TemplateResult=html`<h2>Use variable</h2>`
+    let varBlock: TemplateResult=html`<h2>${transl('useVariable')}</h2>`
     let filteredList: VarObject[]=[];
 
     if(this.type==='bool'){
       valueType=html`
-        <button class=${'true' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
-        <button class=${'false' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+        <button class=${'true' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>${transl('true')}</button>
+        <button class=${'false' === this.val.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>${transl('false')}</button>`
     }else if(this.type==='number'){
       valueType=html`<input type="number" .value=${this.val.type === 'variable' ? '' : this.val.value}
-       @input=${this._handleValueInput} inputmode="decimal" step="any" placeholder="Enter a number">`
+       @input=${this._handleValueInput} inputmode="decimal" step="any" placeholder=${transl('enterNumber')}>`
     }else{
-      valueType=html`<input type="text" .value=${this.val.type === 'variable' ? '' : this.val.value} @input=${this._handleValueInput} placeholder="Add value" />`
+      valueType=html`<input type="text" .value=${this.val.type === 'variable' ? '' : this.val.value} @input=${this._handleValueInput} placeholder=${transl('addVal')} />`
     }
 
     if(this.type!='variable' && this.type!=='note'){
@@ -119,7 +123,7 @@ export class ChangeValElement extends LitElement {
 
     filteredList.forEach((item)=>{
         varBlock=html`${varBlock}
-        <button @click=${() => this._saveChanges(item.name)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`
+        <button @click=${() => this._saveChanges(item.name)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : transl(item.value.value)}</button>`
     })
 
     let filteredSensors=sensors;
@@ -134,17 +138,17 @@ export class ChangeValElement extends LitElement {
     }
 
     return html`
-      <button class="but" @click=${this._openCloseModal}>${this.val.value}</button>
+      <button class="but" @click=${this._openCloseModal}>${transl(this.val.value)}</button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             ${this.type!='variable' ? html`
-            <h2>Change value: </h2>
-            <div>${valueType} <button class="save" @click=${() => this._saveChanges()}>Save</button></div>
+            <h2>${transl('changeVal')}</h2>
+            <div>${valueType} <button class="save" @click=${() => this._saveChanges()}>${transl('save')}</button></div>
             ` : ''}
             ${filteredList.length != 0 || filteredSensors.length!==0 ? html`${varBlock}` : ''}
-            <div><button class="cancel" @click=${this._openCloseModal}>X Cancel</button></div>
+            <div><button class="cancel" @click=${this._openCloseModal}>X ${transl('cancel')}</button></div>
           </div>
         </div>
       ` : ''}

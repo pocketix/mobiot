@@ -61,7 +61,7 @@ export class VarListElement extends LitElement {
     
         ${this.isOpen ? html`
           <div class="modal">
-            <h1>⛭ Settings</h1>
+            <h1>⛭ ${transl('settings')}</h1>
             <h2>Program</h2>
             <button @click=${this._openFilePicker}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -69,29 +69,29 @@ export class VarListElement extends LitElement {
               <path d="m8 11 4 4 4-4"></path>
               <path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"></path>
               </svg>
-            Import JSON file</button>
+            ${transl('importJSONfile')}</button>
             <button @click=${this._exportText}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12l7-7 7 7" />
               <path d="M12 5v14" />
               </svg>
-            Export JSON file</button>
+            ${transl('exportJSONfile')}</button>
             <label for="mySelect">${transl('chooseLanguage')}</label>
             <select id="mySelect" .value=${getLang()} @change=${this._changeLanguage}>
               <option value="en" >English</option>
               <option value="cs" >Čeština</option>
             </select>
-            <h2>Manual Factors</h2>
-            <button>{ } Procedures</button>
-            <var-list-element></var-list-element>
-            <cond-list-element></cond-list-element>
-            <h2>Derived factors</h2>
+            <h2>${transl('usersFactors')}</h2>
+            <button>{ } ${transl('procedures')}</button>
+            <var-list-element .currentLang=${getLang()}></var-list-element>
+            <cond-list-element .currentLang=${getLang()}></cond-list-element>
+            <h2>${transl('devicesFactors')}</h2>
             <device-commands-element></device-commands-element>
             <device-parameters-element></device-parameters-element>
-            <h2>Help</h2>
-            <h2>About</h2>
+            <h2>${transl('help')}</h2>
+            <h2>${transl('about')}</h2>
             <p>I'm VPL project for Pocketix from David Skrabal</p>
-            <button @click=${this._openCloseModal}>Back</button>
+            <button @click=${this._openCloseModal}>${transl('back')}</button>
           </div>
           ` : ''}
         `;
@@ -144,6 +144,10 @@ export class VarListElement extends LitElement {
             const select = e.target as HTMLSelectElement;
             setLang(select.value as LangCode);
             this.requestUpdate();
+            this.dispatchEvent(new CustomEvent('language-changed', {
+              bubbles: true,
+              composed: true
+          }));
           }
 
  

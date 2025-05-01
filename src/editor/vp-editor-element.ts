@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { ProgramBlock} from '../general/interfaces.ts'
 import { consume} from '@lit/context';
 import { programIndexExport, detailGeneralExport} from '../general/context';
+import { LangCode, transl } from '../general/language.ts';
 import './block-element.ts';
 
 const BREAKPOINT = html`<!-- BREAKPOINT -->`;
@@ -15,6 +16,9 @@ export class VPEditorElement extends LitElement {
 
   @property()
   program: ProgramBlock[] = [];
+
+  @property({ attribute: false })
+  currentLang: LangCode = 'en';
 
   @consume({ context: programIndexExport, subscribe: true })
   @property({ attribute: false })
@@ -90,7 +94,7 @@ export class VPEditorElement extends LitElement {
     if(this.program.length===0){
       return html`
         <div class="block">
-        <div class="header">Insert first block of your program. </div>
+        <div class="header">${transl('insertFirstBlock')}</div>
         <div class="content" />
         </div>`
     }
@@ -99,14 +103,14 @@ export class VPEditorElement extends LitElement {
     
     this.program.forEach((item)=>{
       if(this.program.indexOf(item)===this.programIndex && item.arguments.length===item.block.argTypes.length){
-        stackProgramBody.push(html`<div class="block"><div class="header">Insert next block of your program. </div></div>`);
+        stackProgramBody.push(html`<div class="block"><div class="header">${transl('insertBlock')}</div></div>`);
       }
 
       if(item.block.id=="end"){
         stackProgramBody.push(this._createBlockElement(this.program.indexOf(item)))
       }
       else if(item.block.simple==true){
-        stackProgramBody.push(html`<block-element .block=${item} 
+        stackProgramBody.push(html`<block-element .block=${item} .currentLang=${this.currentLang}
           .startIndex=${this.program.indexOf(item)===0} .endIndex=${this.program.indexOf(item)===this.program.length-1}
           @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), this.program.indexOf(item))}}
           @show-zone=${(e: CustomEvent)=>{e.stopPropagation(); this.zoneAvailable=!this.zoneAvailable; this.dragItem===null ? this.dragItem=item : this.dragItem=null;}}
@@ -125,7 +129,7 @@ export class VPEditorElement extends LitElement {
 
     let last:ProgramBlock=this.program[this.program.length-1];
     if(last.arguments.length===last.block.argTypes.length && this.programIndex===-1 && !this.zoneAvailable){
-      stackProgramBody.push(html`<div class="block"><div class="header">Insert next block of your program. </div></div>`);
+      stackProgramBody.push(html`<div class="block"><div class="header">${transl('insertBlock')}</div></div>`);
     }
 
     while(stackComplexName.length>=1){
@@ -145,7 +149,7 @@ export class VPEditorElement extends LitElement {
       @dragover=${this._handleDragOver}
       @dragleave=${this._handleDragLeave}
       @drop=${this._handleDrop}
-    >Insert here. </div>`;
+  >${transl('insertHere')}</div>`;
   }
 
   private _endIndex(index: number, ifBlock: boolean=false): boolean{
@@ -165,7 +169,7 @@ export class VPEditorElement extends LitElement {
 
     let item=stackComplexName.pop();
     if(item){
-      return html`<block-element .block=${item} 
+      return html`<block-element .block=${item} .currentLang=${this.currentLang}
         .startIndex=${this.program.indexOf(item)===0}.endIndex=${this._endIndex(endIndex, item.block.id==='if')}
         @change-detail=${() => this._changeDetail(endIndex, item)}
         @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
@@ -258,7 +262,7 @@ export class VPEditorElement extends LitElement {
         if(toIndex!==null){
           if(this.program[fromIndexStart].block.id==='if'){
             fromIndexEnd=this._ifElseBlock(fromIndexEnd);
-            const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ");
+            const confirmMove = window.confirm(transl('attentionIf'));
             if (!confirmMove) return;
           }
           this._changeProgram(fromIndexStart, fromIndexEnd, toIndex);
@@ -286,7 +290,7 @@ export class VPEditorElement extends LitElement {
     if(toIndex!==null && this.dragItem!==null && this.dragEndIndex!==null){
       if(this.program[this.program.indexOf(this.dragItem)].block.id==='if'){
         this.dragEndIndex=this._ifElseBlock(this.dragEndIndex);
-        const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ");
+        const confirmMove = window.confirm(transl('attentionIf'));
         if (!confirmMove) return;
       }
       this._changeProgram(this.program.indexOf(this.dragItem), this.dragEndIndex, toIndex);
@@ -312,7 +316,7 @@ export class VPEditorElement extends LitElement {
   private _changeProgram(fromIndexStart: number, fromIndexEnd: number, toIndex: number) {
     if (fromIndexStart < 0 || fromIndexEnd > this.program.length || toIndex < 0 || toIndex > this.program.length || fromIndexStart === toIndex || 
       (fromIndexEnd>=toIndex && fromIndexStart<=toIndex)){
-      window.alert("Invalid drag and drop action. ");
+      window.alert(transl('invalidAction'));
       return;
     }
 

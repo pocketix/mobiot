@@ -4,12 +4,12 @@ import { VarObject, Argument} from '../general/interfaces'
 import { varListExport, condListExport} from '../general/context';
 import { consume } from '@lit/context';
 import { CondText } from '../general/cond-text';
+import { LangCode, transl } from '../general/language';
 import './var-choose-element';
 import './new-val-element';
 import './cond-block-element';
 import '../icons/delete-icon';
 
-const EMPTYBLOCK=html`<div class="empty"><div class="empty-header">Add first variable or value to your condition</div><div class="empty-content" /></div>`
 
 @customElement('cond-edit-element')
 export class CondEditElement extends LitElement {
@@ -63,6 +63,9 @@ export class CondEditElement extends LitElement {
 
   @state()
   selectedBlock: Argument=this.block
+
+  @property({ attribute: false })
+  currentLang: LangCode = 'en';
 
   static styles = css`
       
@@ -171,20 +174,26 @@ export class CondEditElement extends LitElement {
   `;
     
   render() {
+    const EMPTYBLOCK=html`<div class="empty"><div class="empty-header">${transl('addFirstVar')}</div><div class="empty-content" /></div>`
     if(this.block.args.length===0 && this.args.length!==0){
       this.block.args=this.args;
     }
     let cond: TemplateResult=this._drawExistOptions();
     
     return html`
-      <button class=${'+ New condition' === this.title || '✎ Edit' === this.title? 'menu' : 'block'} @click=${this._openCloseModal}>${this.title}</button>
+      <button class=${'+ New condition' === this.title || '✎ Edit' === this.title? 'menu' : 'block'} @click=${this._openCloseModal}>
+      ${this.title === '✎ Edit'
+      ? html`✎ ${transl('edit')}`
+      : this.title === '+ New condition'
+        ? html`+ ${transl('newCondition')}`
+        : html`${this.title}`}</button>
 
       ${this.isOpen ? html`
         <div class="modal">
-          <h1>Condition Editor</h1>
+          <h1>${transl('conditionEditor')}</h1>
           ${cond}
-          ${this.newMode ? html`<h2>Fill name of new condition</h2>
-            <input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder="Add name ..." />`:''}
+          ${this.newMode ? html`<h2>${transl('fillNameOfNewCondition')}</h2>
+            <input type="text" .value=${this.condEdit.name} @input=${this._handleValueInput} placeholder=${transl('addName')}/>`:''}
           ${this.block.args.length===0? EMPTYBLOCK:''}
           <cond-block-element .block=${this.block}
             .newArg=${this.newArg}
@@ -200,18 +209,18 @@ export class CondEditElement extends LitElement {
           ></cond-block-element>
           <div>
             <var-choose-element .varList=${this.varList} @var-add=${(e: CustomEvent) => this._addArg(e.detail.value)}></var-choose-element>
-            <new-val-element @val-saved=${(e: CustomEvent) => this._addArg(e.detail.value)}></new-val-element>
+            <new-val-element @val-saved=${(e: CustomEvent) => this._addArg(e.detail.value)} .currentLang=${this.currentLang}></new-val-element>
           </div>
             ${this.selectMode ? html`
               <div>
-                  <button class="group" ?disabled=${!this.canGroup} @click=${()=>{this.groupAction =true}}>Group</button>
-                  <button class="delete" @click=${()=>{this.deleteAction =true}}><delete-icon></delete-icon>Delete</button>
+                  <button class="group" ?disabled=${!this.canGroup} @click=${()=>{this.groupAction =true}}>${transl('group')}</button>
+                  <button class="delete" @click=${()=>{this.deleteAction =true}}><delete-icon></delete-icon>${transl('delete')}</button>
               </div>
-          ` : html`<button class="group" @click=${this._selectMode}>☑ Select ...</button>`}
+          ` : html`<button class="group" @click=${this._selectMode}>☑ ${transl('select')}</button>`}
             <div>
-                ${this.newMode ? html`<button ?disabled=${!this.canSave} class="save" @click=${()=>{this._saveUpdate(true)}}>Save condition</button>`:
-                  html`<button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveUpdate(false)}}>Use value</button>`}
-                <button @click=${this._backAction}>← Back</button>
+                ${this.newMode ? html`<button ?disabled=${!this.canSave} class="save" @click=${()=>{this._saveUpdate(true)}}>${transl('saveCondition')}</button>`:
+                  html`<button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveUpdate(false)}}>${transl('useValue')}</button>`}
+                <button @click=${this._backAction}>← ${transl('back')}</button>
             </div>
         </div>
       ` : ''}
@@ -224,7 +233,7 @@ export class CondEditElement extends LitElement {
       this.condList.forEach((item)=>{
         cond=html`${cond}<button @click=${()=>{this.block.args[0]=structuredClone(item.value);this._updateCond()}}>${CondText(item.value)}</button>`
       })
-      cond=html`<h2>Select one from exist</h2>
+      cond=html`<h2>${transl('selectFromExist')}</h2>
         <div>${cond}</div>`;
     }
     return cond;

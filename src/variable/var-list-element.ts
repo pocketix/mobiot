@@ -7,12 +7,16 @@ import { VarObject} from '../general/interfaces.ts'
 import { CondText } from '../general/cond-text.ts'
 import { consume } from '@lit/context';
 import { varListExport } from '../general/context.ts'
+import { LangCode, transl } from '../general/language.ts'
 
 @customElement('var-list-element')
 export class VarListElement extends LitElement {
 
     @state()
     private isOpen: boolean = false;
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     @consume({ context: varListExport })
     @property({ attribute: false })
@@ -101,33 +105,35 @@ export class VarListElement extends LitElement {
       render() {
     
         return html`
-        <button @click=${this._openCloseModal}><table-icon></table-icon>Variables</button>
+        <button @click=${this._openCloseModal}><table-icon></table-icon>${transl('variables')}</button>
     
           ${this.isOpen ? html`
             <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.varEdit)}>
-                <h1>List of variables</h1>
+                <h1>${transl('listOfVariables')}</h1>
                 <table @click=${(e: Event) => { e.stopPropagation()}}>
                     <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Name</th>
-                        <th>Value</th>
+                        <th>${transl('type')}</th>
+                        <th>${transl('name')}</th>
+                        <th>${transl('value')}</th>
                     </tr>
                     </thead>
                     <tbody>
                     ${this.table.map(item => html`
                         <tr @click=${(e: Event) => this._handleRowClick(e, item)}>
-                        <td>${item.value.type}</td>
+                        <td>${transl(item.value.type)}</td>
                         <td>${item.name}</td>
-                        ${item.value.type==='expr' ? html`<td>${CondText(item.value.args[0])}</td>` : html`<td>${item.value.value}</td>`}
+                        ${item.value.type==='expr' ? html`<td>${CondText(item.value.args[0])}</td>` : 
+                            html`<td>${item.value.type==='bool'? transl(item.value.value) : item.value.value}</td>`}
                         <div>
                         ${this.selectedRow === item ? html`
                             <var-edit-element 
+                                .currentLang=${this.currentLang}
                                 @click=${(e: Event) => e.stopPropagation()} 
                                 .var=${item} 
                                 @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value, item)}>
                             </var-edit-element>
-                            <button class="delete" @click=${(e: Event) => this._deleteVar(e, item)}><delete-icon></delete-icon>Delete</button>
+                            <button class="delete" @click=${(e: Event) => this._deleteVar(e, item)}><delete-icon></delete-icon>${transl('delete')}</button>
                         ` : ''}
                         </div>
                         </tr>
@@ -135,8 +141,8 @@ export class VarListElement extends LitElement {
                     </tbody>
                 </table>
                 <div>
-                    <button @click=${this._saveChanges}>Back</button>
-                    <var-edit-element .var=${this.varEdit} @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value)}></var-edit-element>
+                    <button @click=${this._saveChanges}>${transl('back')}</button>
+                    <var-edit-element .var=${this.varEdit} .currentLang=${this.currentLang} @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value)}></var-edit-element>
                 </div>
             </div>
           ` : ''}

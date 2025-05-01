@@ -2,6 +2,7 @@ import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Argument, VarObject} from '../general/interfaces';
 import { sensors } from '../general/sensors';
+import { LangCode, transl } from '../general/language';
 
 @customElement('var-choose-element')
 export class VarChooseElement extends LitElement {
@@ -24,6 +25,9 @@ export class VarChooseElement extends LitElement {
 
     @property()
     varList: VarObject[]=[];
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     static styles = css`
     h2{
@@ -106,7 +110,7 @@ export class VarChooseElement extends LitElement {
     if(this.selected==='User'){
       let filteredList=this.varList.filter(item=>item.value.type!=='text' && item.value.type!=='expr')//TODO consult this decesion
       filteredList.forEach((item)=>{
-        listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}: ${item.value.value}</button>`);
+        listCode.push(html`<button @click=${() => this._addArg(item.name)}>${item.name}: ${transl(item.value.value)}</button>`);
       });
     }
     else {
@@ -117,18 +121,18 @@ export class VarChooseElement extends LitElement {
     }
     
     return html`
-      <button @click=${this._openCloseModal}><div class="icon"><h3>+</h3> <p>Add variable</p></div></button>
+      <button @click=${this._openCloseModal}><div class="icon"><h3>+</h3> <p>${transl('addVariable')}</p></div></button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             <div class="menu-container">
               ${this.varTypes.map(item=>html`
-              <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${item} variable</button>
+              <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${transl(item)} ${transl('variables')}</button>
               `)}
             </div>
             ${listCode}
-            <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
+            <button class="cancel" @click=${this._openCloseModal}>X ${transl('cancel')}</button>
           </div>
         </div>
       ` : ''}

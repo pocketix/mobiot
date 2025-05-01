@@ -2,12 +2,13 @@ import { LitElement, css, html, TemplateResult} from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { VarObject, ProgramBlock } from './general/interfaces.ts'
 import { View } from './general/types.ts';
-import { varListExport, condListExport, programIndexExport, detailGeneralExport } from './general/context.ts';
+import { varListExport, condListExport, programIndexExport, detailGeneralExport} from './general/context.ts';
 import { provide } from '@lit/context';
 import { vpToText } from './convert/vp-to-text.ts';
 import { TextToVp } from './convert/text-to-vp.ts';
 import { UpdateVarList } from './convert/update-var-list.ts';
 import { TextSyntax } from './convert/text-syntax.ts';
+import { LangCode, getLang} from './general/language.ts';
 import './editor/vp-editor-element.ts';
 import './editor/text-editor-element.ts';
 import './variable/var-list-element.ts';
@@ -20,8 +21,11 @@ import './menu-element.ts'
 export class MainElement extends LitElement {
 
     @provide({ context: programIndexExport})
-    @property({attribute: false})
+    @property({ type: String })
     programIndex: number = -1;
+
+    @property({attribute: false})
+    currentLang: LangCode = 'en';
 
     @provide({ context: detailGeneralExport})
     @property({attribute: false})
@@ -50,9 +54,9 @@ export class MainElement extends LitElement {
   program: ProgramBlock[]=[
     {block: {name: "If", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
       arguments: [{type: '=', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}], hide: false},
-    {block: {name: "Send notification", simple: true, id: 'alert', type: 'alert', argTypes: ['text']}, 
+    {block: {name: "SendNotification", simple: true, id: 'alert', type: 'alert', argTypes: ['text']}, 
       arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
-    {block: {name: "End of block", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
+    {block: {name: "EndOfBlock", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
     // {block: {name: "Otherwise", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
   ];
 
@@ -85,6 +89,7 @@ export class MainElement extends LitElement {
     if(this.view==='Both'){
       editors=html`
           <vp-editor-element class="editor" 
+            .currentLang=${this.currentLang}
             .program=${this.program} 
             @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
             @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
@@ -97,7 +102,8 @@ export class MainElement extends LitElement {
     }
     else if(this.view==='Graphical'){
       editors=html`
-        <vp-editor-element class="editor" 
+        <vp-editor-element class="editor"
+          .currentLang=${this.currentLang} 
           .program=${this.program} 
           @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
           @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
@@ -113,20 +119,22 @@ export class MainElement extends LitElement {
       <div class="container">
         <div class="body ${this.view==='Text'?"text":''}">
         <menu-element class="menu"
+        .currentLang=${this.currentLang}
           .programText=${vpToText(this.program)} 
           @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
           .varList=${this.varList}
           @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
           .view=${this.view}
           @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}
-          @cond-list-saved=${(e: CustomEvent) => this._condList(e.detail.value)}></menu-element>
+          @cond-list-saved=${(e: CustomEvent) => this._condList(e.detail.value)}
+          @language-changed=${()=>this._updateLang()}></menu-element>
         <div class="editor-container">
           ${editors}
         </div>
         </div>
           ${this.view==='Text'? '':html`
           <options-element class="options" style="z-index: ${this.condOpen ? 100 : 10};"
-            .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex}
+            .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex} .currentLang=${this.currentLang}
             @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
             @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}
             @cond-open=${(e: CustomEvent) => this._condOpen(e.detail.value)}></options-element>
@@ -135,6 +143,10 @@ export class MainElement extends LitElement {
           `}
     `
   }
+
+private _updateLang(){
+  this.currentLang=getLang();
+}
 
 private _varList(newVar: VarObject[]) {
   this.varList = [ ...newVar] ;

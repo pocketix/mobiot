@@ -4,6 +4,7 @@ import { condListExport} from '../general/context';
 import { consume } from '@lit/context';
 import { VarObject, Argument} from '../general/interfaces.ts';
 import { CondText } from '../general/cond-text.ts';
+import { LangCode, transl } from '../general/language.ts';
 import './cond-edit-element.ts';
 import '../icons/table-icon.ts'
 import '../icons/delete-icon.ts'
@@ -18,6 +19,9 @@ export class CondListElement extends LitElement {
     @consume({ context: condListExport })
     @property({ attribute: false })
     table: VarObject[] = []
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     @state()
     private condEdit: VarObject={
@@ -102,16 +106,16 @@ export class CondListElement extends LitElement {
     
     render() {
         return html`
-          <button @click=${this._openCloseModal}><table-icon></table-icon>Conditions</button>
+          <button @click=${this._openCloseModal}><table-icon></table-icon>${transl('conditions')}</button>
     
           ${this.isOpen ? html`
             <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.condEdit)}>
-                <h1>List of conditions</h1>
+                <h1>${transl('listOfConditions')}</h1>
                 <table @click=${(e: Event) => { e.stopPropagation()}}>
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Value</th>
+                        <th>${transl('name')}</th>
+                        <th>${transl('value')}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -123,12 +127,12 @@ export class CondListElement extends LitElement {
                         ${this.selectedRow === item ? (() => {
                             const original = structuredClone(item.value); return html`
                             <cond-edit-element 
-                                .newMode=${false} .args=${[item.value]} .selectedBlock=${item.value} .title=${'✎ Edit'}
+                                .newMode=${false} .args=${[item.value]} .selectedBlock=${item.value} .title=${'✎ Edit'} .currentLang=${this.currentLang}
                                 @click=${(e: Event) => e.stopPropagation()}
                                 @cond-update=${(e: CustomEvent) => this._updateCond(e.detail.value, item)}
                                 @cond-clean=${() => this._updateCond(original, item)}>
                             </cond-edit-element>
-                            <button class="delete" @click=${(e: Event) => this._deleteCond(e, item)}><delete-icon></delete-icon>Delete</button>
+                            <button class="delete" @click=${(e: Event) => this._deleteCond(e, item)}><delete-icon></delete-icon>${transl('delete')}</button>
                         `})(): ''}
                         </div>
                         </tr>
@@ -136,8 +140,9 @@ export class CondListElement extends LitElement {
                     </tbody>
                 </table>
                 <div>
-                    <button @click=${this._saveChanges}>← Back</button>
-                    <cond-edit-element @click=${(e: Event) => e.stopPropagation()} @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)}>></cond-edit-element>
+                    <button @click=${this._saveChanges}>← ${transl('back')}</button>
+                    <cond-edit-element @click=${(e: Event) => e.stopPropagation()} @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)} 
+                    .currentLang=${this.currentLang}></cond-edit-element>
                 </div>
             </div>
           ` : ''}

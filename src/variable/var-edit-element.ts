@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { VarObject, Argument} from '../general/interfaces'
 import { TypeOption } from '../general/types';
 import { CondText } from '../general/cond-text.ts';
+import { LangCode, transl } from '../general/language.ts';
 
 @customElement('var-edit-element')
 export class VarEditElement extends LitElement {
@@ -14,6 +15,9 @@ export class VarEditElement extends LitElement {
 
   @state()
   private isOpen: boolean = false;
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
   @state()
   private canSave: boolean = false;
@@ -114,15 +118,15 @@ export class VarEditElement extends LitElement {
   `;
 
   render() {
-    let title = this.var.value.type==='note' ? '+ New variable' : '✎Edit';
+    let title = this.var.value.type==='note' ? '+ ' + transl('newVariable') : '✎' + transl('edit');
     this._saveBut();
     let valueType: TemplateResult=html``
     if(this.var.value.type==='bool'){
       valueType=html`
-      <button class=${'true' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
-      <button class=${'false' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+      <button class=${'true' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>${transl('true')}</button>
+      <button class=${'false' === this.var.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>${transl('false')}</button>`
     }else if(this.var.value.type==='number'){
-      valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
+      valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder=${transl('enterNumber')}>`
     }else if(this.var.value.type==='expr'){
       valueType=html`<cond-edit-element 
         .newMode=${false} .args=${this.var.value.args} .exprMode=${true}
@@ -131,7 +135,7 @@ export class VarEditElement extends LitElement {
         @cond-update=${(e: CustomEvent) => this._updateExpr(e.detail.value)}>
       </cond-edit-element>`
     }else{
-      valueType=html`<input type="text" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
+      valueType=html`<input type="text" .value=${this.var.value.value} @input=${this._handleValueInput} placeholder=${transl('addVarVal')} />`
     }
     return html`
       <button class="menu" @click=${this._openCloseModal}>${title}</button>
@@ -139,20 +143,20 @@ export class VarEditElement extends LitElement {
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
-            <h2>Select type of variable: </h2>
+            <h2>${transl('selectTypeOfVar')}</h2>
             <div>
              ${this.type.map(item=>html`
-                <button class=${item === this.var.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
+                <button class=${item === this.var.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${transl(item)}</button>
               `)}
             </div>
-            <h2>Name: </h2>${this.original.name==='' ? 
-              html`<input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder="Add variable name..." />`
+            <h2>${transl('name')}: </h2>${this.original.name==='' ? 
+              html`<input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder=${transl('addVarName')} />`
               : html`<p>${this.var.name}</p>`}
              
-            <h2>Value: </h2>
+            <h2>${transl('value')}: </h2>
             <div>${valueType}</div>
-            <button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveChanges()}}>Save</button>
-            <button class="cancel" @click=${()=>{this.var=this.original;this._saveChanges()}}>Cancel</button>
+            <button class="save" ?disabled=${!this.canSave} @click=${()=>{this._saveChanges()}}>${transl('save')}</button>
+            <button class="cancel" @click=${()=>{this.var=this.original;this._saveChanges()}}>${transl('cancel')}</button>
           </div>
         </div>
       ` : ''}

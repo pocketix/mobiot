@@ -7,6 +7,7 @@ import { consume } from '@lit/context';
 import { programIndexExport, detailGeneralExport} from './general/context';
 import { blockTypes } from './general/blocks.ts';
 import { sensors } from './general/sensors.ts';
+import { LangCode, transl } from './general/language.ts';
 import './icons/block-icon.ts';
 
 @customElement('options-element')//TODO clean code 3rd phase
@@ -44,6 +45,9 @@ export class OptionsElement extends LitElement {
     @property()
     programStartIndex: number=-1;
 
+     @property({attribute: false})
+    currentLang: LangCode = 'en';
+
     render() {
         let listOptions: TemplateResult[]=[];
         if(!this.menuParams){
@@ -55,7 +59,7 @@ export class OptionsElement extends LitElement {
             }
             filteredBlocks.forEach((block)=>{
             listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}>
-                ${block.type==='dev' ? html`<block-icon type="dev"></block-icon>` : html`<block-icon type=${block.id}></block-icon>`} ${block.name}${this.addText(block.id)}</button>`);
+                ${block.type==='dev' ? html`<block-icon type="dev"></block-icon>` : html`<block-icon type=${block.id}></block-icon>`} ${transl(block.name)}${this.addText(block.id)}</button>`);
         });
         }else{
             listOptions=this._filterParams();
@@ -66,7 +70,7 @@ export class OptionsElement extends LitElement {
             cathegoriesMenu=html`
             <div class="menu">
                 ${this.categories.map(item=>html`
-                <button class=${item === this.category ? 'selected' : 'menu-item'} @click=${() => this._selectCategory(item)}>${item}</button>
+                <button class=${item === this.category ? 'selected' : 'menu-item'} @click=${() => this._selectCategory(item)}>${transl(item)}</button>
                 `)}
             </div>`
         }
@@ -80,11 +84,11 @@ export class OptionsElement extends LitElement {
 
     private addText(id: string):string{
         if(['while', 'if', 'elseif'].includes(id)){
-            return " ...do ...";
+            return "..." + transl('do') + "...";
         }else if(id==='else'){
-            return ' do...'
+            return ' ' + transl('do') +'...'
         }else if(id==='switch'){
-            return ' ...'
+            return '...'
         }
         return'';
     }
@@ -97,13 +101,13 @@ export class OptionsElement extends LitElement {
             });
             list.push(html`<cond-edit-element " class="button"
                 .newMode=${false}
-                .title=${'Click here to create expression. '}
+                .title=${transl('clickCreate')}
                 @click=${(e: Event) => e.stopPropagation()}
                 @cond-update=${(e: CustomEvent) => this._addParamsVar({name: '', value: e.detail.value})}>
               </cond-edit-element>`)
         }else if(this.paramType==='variable'){
             this.variables.forEach((item)=>{
-                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`);
+                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : transl(item.value.value)}</button>`);
             });//TODO clean code
         }else{
             let varList: VarObject[]=[];
@@ -123,20 +127,20 @@ export class OptionsElement extends LitElement {
             }
             varList.forEach((item)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: 
-                    ${item.value.type==='expr' ? CondText(item.value.args[0]) : item.value.value}</button>`);
+                    ${item.value.type==='expr' ? CondText(item.value.args[0]) : transl(item.value.value)}</button>`);
             });
             let sensorsList: VarObject[]=sensors.filter(item => item.value.type===this.paramType);
             sensorsList.forEach((item)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}</button>`);
             });
             if(this.paramType==='bool'){
-                list.push(html`<li><button @click=${() => this._addParamsVal('true')}>true</button></li>`);
-                list.push(html`<li><button @click=${() => this._addParamsVal('false')}>false</button></li>`);
+                list.push(html`<li><button @click=${() => this._addParamsVal('true')}>${transl('true')}</button></li>`);
+                list.push(html`<li><button @click=${() => this._addParamsVal('false')}>${transl('false')}</button></li>`);
             }else if(this.paramType==='number'){
                 let paramInput: string='';
                 list.push(html`
                     <li>
-                      <input type="number" inputmode="decimal" step="any" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder="Enter a number">
+                      <input type="number" inputmode="decimal" step="any" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder=${transl('enterNumber')}>
                       <button @click=${() => this._addParamsVal(paramInput)}>Use this value</button>
                     </li>
                   `);
@@ -144,8 +148,8 @@ export class OptionsElement extends LitElement {
                 let paramInput: string='';
                 list.push(html`
                     <li>
-                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder="Enter a string">
-                      <button @click=${() => this._addParamsVal(paramInput)}>Use this value</button>
+                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder=${transl('addVal')}>
+                      <button @click=${() => this._addParamsVal(paramInput)}>${transl('useValue')}</button>
                     </li>
                   `);
                 }

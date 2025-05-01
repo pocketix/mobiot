@@ -2,6 +2,7 @@ import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Argument} from '../general/interfaces'
 import { TypeOption } from '../general/types';
+import { LangCode, transl } from '../general/language';
 
 @customElement('new-val-element')
 export class NewValElement extends LitElement {
@@ -21,6 +22,9 @@ export class NewValElement extends LitElement {
         value: '',
         args: []
     };
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     static styles = css`
 
@@ -110,30 +114,30 @@ export class NewValElement extends LitElement {
     let valueType: TemplateResult=html``
     if(this.value.type==='bool'){
       valueType=html`
-      <button class=${'true' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>true</button>
-      <button class=${'false' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>false</button>`
+      <button class=${'true' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('true')}>${transl('true')}</button>
+      <button class=${'false' === this.value.value ? 'selected' : ''} @click=${() => this._handleBoolInput('false')}>${transl('false')}</button>`
     }else if(this.value.type==='number'){
-      valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Enter a number">`
+      valueType=html`<input type="number" inputmode="decimal" step="any" .value=${this.value.value} @input=${this._handleValueInput} placeholder=${transl('enterNumber')}>`
     }else{
-      valueType=html`<input type="text" .value=${this.value.value} @input=${this._handleValueInput} placeholder="Add variable value..." />`
+      valueType=html`<input type="text" .value=${this.value.value} @input=${this._handleValueInput} placeholder=${transl('addVarVal')}/>`
     }
     return html`
-      <button @click=${this._openCloseModal}><div class="icon"><h3>+</h3> <p>Add value</p></div></button>
+      <button @click=${this._openCloseModal}><div class="icon"><h3>+</h3> <p>${transl('addValue')}</p></div></button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
-            <h2>Type of variable: </h2>
+            <h2>${transl('selectTypeOfVar')}</h2>
             <div>
               ${this.type.map(item=>html`
-                <button class=${item === this.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${item}</button>
+                <button class=${item === this.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${transl(item)}</button>
                 `)}
             </div>
-            <h2>Value: </h2>
+            <h2>${transl('value')}: </h2>
               ${valueType}
             <div>
-              <button class="save" ?disabled=${!this.canSave} @click=${this._addNew}>Save</button>
-              <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
+              <button class="save" ?disabled=${!this.canSave} @click=${this._addNew}>${transl('save')}</button>
+              <button class="cancel" @click=${this._openCloseModal}>X ${transl('cancel')}</button>
             </div>
           </div>
         </div>

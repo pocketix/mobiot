@@ -1,6 +1,7 @@
 import { LitElement, html, css, TemplateResult} from 'lit';
 import { customElement, property, state} from 'lit/decorators.js';
-import { TypeOption} from '../general/types'
+import { TypeOption} from '../general/types';
+import { LangCode, transl, getLang } from '../general/language';
 
 @customElement('operand-choose-element')
 export class OperandChooseElement extends LitElement {
@@ -16,6 +17,9 @@ export class OperandChooseElement extends LitElement {
 
     @state()
     private selected: string='Compare';
+
+    @property({ attribute: false })
+        currentLang: LangCode = 'en';
     
     static styles = css`
 
@@ -105,13 +109,13 @@ export class OperandChooseElement extends LitElement {
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             <div class="menu-container">
               ${this.operandTypes.map(item=>html`
-              <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${item}</button>
+              <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${transl(item)}</button>
               `)}
             </div>
             <div >
               ${listOperand}
             </div>
-            <button class="cancel" @click=${this._openCloseModal}>X Cancel</button>
+            <button class="cancel" @click=${this._openCloseModal}>X ${transl('cancel')}</button>
           </div>
         </div>
       ` : ''}
@@ -119,6 +123,7 @@ export class OperandChooseElement extends LitElement {
   }
   private _openCloseModal() {
     this.isOpen = !this.isOpen;
+    this.currentLang=getLang();
   }
 
   private _selectType(cat: string){
