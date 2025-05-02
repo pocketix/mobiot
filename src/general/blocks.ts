@@ -13,5 +13,6 @@ export const blockTypes: Block[] = [
     { name: "SetVariable", simple: true, id: "setvar", argTypes: ['variable', 'note'], type: 'set_var' },
     { name: "LED1.setLedColor", simple: true, id: "LED1.setLedColor", argTypes: ['bool'], type: 'dev' },
     { name: "wateringGreen1.setWater", simple: true, id: "waterGreen1.setWater", argTypes: [], type: 'dev' },
+    { name: "wateringGreen1.stopWater", simple: true, id: "waterGreen1.stopWater", argTypes: [], type: 'dev' },
     { name: "vacuumCleaner1.cleanRoom", simple: true, id: "vacuumCleaner1.cleanRoom", argTypes: [], type: 'dev' }
 ];

@@ -1,11 +1,15 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
-
+import { LangCode, transl } from '../general/language';
+import { blockTypes } from '../general/blocks';
 @customElement('device-commands-element')
 export class VarListElement extends LitElement {
 
     @state()
     private isOpen: boolean = false;
+
+    @property({ attribute: false })
+    currentLang: LangCode = 'en';
 
     static styles = css`
 
@@ -24,7 +28,7 @@ export class VarListElement extends LitElement {
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        gap: 16px;
+        gap: 8px;
         overflow-y: auto;
         color": black;
       }
@@ -40,18 +44,73 @@ export class VarListElement extends LitElement {
       background-color: gray;
       cursor: pointer;
       transition: border-color 0.25s;
-      margin-left: auto;
     }
+
+    .back{
+      width: 100%;
+      max-width: 200px;
+    }
+
+    .block {
+    display: block;
+    border: 2px solid #333;
+    border-radius: 8px;
+    background-color: #e0e0e0;
+    margin: 2px ;
+    width: 100%;
+    max-width: 200px;
+  }
+  .header {
+    padding: 6px 2px;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(to bottom, rgb(66, 63, 255), #7da7d9);
+  }
+
+  .content {
+    padding: 4px;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(to bottom, #7da7d9, #e0e0e0);
+  }
+
+  h2{
+    color: #7da7d9
+  }
       `;
     
       render() {
+        const commandsList: Record<string, string[]> = {};
+        let devList=blockTypes.filter(item=>(item.type==='dev'));
+        devList.forEach(item=>{
+          const itemParts = item.name.split('.');
+
+          if (itemParts.length >= 2) {
+            const key = itemParts[0];
+            const value = itemParts[1];
+
+            if (!commandsList[key]) {
+              commandsList[key] = [value];
+            }else {
+              commandsList[key].push(value);
+            }
+          } 
+        });
         return html`
-        <button @click=${this._openCloseModal}>Commands</button>
+        <button @click=${this._openCloseModal}>${transl('commands')}</button>
     
         ${this.isOpen ? html`
           <div class="modal">
-
-            <button @click=${this._openCloseModal}>Back</button>
+            <h2>${transl('commands')}</h2>
+            ${Object.entries(commandsList).map(([key, values]) => html`
+            <div class="block">
+              <div class="header">${key}</div>
+              <div class="content">
+                ${values.map(value => html`<div>${value}</div>`)}
+              </div>
+            </div>
+            `)}
+            <button class="back" @click=${this._openCloseModal}>← ${transl('back')}</button>
           </div>
           ` : ''}
         `;

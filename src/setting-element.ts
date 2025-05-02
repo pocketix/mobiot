@@ -18,27 +18,66 @@ export class VarListElement extends LitElement {
     @property()
     varList: VarObject[] = [];
 
+    @state()
+    private showHelp: boolean = false;
+
+    @state()
+    private showAbout: boolean = false;
+
     static styles = css`
 
       :host {
         color: black;
       }
 
-      .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 16px;
-        overflow-y: auto;
-        color": black;
-      }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background: white;
+      max-height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+
+      max-width: 425px;
+      box-sizing: border-box;
+      padding: 24px 0px;
+      border-radius: 8px;
+    }
+
+    h1{
+      color: rgb(66, 63, 255);
+    }
+    h1, h2 {
+      margin: 16px 0 0 0;
+    }
+
+    h2{
+      color: #7da7d9
+    }
+
+    .border{
+    padding-top: 16px;
+      border-top: 1px solid #ccc;
+    }
+
+    select{
+      max-width: 200px;
+      margin: auto;
+      padding: 5px 20px;
+      font-size: 1em;
+      background-color: gray;
+    }
 
     button {
       border-radius: 8px;
@@ -51,7 +90,10 @@ export class VarListElement extends LitElement {
       background-color: gray;
       cursor: pointer;
       transition: border-color 0.25s;
-      margin-left: auto;
+    }
+
+    .back{
+      margin: 0.2em 0.8em;
     }
       `;
     
@@ -61,37 +103,46 @@ export class VarListElement extends LitElement {
     
         ${this.isOpen ? html`
           <div class="modal">
+          <div class="modal-content">
             <h1>⛭ ${transl('settings')}</h1>
             <h2>Program</h2>
-            <button @click=${this._openFilePicker}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3v12"></path>
-              <path d="m8 11 4 4 4-4"></path>
-              <path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"></path>
-              </svg>
-            ${transl('importJSONfile')}</button>
-            <button @click=${this._exportText}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12l7-7 7 7" />
-              <path d="M12 5v14" />
-              </svg>
-            ${transl('exportJSONfile')}</button>
-            <label for="mySelect">${transl('chooseLanguage')}</label>
-            <select id="mySelect" .value=${getLang()} @change=${this._changeLanguage}>
+            <div>
+              <button @click=${this._openFilePicker}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v12"></path>
+                <path d="m8 11 4 4 4-4"></path>
+                <path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"></path>
+                </svg>
+              ${transl('importJSONfile')}</button>
+              <button @click=${this._exportText}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12l7-7 7 7" />
+                <path d="M12 5v14" />
+                </svg>
+              ${transl('exportJSONfile')}</button>
+            </div>
+            <h2 class="border">${transl('chooseLanguage')}</h2>
+            <select .value=${getLang()} @change=${this._changeLanguage}>
               <option value="en" >English</option>
               <option value="cs" >Čeština</option>
             </select>
-            <h2>${transl('usersFactors')}</h2>
-            <button>{ } ${transl('procedures')}</button>
-            <var-list-element .currentLang=${getLang()}></var-list-element>
-            <cond-list-element .currentLang=${getLang()}></cond-list-element>
-            <h2>${transl('devicesFactors')}</h2>
-            <device-commands-element></device-commands-element>
-            <device-parameters-element></device-parameters-element>
-            <h2>${transl('help')}</h2>
-            <h2>${transl('about')}</h2>
-            <p>I'm VPL project for Pocketix from David Skrabal</p>
-            <button @click=${this._openCloseModal}>${transl('back')}</button>
+            <h2 class="border">${transl('usersFactors')}</h2>
+            <div>
+              <var-list-element .currentLang=${getLang()}></var-list-element>
+              <cond-list-element .currentLang=${getLang()}></cond-list-element>
+              <button>{ } ${transl('procedures')}</button>
+            </div>
+            <h2 class="border">${transl('devicesFactors')}</h2>
+            <div>
+              <device-commands-element .currentLang=${getLang()}></device-commands-element>
+              <device-parameters-element .currentLang=${getLang()}></device-parameters-element>
+            </div>
+            <h2 class="border" @click=${()=>this.showHelp=!this.showHelp}>${transl('help')}${this.showHelp? '▲':'▼'}</h2>
+            ${this.showHelp? html`<p>There will be some hepl text, which is general for whole app. </p>`:''}
+            <h2 class="border" @click=${()=>this.showAbout=!this.showAbout}>${transl('about')}${this.showAbout? '▲':'▼'}</h2>
+            ${this.showAbout? html`<p>I'm VPL project for Pocketix from David Skrabal</p>`:''}
+            <button class="back" @click=${this._openCloseModal}>← ${transl('back')}</button>
+          </div>
           </div>
           ` : ''}
         `;

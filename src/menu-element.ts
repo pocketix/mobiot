@@ -27,10 +27,6 @@ export class MenuElement extends LitElement {
     view: View='Both'
 
   render() {
-    // console.log(this.currentLang);
-    // if(this.currentLang==='cs'){
-      
-    // }
     return html`
         <div class="content">
         <div class="view-container">

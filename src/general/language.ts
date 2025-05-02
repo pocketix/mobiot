@@ -114,8 +114,8 @@ export const translations: Record<LangCode, Record<string, string>> = {
 
     settings: 'Nastavení',
     usersFactors: 'Uživatelské faktory',
-    importJSONfile: 'Importovat soubor JSON',
-    exportJSONfile: 'Exportovat soubor JSON',
+    importJSONfile: 'Import soubor',
+    exportJSONfile: 'Export soubor',
     chooseLanguage: 'Zvol jazyk:',
     procedures: 'Procedury', 
     variables: 'Proměnné',
