@@ -63,7 +63,7 @@ export class BlockMenuElement extends LitElement {
       bottom: 15vh;
       background-color: #7da7d9;
       width: 100%;
-      max-width: 1040px;
+      max-width: 1200px;
       padding: 10px;
     }
 
@@ -84,7 +84,8 @@ export class BlockMenuElement extends LitElement {
             <button @click=${this._detailBlock}><detail-start-icon></detail-start-icon>Detail</button>` :''}
             <button class="delete" @click=${this._deleteBlock}><delete-icon></delete-icon>${transl('delete')}</button>
             <button @click=${this._replaceBlock}>${transl('replace')}</button>
-            <button class="save">${transl('saveAsProcedure')}</button>
+            ${!this.block.block.simple ? html`
+            <button class="save">${transl('saveAsProcedure')}</button>` :''}
             ${this._availableMove(true) ? html`<button @click=${()=>this._moveBlock(true)}>△</button>` : ''}
             ${this._availableMove()  ? html`<button @click=${()=>this._moveBlock(false)}>▽</button>` : ''}
           </div>

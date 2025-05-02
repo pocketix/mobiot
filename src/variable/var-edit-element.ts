@@ -31,6 +31,9 @@ export class VarEditElement extends LitElement {
       value: {type: 'note', value: '', args: []}
   };
 
+  @property()
+  varList: VarObject[]=[];
+
     static styles = css`
 
     h2{
@@ -210,6 +213,14 @@ export class VarEditElement extends LitElement {
   }
 
     private _saveChanges() {
+      if(this.original.name===''){
+        for (const item of this.varList) {
+          if(item.name===this.var.name){
+            window.alert(transl('invalidName'));
+            return;
+          }
+        }
+      }
       this.dispatchEvent(new CustomEvent('var-saved', {
         detail: { value: this.var },
         bubbles: true,

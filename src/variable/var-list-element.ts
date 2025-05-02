@@ -142,7 +142,7 @@ export class VarListElement extends LitElement {
                 </table>
                 <div>
                     <button @click=${this._saveChanges}>${transl('back')}</button>
-                    <var-edit-element .var=${this.varEdit} .currentLang=${this.currentLang} @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value)}></var-edit-element>
+                    <var-edit-element .var=${this.varEdit} .currentLang=${this.currentLang} .varList=${this.table} @var-saved=${(e: CustomEvent) => this._addVar(e.detail.value)}></var-edit-element>
                 </div>
             </div>
           ` : ''}
@@ -165,6 +165,8 @@ export class VarListElement extends LitElement {
 
     private _deleteVar(event: Event, deletedVar: VarObject) {
         event.stopPropagation();
+        const confirmMove = window.confirm(transl('attentionVar'));
+        if (!confirmMove) return;
         this.table=this.table.filter(item => item != deletedVar)
     }
 

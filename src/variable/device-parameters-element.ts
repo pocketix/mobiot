@@ -96,7 +96,6 @@ export class VarListElement extends LitElement {
                }
              } 
            });
-           console.log(paramsList);
            return html`
            <button @click=${this._openCloseModal}>${transl('parameters')}</button>
        

@@ -45,8 +45,11 @@ export class OptionsElement extends LitElement {
     @property()
     programStartIndex: number=-1;
 
-     @property({attribute: false})
+    @property({attribute: false})
     currentLang: LangCode = 'en';
+
+    @state()
+    private canSave: boolean = false;
 
     render() {
         let listOptions: TemplateResult[]=[];
@@ -140,21 +143,28 @@ export class OptionsElement extends LitElement {
                 let paramInput: string='';
                 list.push(html`
                     <li>
-                      <input type="number" inputmode="decimal" step="any" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder=${transl('enterNumber')}>
-                      <button @click=${() => this._addParamsVal(paramInput)}>Use this value</button>
+                      <input type="number" inputmode="decimal" step="any" .value=${paramInput} 
+                        @input=${(e: Event) => {paramInput = (e.target as HTMLInputElement).value;this._canSave(paramInput)}} placeholder=${transl('enterNumber')}>
+                      <button class="save" ?disabled=${!this.canSave} @click=${() => this._addParamsVal(paramInput)}>${transl('useValue')}</button>
                     </li>
                   `);
             }else{
                 let paramInput: string='';
                 list.push(html`
                     <li>
-                      <input type="text" .value=${paramInput} @input=${(e: Event) => paramInput = (e.target as HTMLInputElement).value} placeholder=${transl('addVal')}>
-                      <button @click=${() => this._addParamsVal(paramInput)}>${transl('useValue')}</button>
+                      <input type="text" .value=${paramInput} 
+                        @input=${(e: Event) => {paramInput = (e.target as HTMLInputElement).value;this._canSave(paramInput)}} placeholder=${transl('addVal')}>
+                      <button class="save" ?disabled=${!this.canSave} @click=${() => this._addParamsVal(paramInput)}>${transl('useValue')}</button>
                     </li>
                   `);
                 }
         }
         return list
+    }
+
+    private _canSave(value: string) {
+        if(value)this.canSave=true;
+        else this.canSave=false;
     }
 
     private _syntaxFilter(): Block[]{
@@ -342,6 +352,7 @@ export class OptionsElement extends LitElement {
                 composed: true
             }));
         }
+        this.canSave=false;
         this._saveChanges();
     }
     
@@ -409,6 +420,18 @@ export class OptionsElement extends LitElement {
         li {
             list-style-type: none;
             padding: 0;
+        }
+
+        .save {
+        margin: 12px 1px;
+        background-color:rgb(106, 175, 108);
+        }
+
+        button:disabled {
+        background-color: grey;
+        cursor: not-allowed;
+        background-color: #c4c4c4; /* světle šedá */
+        color: #6e6e6e;
         }
 
         .branch { background-color: #7da7d9;}

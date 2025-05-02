@@ -28,10 +28,14 @@ export class ChangeValElement extends LitElement {
     @property({ attribute: false })
     currentLang: LangCode = 'en';
 
+    @state()
+    private canSave: boolean = false;
+
     static styles = css`
 
     h2{
       color: black;
+      margin-bottom: 0px;
     }
     
     button {
@@ -46,7 +50,7 @@ export class ChangeValElement extends LitElement {
     }
         
     button.selected {
-      background-color: #7da7d9;
+      background-color: rgb(66, 63, 255);;
       color: white;
     }
 
@@ -55,8 +59,15 @@ export class ChangeValElement extends LitElement {
     }
 
     .save {
-      margin: 16px 1px;
+      margin: 12px 1px;
       background-color:rgb(79, 255, 108);
+    }
+
+    button:disabled {
+      background-color: grey;
+      cursor: not-allowed;
+      background-color: #c4c4c4; /* světle šedá */
+      color: #6e6e6e;
     }
 
     .but {
@@ -83,11 +94,15 @@ export class ChangeValElement extends LitElement {
     }
 
     .modal {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 1200px;
+      height: 25vh; 
       background: white;
-      padding: 24px;
-      border-radius: 8px;
-      max-width: 400px;
+      padding: 4px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      overflow-y: auto;
     }
   `;
 
@@ -138,14 +153,14 @@ export class ChangeValElement extends LitElement {
     }
 
     return html`
-      <button class="but" @click=${this._openCloseModal}>${transl(this.val.value)}</button>
+      <button class="but" @click=${this._openCloseModal}>${this.val.type==='bool'? transl(this.val.value):this.val.value}</button>
 
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             ${this.type!='variable' ? html`
-            <h2>${transl('changeVal')}</h2>
-            <div>${valueType} <button class="save" @click=${() => this._saveChanges()}>${transl('save')}</button></div>
+            <h2>${transl('changeValue')}</h2>
+            <div>${valueType} <button class="save" ?disabled=${!this.canSave} @click=${() => this._saveChanges()}>${transl('save')}</button></div>
             ` : ''}
             ${filteredList.length != 0 || filteredSensors.length!==0 ? html`${varBlock}` : ''}
             <div><button class="cancel" @click=${this._openCloseModal}>X ${transl('cancel')}</button></div>
@@ -156,16 +171,21 @@ export class ChangeValElement extends LitElement {
   }
 
   private _openCloseModal() {
+    if(!this.isOpen && this.val.type==='variable'){
+      this.canSave=false;
+    }
     this.isOpen = !this.isOpen;
   }
 
   private _handleValueInput(event: InputEvent) {
     const target = event.target as HTMLInputElement;
     this.val.value = target.value;
+    this._saveBut();
   }
 
   private _handleBoolInput(input: string) {
     this.val = {...this.val, value: input }
+    this._saveBut();
   }
 
   private _saveChanges(item: string='') {
@@ -182,6 +202,11 @@ export class ChangeValElement extends LitElement {
       composed: true
     }));
     this._openCloseModal()
+  }
+
+  private _saveBut() {
+    if (this.val.value.length===0)this.canSave=false;
+    else this.canSave=true;
   }
 }
 

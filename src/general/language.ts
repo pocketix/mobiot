@@ -73,6 +73,8 @@ export const translations: Record<LangCode, Record<string, string>> = {
     insertHere: 'Insert here',
     attentionIf: 'Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ',
     invalidAction: 'Invalid drag and drop action. ',
+    attentionVar: 'Attention: If you delete used variable, it makes error in your program. ',
+    invalidName: 'Variable with this name already exist. ',
     
     do: 'do', 
     Repeat: 'Repeat',
@@ -175,6 +177,8 @@ export const translations: Record<LangCode, Record<string, string>> = {
     insertHere: 'Vložte zde',
     attentionIf: 'Upozornění: Všechny (else if) a (else) blocky propojené s tímto (if) blokem budou také přesunuty. ',
     invalidAction: 'Chybná drag and drop akce. ',
+    attentionVar: 'Upozornění: Pokud smažete používanou proměnnou, vznikne chyba v programu. ',
+    invalidName: 'Proměnná s tímto jménem již existuje. ',
 
     do: 'proveď', 
     Repeat: 'Opakuj',
