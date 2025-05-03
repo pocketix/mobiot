@@ -49,13 +49,13 @@ export class VarChooseElement extends LitElement {
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background-color: rgb(168, 168, 168);
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
       transition: background-color 0.2s, color 0.2s;
       color: black;
     }
 
     .cancel {
-      background-color:rgb(255, 104, 104);
+      background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
     }
 
     .overlay {
@@ -82,7 +82,7 @@ export class VarChooseElement extends LitElement {
     }
 
     button.selected {
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       margin 0px;
       color: white;
     }

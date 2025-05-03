@@ -73,7 +73,7 @@ export class OptionsElement extends LitElement {
             cathegoriesMenu=html`
             <div class="menu">
                 ${this.categories.map(item=>html`
-                <button class=${item === this.category ? 'selected' : 'menu-item'} @click=${() => this._selectCategory(item)}>${transl(item)}</button>
+                <button class=${item === this.category ? `${item} selected` : `menu-item ${item}_text`} @click=${() => this._selectCategory(item)}>${transl(item)}</button>
                 `)}
             </div>`
         }
@@ -378,12 +378,13 @@ export class OptionsElement extends LitElement {
             font-size: 1em;
             font-weight: 500;
             font-family: inherit;
-            background-color: #7da7d9;
+            background: linear-gradient(135deg, #4a90e2, #7da7d9);
+            border: none;
             cursor: pointer;
             transition: border-color 0.25s;
             }
         button.selected {
-            background-color: #7da7d9;
+            border: none;
             color: white;
             margin: 0px;
             padding: 0.8em 1.6em;
@@ -400,7 +401,7 @@ export class OptionsElement extends LitElement {
 
         .menu-item {
             padding: 0.6em 0.8em;
-            background-color: gray;
+            background: gray;
             margin: 0px;
         }
 
@@ -413,7 +414,7 @@ export class OptionsElement extends LitElement {
             font-size: 1em;
             padding: 4px;
             border: none;
-            background-color: #7da7d9;
+            background: linear-gradient(135deg, #4a90e2, #7da7d9);
             color: black;
         }
 
@@ -424,22 +425,45 @@ export class OptionsElement extends LitElement {
 
         .save {
         margin: 12px 1px;
-        background-color:rgb(106, 175, 108);
+        background: linear-gradient(135deg, rgb(106, 175, 108), rgb(79, 255, 108));
+        border: none;
         }
 
         button:disabled {
-        background-color: grey;
-        cursor: not-allowed;
-        background-color: #c4c4c4; /* světle šedá */
-        color: #6e6e6e;
+            background-color: grey;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #c4c4c4, rgb(214, 214, 214));
+            color: #6e6e6e;
         }
 
-        .branch { background-color: #7da7d9;}
-        .cycle { background-color: rgb(106, 175, 108);}
-        .dev { background-color: #ff9800; }
-        .alert { background-color:rgb(255, 108, 108); }
-        .end { background-color:rgb(226, 192, 0); }
-        .set_var { background-color: #E2A7F0; } 
+        .branch {
+        background: linear-gradient(135deg, #7da7d9, #96b9e1);
+        border: none;
+        }
+        .cycle {
+        background: linear-gradient(135deg, rgb(106, 175, 108), rgb(136, 205, 138));
+        border: none;
+        }
+        .dev {
+        background: linear-gradient(135deg, #ff9800, #ffb733);
+        border: none;
+        }
+        .alert {
+        background: linear-gradient(135deg, rgb(255, 108, 108), rgb(255, 138, 138));
+        border: none;
+        }
+        .end {
+        background: linear-gradient(135deg, rgb(226, 192, 0), rgb(236, 206, 64));
+        border: none;
+        }
+        .set_var {
+        background: linear-gradient(135deg, #E2A7F0, #ebbef5);
+        border: none;
+        }
+
+        .branch_text {color:  #7da7d9;}
+        .cycle_text {color:  rgb(106, 175, 108);}
+        .dev_text {color:  #ff9800;}
      `
 }
 

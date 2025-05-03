@@ -47,31 +47,36 @@ export class NewValElement extends LitElement {
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background-color: rgb(168, 168, 168);
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
       transition: background-color 0.2s, color 0.2s;
       color: black;
     }
+
+    .menu{
+      background: linear-gradient(135deg, #ddd,rgb(224, 224, 224));
+    }
         
     button.selected {
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       color: white;
     }
 
     .save {
       margin: 16px 3px;
       padding: 8px 24px;
-      background-color:rgb(79, 255, 108);
+      background: linear-gradient(135deg, rgb(79, 255, 108), rgb(200, 255, 220));
     }
 
     button:disabled {
-      background-color: grey;
+      background: linear-gradient(135deg, #c4c4c4, rgb(214, 214, 214));
+      color: #6e6e6e;
       cursor: not-allowed;
       opacity: 0.5;
     }
 
     .cancel {
       margin: 16px 3px;
-      background-color:rgb(255, 104, 104);
+      background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
     }
 
     input {
@@ -130,7 +135,7 @@ export class NewValElement extends LitElement {
             <h2>${transl('selectTypeOfVar')}</h2>
             <div>
               ${this.type.map(item=>html`
-                <button class=${item === this.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${transl(item)}</button>
+                <button class=${item === this.value.type ? 'selected' : 'menu'} @click=${() => this._selectTypeInput(item)}>${transl(item)}</button>
                 `)}
             </div>
             <h2>${transl('value')}: </h2>

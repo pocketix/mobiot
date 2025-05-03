@@ -75,28 +75,30 @@ export class CondEditElement extends LitElement {
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background-color: rgb(168, 168, 168);
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
+
       transition: background-color 0.2s, color 0.2s;
       color: black;
     }
 
     .save {
-      background-color:rgb(79, 255, 108);
+      background: linear-gradient(135deg, rgb(79, 255, 108), rgb(200, 255, 220));
     }
 
     button:disabled {
-      background-color: grey;
+      background: linear-gradient(135deg, #c4c4c4, rgb(214, 214, 214));
+      color: #6e6e6e;
       cursor: not-allowed;
       opacity: 0.5;
     }
 
     .delete {
-      background-color:rgb(255, 104, 104);
+      background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
     }
         
     .group {
       padding: 10px 30px;
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
     }
 
     h2{
@@ -112,7 +114,7 @@ export class CondEditElement extends LitElement {
       font-size: 1em;
       padding: 4px;
       border: none;
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       color: black;
     }
 
@@ -133,7 +135,7 @@ export class CondEditElement extends LitElement {
     }
     
     .empty-content {
-      background-color: rgb(168, 168, 168);
+      background: linear-gradient(to bottom, gray, #e0e0e0);
       min-height: 50px;
       padding: 8px;
       border-radius: 0 0 4px 4px;
@@ -147,14 +149,14 @@ export class CondEditElement extends LitElement {
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       cursor: pointer;
       transition: border-color 0.25s;
       color: white;
     }
 
     .block {
-      background-color: #ddd;
+      background: #ddd;
     }
       
     .modal {

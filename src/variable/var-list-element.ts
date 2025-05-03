@@ -42,6 +42,8 @@ export class VarListElement extends LitElement {
             font-weight: 500;
             font-family: inherit;
             background-color:gray;
+            background: linear-gradient(135deg, gray, rgb(170, 170, 170));
+            border: none;
             cursor: pointer;
             transition: border-color 0.25s;
         }
@@ -51,7 +53,7 @@ export class VarListElement extends LitElement {
         }
 
         .delete {
-            background-color:rgb(255, 64, 64);
+            background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
         }
         
         .modal {
@@ -84,7 +86,8 @@ export class VarListElement extends LitElement {
            
         tr {
             border-radius: 8px;
-            background-color:rgb(170, 170, 170);
+            background: linear-gradient(135deg, rgb(170, 170, 170), #ddd);
+            border: none;
         }
 
         tr td:first-child {
@@ -98,7 +101,7 @@ export class VarListElement extends LitElement {
         }
 
         thead tr {
-            background-color:white;
+            background:white;
         }
       `;
     

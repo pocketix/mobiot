@@ -44,40 +44,40 @@ export class ChangeValElement extends LitElement {
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       transition: background-color 0.2s, color 0.2s;
       color: black;
     }
         
     button.selected {
-      background-color: rgb(66, 63, 255);;
+      background: linear-gradient(135deg, rgb(66, 63, 255), #357ABD);
       color: white;
     }
 
     input {
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
     }
 
     .save {
       margin: 12px 1px;
-      background-color:rgb(79, 255, 108);
+      background: linear-gradient(135deg, rgb(79, 255, 108), rgb(200, 255, 220));
     }
 
     button:disabled {
       background-color: grey;
       cursor: not-allowed;
-      background-color: #c4c4c4; /* světle šedá */
+      background: linear-gradient(135deg, #c4c4c4, rgb(214, 214, 214));
       color: #6e6e6e;
     }
 
     .but {
       margin: 0px;
-      background-color: #ddd;
+      background: #ddd;
     }
 
     .cancel{
-    margin: 0px;
-      background-color:rgb(255, 104, 104)
+      margin: 0px;
+      background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
     }
 
     .overlay {

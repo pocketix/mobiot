@@ -40,7 +40,7 @@ export class BlockMenuElement extends LitElement {
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        background-color: #ddd;
+        background: linear-gradient(135deg, #ddd,rgb(224, 224, 224));
         transition: background-color 0.2s, color 0.2s;
         color: black;
     }
@@ -61,18 +61,18 @@ export class BlockMenuElement extends LitElement {
     .modal {
       position: fixed;
       bottom: 15vh;
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       width: 100%;
       max-width: 1200px;
       padding: 10px;
     }
 
     .save {
-      background-color:rgb(79, 255, 108);
+      background: linear-gradient(135deg, rgb(79, 255, 108), rgb(200, 255, 220));
     }
 
     .delete {
-      background-color:rgb(255, 104, 104);
+      background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
     }
   `;
 

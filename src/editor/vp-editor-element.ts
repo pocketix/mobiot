@@ -79,7 +79,7 @@ export class VPEditorElement extends LitElement {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #e0e0e0;
+    background: linear-gradient(135deg, #ddd,rgb(224, 224, 224));
     margin: 4px ;
     color: black;
   }

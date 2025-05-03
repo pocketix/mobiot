@@ -76,7 +76,8 @@ export class VarListElement extends LitElement {
       margin: auto;
       padding: 5px 20px;
       font-size: 1em;
-      background-color: gray;
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
+      border: none;
     }
 
     button {
@@ -87,7 +88,8 @@ export class VarListElement extends LitElement {
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
-      background-color: gray;
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
+      border: none;
       cursor: pointer;
       transition: border-color 0.25s;
     }
@@ -175,7 +177,7 @@ export class VarListElement extends LitElement {
                       composed: true
                   }));
                 } catch (error) {
-                  window.alert("Import program cannot be used. There is some mistake in imported JSON. ");
+                  window.alert(transl('invalidImport'));
                 }
               }
             }

@@ -59,7 +59,7 @@ export class CondBlockElement extends LitElement {
     }
 
     .header {
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       padding: 4px;
       color: white;
       font-weight: bold;
@@ -72,11 +72,11 @@ export class CondBlockElement extends LitElement {
     }
 
     .header.selected {
-      background:rgb(66, 63, 255);
+      background: linear-gradient(135deg, rgb(66, 63, 255), #357ABD);
     }
 
     .content {
-      background-color: rgb(168, 168, 168);
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
       min-height: 50px;
       padding: 2px;
       border-radius: 0 0 4px 4px;
@@ -84,7 +84,7 @@ export class CondBlockElement extends LitElement {
     }
 
     .edit {
-        background-color: #7da7d9;
+        background-color: #4a90e2;
         border: 2px solid #fff;
         margin: 5px;
         border-radius: 8px;
@@ -97,7 +97,7 @@ export class CondBlockElement extends LitElement {
     }
 
     .value {
-        background-color: rgb(168, 168, 168);
+        background: linear-gradient(135deg, gray, rgb(170, 170, 170));
         padding: 10px;
         border-radius: 4px;
         color: black;
@@ -230,8 +230,10 @@ export class CondBlockElement extends LitElement {
                     <p class="center" @click=${this._handleHeaderClick}>${this.block.type}</p>
                     ${(this.selectMode && this.selectedBlock === this.blockParent) ? 
                     html`
-                    <label class="custom-checkbox">
-                        <input type="checkbox" @change=${(e: Event) => this._chooseArgsChanged(e)} />
+                    <label class="custom-checkbox" @click=${(e: Event) => e.stopPropagation()}>
+                        <input type="checkbox"
+                            @click=${(e: Event) => e.stopPropagation()}
+                            @change=${(e: Event) => this._chooseArgsChanged(e)} />
                         <span class="checkmark"></span>
                     </label>
                     ` : ''}

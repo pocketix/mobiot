@@ -37,19 +37,19 @@ export class OperandChooseElement extends LitElement {
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
-      background-color: #ddd;
+      background: linear-gradient(135deg, rgb(170, 170, 170), #ddd);
       transition: background-color 0.2s, color 0.2s;
       color: black;
     }
 
     button.selected {
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       margin 0px;
       color: white;
     }
 
     .cancel {
-      background-color:rgb(255, 104, 104);
+      background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
     }
 
     .button-container {

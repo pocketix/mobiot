@@ -108,7 +108,7 @@ export class BlockElement extends LitElement {
       color: white;
       font-weight: bold;
       border-radius: 8px;
-      background-color: gray;
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
     }
 
     .focus-block {
@@ -138,14 +138,30 @@ export class BlockElement extends LitElement {
       z-index: 100;
     }
 
-    .branch { background-color: #7da7d9; }
-    .cycle { background-color: rgb(106, 175, 108); }
-    .dev { background-color: #ff9800; }
-    .alert { background-color:rgb(255, 108, 108); }
-    .end { background-color:rgb(226, 192, 0); }
-    .set_var { background-color: #E2A7F0; } 
-    .branch-body { background-color:rgb(179, 200, 224); }
-    .cycle-body { background-color: #d4f1c5; }
+    .branch {
+      background: linear-gradient(135deg, #7da7d9, #96b9e1);
+    }
+    .cycle {
+      background: linear-gradient(135deg, rgb(106, 175, 108), rgb(136, 205, 138));
+    }
+    .dev {
+      background: linear-gradient(135deg, #ff9800, #ffb733);
+    }
+    .alert {
+      background: linear-gradient(135deg, rgb(255, 108, 108), rgb(255, 138, 138));
+    }
+    .end {
+      background: linear-gradient(135deg, rgb(226, 192, 0), rgb(236, 206, 64));
+    }
+    .set_var {
+      background: linear-gradient(135deg, #E2A7F0, #ebbef5);
+    }
+    .branch-body {
+      background: linear-gradient(135deg, rgb(179, 200, 224), rgb(199, 215, 234));
+    }
+    .cycle-body {
+      background: linear-gradient(135deg, #d4f1c5, #e1f7d7);
+    }
   `;
   render() {
     this._endDetail();
@@ -154,7 +170,7 @@ export class BlockElement extends LitElement {
     let body: TemplateResult=html``;
 
     if(this.block.block.argTypes.length===0){
-      header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${transl(this.block.block.name)}`;
+      header=html`${this.block.block.type==='dev' ? html`<block-icon type="dev"></block-icon>` : html`<block-icon type=${this.block.block.id}></block-icon>`} ${transl(this.block.block.name)}`;
     }
     else {
       header=this._drawHeader();

@@ -22,7 +22,7 @@ export const translations: Record<LangCode, Record<string, string>> = {
     commands: 'Commands',
     parameters: 'Parameters',
     about: 'About',
-    help: 'Help',
+    help: '? Help',
 
 
     save: 'Save',
@@ -37,10 +37,10 @@ export const translations: Record<LangCode, Record<string, string>> = {
     value: 'Value',
     newVariable: 'New variable',
 
-    number: 'number',
-    text: 'text', 
-    bool: 'bool',
-    expr: 'expr',
+    number: '🔢 number',
+    text: '🔤 text', 
+    bool: '✅ bool',
+    expr: '🧮 expr',
     true: 'true',
     false: 'false',
     enterNumber: 'Enter a number',
@@ -75,6 +75,7 @@ export const translations: Record<LangCode, Record<string, string>> = {
     invalidAction: 'Invalid drag and drop action. ',
     attentionVar: 'Attention: If you delete used variable, it makes error in your program. ',
     invalidName: 'Variable with this name already exist. ',
+    invalidImport: 'Import program cannot be used. There is some mistake in imported JSON. ',
     
     do: 'do', 
     Repeat: 'Repeat',
@@ -126,7 +127,7 @@ export const translations: Record<LangCode, Record<string, string>> = {
     commands: 'Příkazy',
     parameters: 'Parametry',
     about: 'O projektu',
-    help: 'Nápověda',
+    help: '? Nápověda',
 
     save: 'Uložit',
     back: 'Zpět',
@@ -140,10 +141,10 @@ export const translations: Record<LangCode, Record<string, string>> = {
     value: 'Hodnota',
     newVariable: 'Nová proměnná',
 
-    number: 'číslo',
-    text: 'text', 
-    bool: 'bool',
-    expr: 'výraz',
+    number: '🔢 číslo',
+    text: '🔤 text', 
+    bool: '✅ bool',
+    expr: '🧮 výraz',
     true: 'pravda',
     false: 'nepravda',
     enterNumber: 'Vlož číslo',
@@ -179,6 +180,7 @@ export const translations: Record<LangCode, Record<string, string>> = {
     invalidAction: 'Chybná drag and drop akce. ',
     attentionVar: 'Upozornění: Pokud smažete používanou proměnnou, vznikne chyba v programu. ',
     invalidName: 'Proměnná s tímto jménem již existuje. ',
+    invalidImport: 'Nelze importovat. Byla nalezena chyba ve vstupním JSON. ',
 
     do: 'proveď', 
     Repeat: 'Opakuj',

@@ -27,7 +27,13 @@ export class TextEditorElement extends LitElement {
       line-height: 1.4;
     }
     .highlight {
-      color: red;
+      color: rgb(156, 0, 0);
+      background: rgb(255, 131, 131)
+    }
+
+    .highlight-less {
+      color: rgb(156, 0, 0);
+      background: rgb(255, 178, 178)
     }
   `;
   // width: 500px;
@@ -40,10 +46,24 @@ export class TextEditorElement extends LitElement {
       <div class="text-container" contenteditable @input=${this._handleInput}>
         ${lines.map(
         (line, index) => 
-          html`<div style="white-space: pre-wrap;" class=${this.errorLines.includes(index) ? 'highlight' : ''}>${line}</div>`
+          html`<div style="white-space: pre-wrap;" class=${this._getLineClass(index)}>${line}</div>`
         )}
       </div>
     `;
+  }
+
+  private _getLineClass(index: number): string {
+    const isError = this.errorLines.includes(index);
+    const isPrevError = this.errorLines.includes(index - 1);
+    const isNextError = this.errorLines.includes(index + 1);
+  
+    if (isError && isPrevError && isNextError) {
+      return 'highlight';
+    } else if (isError) {
+      return 'highlight-less';
+    } else {
+      return '';
+    }
   }
 
   private _handleInput(event: InputEvent) {

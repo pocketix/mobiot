@@ -50,8 +50,8 @@ export class VarEditElement extends LitElement {
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background-color: #ddd;
-      transition: background-color 0.2s, color 0.2s;
+      background: linear-gradient(135deg, #ddd,rgb(224, 224, 224));
+      transition: background 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
       color: black;
     }
 
@@ -63,7 +63,8 @@ export class VarEditElement extends LitElement {
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
+      border: none;
       cursor: pointer;
       transition: border-color 0.25s;
       color: white;
@@ -71,30 +72,35 @@ export class VarEditElement extends LitElement {
 
     .save {
       margin: 16px 4px;
-      background-color:rgb(79, 255, 108);
+      background: linear-gradient(135deg, rgb(79, 255, 108), rgb(200, 255, 220));
+      border: none;
     }
 
     button:disabled {
       background-color: grey;
       cursor: not-allowed;
-      background-color: #c4c4c4; /* světle šedá */
+      
+      background: linear-gradient(135deg, #c4c4c4, rgb(214, 214, 214));
       color: #6e6e6e;
+      opacity: 0.6;
     }
 
     .cancel {
       margin: 16px 4px;
-      background-color:rgb(255, 104, 104);
+      background: linear-gradient(135deg, rgb(255, 104, 104), rgb(255, 160, 180));
     }
         
     button.selected {
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
+      border: none;
+      color: white;
     }
 
     input {
       font-size: 1em;
       padding: 4px;
       border: none;
-      background-color: #7da7d9;
+      background: linear-gradient(135deg, #4a90e2, #7da7d9);
       color: black;
     }
 
