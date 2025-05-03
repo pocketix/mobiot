@@ -10,6 +10,7 @@ export class BlockIcon extends LitElement {
     img {
       width: auto;
       height: 24px;
+      margin: 0px 4px;
     }
 
     .big {

@@ -71,7 +71,7 @@ export class ChangeValElement extends LitElement {
     }
 
     .but {
-      margin: 0px;
+      margin: 0px 4px;
       background: #ddd;
     }
 

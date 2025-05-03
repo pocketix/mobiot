@@ -170,7 +170,8 @@ export class BlockElement extends LitElement {
     let body: TemplateResult=html``;
 
     if(this.block.block.argTypes.length===0){
-      header=html`${this.block.block.type==='dev' ? html`<block-icon type="dev"></block-icon>` : html`<block-icon type=${this.block.block.id}></block-icon>`} ${transl(this.block.block.name)}`;
+      header=html`${this.block.block.type==='dev' ? html`<block-icon height="${true}" type="dev"></block-icon>` :
+        html`<block-icon height="${true}" type=${this.block.block.id}></block-icon>`} ${transl(this.block.block.name)}`;
     }
     else {
       header=this._drawHeader();
@@ -243,7 +244,8 @@ export class BlockElement extends LitElement {
         ${transl('addArgument')} ${this.block.block.argTypes[i]==='note' ? 'all' : transl(this.block.block.argTypes[i])}</div>`
     }
 
-    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${transl(this.block.block.name)}<div> ${header}</div>`
+    header=html`${this.block.block.type==='dev' ? html`<block-icon height="${true}" type="dev"></block-icon>` :
+      html`<block-icon height="${true}" type=${this.block.block.id}></block-icon>`} ${transl(this.block.block.name)}<div> ${header}</div>`
     return header;
   }
 
@@ -272,7 +274,8 @@ export class BlockElement extends LitElement {
       else header=html`<span class="condition" @click=${this._showArguments}>${transl('arguments')}</span>`
     }
 
-    header=html`<block-icon height="${true}" type=${this.block.block.id}></block-icon> ${transl(this.block.block.name)} ${header}`
+    header=html`${this.block.block.type==='dev' ? html`<block-icon height="${true}" type="dev"></block-icon>` :
+      html`<block-icon height="${true}" type=${this.block.block.id}></block-icon>`} ${transl(this.block.block.name)} ${header}`
     return header;
   }
 

@@ -93,7 +93,7 @@ export class MenuElement extends LitElement {
     }
 
     button.selected {
-    border: none;
+      border: none;
       background: linear-gradient(135deg, #ddd,rgb(168, 168, 168));
       color: black;
     }

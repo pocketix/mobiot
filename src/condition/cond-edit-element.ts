@@ -150,9 +150,20 @@ export class CondEditElement extends LitElement {
       font-weight: 500;
       font-family: inherit;
       background: linear-gradient(135deg, #4a90e2, #7da7d9);
+      border: none;
       cursor: pointer;
       transition: border-color 0.25s;
       color: white;
+    }
+
+    .add {
+      margin: 0.3em;
+      padding: 0.6em 0.2em;
+      font-size: 1em;
+      font-weight: 500;
+      font-family: inherit;
+      color: white;
+      background: linear-gradient(135deg, rgb(106, 175, 108), rgb(79, 255, 108));
     }
 
     .block {
@@ -183,7 +194,7 @@ export class CondEditElement extends LitElement {
     let cond: TemplateResult=this._drawExistOptions();
     
     return html`
-      <button class=${'+ New condition' === this.title || '✎ Edit' === this.title? 'menu' : 'block'} @click=${this._openCloseModal}>
+      <button class=${'+ New condition' === this.title || '✎ Edit' === this.title ? 'menu' : this.title===transl('clickCreate')?'add':'block'} @click=${this._openCloseModal}>
       ${this.title === '✎ Edit'
       ? html`✎ ${transl('edit')}`
       : this.title === '+ New condition'
