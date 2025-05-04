@@ -97,6 +97,10 @@ export class VarListElement extends LitElement {
     .back{
       margin: 0.2em 0.8em;
     }
+
+    option {
+      color: black;
+    }
       `;
     
       render() {

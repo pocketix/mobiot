@@ -124,6 +124,10 @@ export class VarEditElement extends LitElement {
       max-width: 400px;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     }
+
+    h3{
+      color: #7da7d9;
+    }
   `;
 
   render() {
@@ -154,13 +158,13 @@ export class VarEditElement extends LitElement {
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             <h2>${transl('selectTypeOfVar')}</h2>
             <div>
-             ${this.type.map(item=>html`
-                <button class=${item === this.var.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${transl(item)}</button>
-              `)}
+              ${this.original.value.type==='note'? this.type.map(item=>html`
+                <button class=${item === this.var.value.type ? 'selected' : ''} @click=${() => this._selectTypeInput(item)}>${transl(item)}</button>`)
+              :html`<h3>${transl(this.var.value.type)}</h3>`}
             </div>
             <h2>${transl('name')}: </h2>${this.original.name==='' ? 
               html`<input type="text" .value=${this.var.name} @input=${this._handleNameInput} placeholder=${transl('addVarName')} />`
-              : html`<p>${this.var.name}</p>`}
+              : html`<h3>${this.var.name}</h3>`}
              
             <h2>${transl('value')}: </h2>
             <div>${valueType}</div>
