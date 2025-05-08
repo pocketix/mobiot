@@ -113,15 +113,22 @@ export class CondBlockElement extends LitElement {
     }
 
     .header .center {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        margin: 0;
+        flex: 1; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-right: 29px;
+    }
+
+    .header .mainCond {
+      flex: 1; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .custom-checkbox {
         display: inline-block;
-        position: relative;
         cursor: pointer;
         user-select: none;
         display: flex;
@@ -245,7 +252,7 @@ export class CondBlockElement extends LitElement {
         ` : html`<div class="main">
                 <div 
                     class="header ${this.selectedBlock === this.block ? 'selected' : ''}" @click=${this._handleHeaderClick} >
-                    <p class="center" @click=${this._handleHeaderClick}>Your condition: </p>
+                    <p class="mainCond" @click=${this._handleHeaderClick}>Your condition: </p>
                 </div>
                 <div>
                     ${element}

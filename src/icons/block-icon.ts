@@ -8,7 +8,6 @@ export class BlockIcon extends LitElement {
 
   static styles = css`
     img {
-      width: auto;
       height: 24px;
       margin: 0px 4px;
     }
@@ -16,7 +15,7 @@ export class BlockIcon extends LitElement {
     .big {
       height: 28px;
     }
-  `;
+  `;//      width: 24px;
 
   private getImageUrl(fileName: string): string {
     return new URL(fileName, import.meta.url).href;

@@ -52,6 +52,19 @@ export class OptionsElement extends LitElement {
     private canSave: boolean = false;
 
     render() {
+        let block: ProgramBlock|undefined;
+        if (this.programIndex >= 0 && this.programIndex < this.program.length) {
+            block = this.program[this.programIndex];
+        }else{
+            block=this.program[this.program.length-1]
+        }
+        if(block && block.block.argTypes.length>block.arguments.length){
+            this.paramType=block.block.argTypes[block.arguments.length]
+        }else{
+            this.menuParams=false;
+            this.paramType='note';
+        }
+        
         let listOptions: TemplateResult[]=[];
         if(!this.menuParams){
             let filteredBlocks =this._syntaxFilter();
@@ -217,7 +230,7 @@ export class OptionsElement extends LitElement {
             this.program=[...this.program, {block: input, arguments: [], hide: false}]
         }
         else{
-            if (this.programIndex > 0 && this.programIndex < this.program.length) {
+            if (this.programIndex >= 0 && this.programIndex < this.program.length) {
                 if(input.id==='end'){
                     this.programIndex=this._endCheck();
                     this.dispatchEvent(new CustomEvent('index-changed', {
@@ -313,13 +326,13 @@ export class OptionsElement extends LitElement {
         }
     }
 
-    private _addParams(block: ProgramBlock, arg: Argument){
+    private _addParams(block: ProgramBlock, arg: Argument){//TODO clen code
         const updatedBlock = { ...block, arguments: [...block.arguments, arg]};
         
         if(this.programIndex===-1){
             this.program=[...this.program, updatedBlock];
         }else{
-            if (this.programIndex > 0 && this.programIndex < this.program.length) {
+            if (this.programIndex >= 0 && this.programIndex < this.program.length) {
                 if(updatedBlock.block.simple){
                     this.program = [
                         ...this.program.slice(0, this.programIndex),
@@ -377,6 +390,9 @@ export class OptionsElement extends LitElement {
             padding: 0.6em 0.2em;
             font-size: 1em;
             font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: inherit;
             background: linear-gradient(135deg, #4a90e2, #7da7d9);
             border: none;
@@ -394,6 +410,8 @@ export class OptionsElement extends LitElement {
         .menu {
             position: sticky;
             top: 0;
+            display: flex;
+            justify-content: center;
             background-color: gray;
             width: 100%;
 
@@ -406,6 +424,9 @@ export class OptionsElement extends LitElement {
         }
 
         .content{
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
             flex: 1;
             overflow-y: auto;
         }

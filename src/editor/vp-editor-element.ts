@@ -171,7 +171,7 @@ export class VPEditorElement extends LitElement {
     if(item){
       return html`<block-element .block=${item} .currentLang=${this.currentLang}
         .startIndex=${this.program.indexOf(item)===0}.endIndex=${this._endIndex(endIndex, item.block.id==='if')}
-        @change-detail=${() => this._changeDetail(endIndex, item)}
+        @change-detail=${(e: CustomEvent)=>{e.stopPropagation();this._changeDetail(endIndex, item)}}
         @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
         @show-zone=${(e: CustomEvent)=>{e.stopPropagation(); this.zoneAvailable=!this.zoneAvailable; this.dragItem===null ? this.dragItem=item : this.dragItem=null}}
         @dragstart=${(e: DragEvent) => { e.stopPropagation();this._setZone(item);this._handleDragStart(e, endIndex); }} 
@@ -375,7 +375,6 @@ export class VPEditorElement extends LitElement {
   private _ifElseBlock(oldEnd: number): number{
     let deepCounter=0;
     let actualBlock;
-
     if(oldEnd<this.program.length-1){
       for (let i=oldEnd+1;i<this.program.length;i++){
         actualBlock=this.program[i];

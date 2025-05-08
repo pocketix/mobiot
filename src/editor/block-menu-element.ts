@@ -38,7 +38,11 @@ export class BlockMenuElement extends LitElement {
     button {
         padding: 8px 8px;
         border: none;
+        margin: 3px;
         border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         cursor: pointer;
         background: linear-gradient(135deg, #ddd,rgb(224, 224, 224));
         transition: background-color 0.2s, color 0.2s;
@@ -60,11 +64,16 @@ export class BlockMenuElement extends LitElement {
 
     .modal {
       position: fixed;
-      bottom: 15vh;
+      top: 75vh;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
       background: linear-gradient(135deg, #4a90e2, #7da7d9);
       width: 100%;
       max-width: 1200px;
       padding: 10px;
+      max-height: 15vh;
+      overflow-y: auto;
     }
 
     .save {
@@ -112,7 +121,7 @@ export class BlockMenuElement extends LitElement {
 
     private _deleteBlock() {
       if(this.block.block.id==='if'){
-        const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be deleted too. ");
+        const confirmMove = window.confirm(transl('attentionIfDelete'));
         if (!confirmMove) {
           this._openCloseModal()
           return;
@@ -137,7 +146,7 @@ export class BlockMenuElement extends LitElement {
 
   private _moveBlock(up: boolean) {
     if(this.block.block.id==='if'){
-      const confirmMove = window.confirm("Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ");
+      const confirmMove = window.confirm(transl('attentionIf'));
       if (!confirmMove) {
         this._openCloseModal()
         return;

@@ -35,7 +35,7 @@ export class ChangeValElement extends LitElement {
 
     h2{
       color: black;
-      margin-bottom: 0px;
+      margin: 0px;
     }
     
     button {

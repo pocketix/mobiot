@@ -94,8 +94,8 @@ export class MainElement extends LitElement {
             @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
             @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
             @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
-            @change-detail=${()=>this._changeDetail()}
-            @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}
+            
+            @detail-index=${(e: CustomEvent) => {this._detailBlock(e.detail.value);this._changeDetail()}}
             @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>
           <text-editor-element class="editor" 
             .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {this._updateProgram(e.detail.value)}}></text-editor-element>`
@@ -108,8 +108,8 @@ export class MainElement extends LitElement {
           @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
           @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
           @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
-          @change-detail=${()=>this._changeDetail()}
-          @detail-index=${(e: CustomEvent) => this._detailBlock(e.detail.value)}
+          
+          @detail-index=${(e: CustomEvent) => {this._detailBlock(e.detail.value);this._changeDetail()}}
           @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>`
     }else{
       editors=html`
@@ -212,7 +212,9 @@ private _updateIndex(newIndex: number){
 }
 
 private _replaceBlock(block: ProgramBlock){
-  this.programIndex=this.program.indexOf(block);
+  if(this.program.indexOf(block)<this.program.length-1){
+    this.programIndex=this.program.indexOf(block);
+  }
 }
 
 private _deleteBlock(block: ProgramBlock){
@@ -221,7 +223,7 @@ private _deleteBlock(block: ProgramBlock){
 
   if (index !== -1) {
     if(block.block.simple){
-      this.program=this.program.filter(item=>item!=block)
+      this.program=this.program.filter(item=>item!=block);
     }else{
       let endIndex = index + 1;
       while (endIndex < this.program.length && (deepCounter>0 || this.program[endIndex].block.id==='elseif' || this.program[endIndex].block.id==='else')) {
@@ -239,25 +241,27 @@ private _deleteBlock(block: ProgramBlock){
     :host {
       width: 1200px;
       margin: 0 auto;
-      padding: 0.5rem;
+      padding: 0px;
       text-align: center;
       display: flex;
       flex-direction: column;
       background: white;
+      height: 100vh;
+      overflow: hidden;
     }
 
     @media (max-width: 768px) {
       :host {
         width: 100%;
         margin: 0;
-        padding: 0;
+
       }
     }
 
     .container {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      max-height: 100vh;
     }
 
     .menu{

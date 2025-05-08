@@ -58,8 +58,8 @@ export class VarEditElement extends LitElement {
     .menu {
       border-radius: 8px;
       border: 1px solid transparent;
-      padding: 0.4em 0.8em;
-      margin: 0.2em 0.4em;
+      padding: 0.4em 0.4em;
+      margin: 0.2em 0.2em;
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;

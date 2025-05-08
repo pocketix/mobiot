@@ -49,7 +49,7 @@ export class CondListElement extends LitElement {
         }
 
         h1 {
-            color: black;
+            color: #4a90e2;
         }
 
         .delete {
@@ -58,17 +58,39 @@ export class CondListElement extends LitElement {
         }
         
         .modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: white;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-          gap: 16px;
+            position: fixed;
+            inset: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: background: rgba(0, 0, 0, 0.5);;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            padding: 24px 5px;;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        @media (min-width: 425px) {
+            .modal-content {
+                min-width: 425px;
+            }
+        }
+
+        @media (max-width: 425px) {
+            .modal-content {
+                width: 100%;
+            }
         }
 
         table {
@@ -103,6 +125,12 @@ export class CondListElement extends LitElement {
         thead tr {
             background:white;
         }
+
+        .menu{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
     `;
     
     render() {
@@ -110,8 +138,9 @@ export class CondListElement extends LitElement {
           <button @click=${this._openCloseModal}><table-icon></table-icon>${transl('conditions')}</button>
     
           ${this.isOpen ? html`
-            <div class="modal" @click=${(e: Event) => this._handleRowClick(e, this.condEdit)}>
-                <h1>${transl('listOfConditions')}</h1>
+          <div class="modal">
+            <div class="modal-content" @click=${(e: Event) => this._handleRowClick(e, this.condEdit)}>
+                <h1>▦${transl('listOfConditions')}</h1>
                 <table @click=${(e: Event) => { e.stopPropagation()}}>
                     <thead>
                     <tr>
@@ -122,9 +151,9 @@ export class CondListElement extends LitElement {
                     <tbody>
                     ${this.table.map(item => html`
                         <tr @click=${(e: Event) => this._handleRowClick(e, item)}>
-                        <td>${item.name}</td>
+                        <td>⚖️${item.name}</td>
                         <td>${CondText(item.value)}</td>
-                        <div>
+                        <div class="menu">
                         ${this.selectedRow === item ? (() => {
                             const original = structuredClone(item.value); return html`
                             <cond-edit-element 
@@ -145,6 +174,7 @@ export class CondListElement extends LitElement {
                     <cond-edit-element @click=${(e: Event) => e.stopPropagation()} @cond-saved=${(e: CustomEvent) => this._addCond(e.detail.value)} 
                     .currentLang=${this.currentLang}></cond-edit-element>
                 </div>
+            </div>
             </div>
           ` : ''}
         `;

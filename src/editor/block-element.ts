@@ -25,7 +25,7 @@ export class BlockElement extends LitElement {
     private args: boolean=false;
 
     @property()
-    detail: boolean=true;
+    detail: boolean=false;
 
     @property()
     startIndex: boolean=false;
@@ -47,7 +47,7 @@ export class BlockElement extends LitElement {
       display: block;
       border: 2px solid #333;
       border-radius: 8px;
-      background-color: #e0e0e0;
+      background: #e0e0e0;
       margin: 4px;
     }
 
@@ -70,11 +70,13 @@ export class BlockElement extends LitElement {
       flex: 1; 
       display: flex;
       justify-content: center;
+      align-items: center;
     }
 
     .header .right {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
     }
 
     .header .left {
@@ -82,6 +84,7 @@ export class BlockElement extends LitElement {
       justify-content: flex-start;
       padding: 8px 8px;
       margin: 2px 8px;
+      align-items: center;
     }
 
     .content {
@@ -115,6 +118,7 @@ export class BlockElement extends LitElement {
       border: 4px solid red;
       position: relative;
       z-index: 1000;
+      background: #e0e0e0;
     }
 
     .detail {
@@ -122,12 +126,12 @@ export class BlockElement extends LitElement {
       left: 0;
       width: 100vw;
       margin-left: calc(-50vw + 50%);
-      background-color: #e0e0e0;
-      border: 2px solid #333;
+      background: #e0e0e0;
+      border: 4px solid red;
     }
 
     .hide {
-      background-color: #e0e0e0;
+      background: #e0e0e0;
       color: black;
       border: 1px solid transparent;
       font-size: 1em;
@@ -197,7 +201,7 @@ export class BlockElement extends LitElement {
       <block-menu-element class="menu" .currentLang=${this.currentLang}
         isOpen=${this.menu} .block=${this.block} .startIndex=${this.startIndex} .endIndex=${this.endIndex}
         @block-menu=${(e: CustomEvent) => this._blockMenu(e.detail.value)}
-        @detail-block=${() => this._detailBlock()}></block-menu-element>
+        @detail-block=${(e: Event) => { e.stopPropagation(); this._detailBlock()}}></block-menu-element>
       ` : ''}
       <div class="${this.menu===true ? 'focus-block' : ''}">
       <div class="${this.detail ? 'detail' : ''}">
@@ -223,7 +227,7 @@ export class BlockElement extends LitElement {
 
   private _addText(id: string): string{
     if(['while', 'if', 'elseif', 'else'].includes(id)){
-      return transl('do') + ": ";
+      return transl(' do') + ": ";
     }
     return'';
   }

@@ -35,6 +35,9 @@ export class CondEditElement extends LitElement {
   @property()
   newMode: boolean=true;
 
+  @state()
+  private hideVars: boolean=true;
+
   @property()
   exprMode: boolean=false;
 
@@ -98,11 +101,13 @@ export class CondEditElement extends LitElement {
         
     .group {
       padding: 10px 30px;
+      
+      margin: 0 auto;
       background: linear-gradient(135deg, #4a90e2, #7da7d9);
     }
 
     h2{
-      color: black;
+      color: rgb(66, 63, 255);
       margin: 0px;
     }
 
@@ -170,20 +175,43 @@ export class CondEditElement extends LitElement {
       background: #ddd;
     }
       
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      gap: 16px;
-      overflow: auto;
-    }
+    
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        height: 100vh;
+        overflow: hidden;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+        .modal-content {
+            background: white;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            padding: 24px 5px;;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        @media (min-width: 425px) {
+            .modal-content {
+                min-width: 425px;
+            }
+        }
+
+        @media (max-width: 425px) {
+            .modal-content {
+                width: 100%;
+            }
+        }
   `;
     
   render() {
@@ -202,7 +230,8 @@ export class CondEditElement extends LitElement {
         : html`${this.title}`}</button>
 
       ${this.isOpen ? html`
-        <div class="modal">
+      <div class="modal">
+        <div class="modal-content">
           <h1>${transl('conditionEditor')}</h1>
           ${cond}
           ${this.newMode ? html`<h2>${transl('fillNameOfNewCondition')}</h2>
@@ -236,6 +265,7 @@ export class CondEditElement extends LitElement {
                 <button @click=${this._backAction}>← ${transl('back')}</button>
             </div>
         </div>
+      </div>
       ` : ''}
     `;
   }
@@ -246,8 +276,8 @@ export class CondEditElement extends LitElement {
       this.condList.forEach((item)=>{
         cond=html`${cond}<button @click=${()=>{this.block.args[0]=structuredClone(item.value);this._updateCond()}}>${CondText(item.value)}</button>`
       })
-      cond=html`<h2>${transl('selectFromExist')}</h2>
-        <div>${cond}</div>`;
+      cond=html`<h2  @click=${()=>this.hideVars=!this.hideVars}>${transl('selectFromExist')}${this.hideVars? '▲':'▼'}</h2>
+        ${this.hideVars ? html`<div>${cond}</div>`:''}`;
     }
     return cond;
   }
