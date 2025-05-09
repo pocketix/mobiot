@@ -18,20 +18,43 @@ export class VarListElement extends LitElement {
       }
 
       .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 8px;
-        overflow-y: auto;
-        color": black;
-      }
+            position: fixed;
+            inset: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: background: rgba(0, 0, 0, 0.5);;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+
+            padding: 24px 5px;;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        @media (min-width: 425px) {
+            .modal-content {
+                min-width: 425px;
+                border-radius: 8px;
+                box-sizing: border-box;
+            }
+        }
+
+        @media (max-width: 425px) {
+            .modal-content {
+                width: 100%;
+            }
+        }
 
     button {
       border-radius: 8px;
@@ -101,7 +124,8 @@ export class VarListElement extends LitElement {
         <button @click=${this._openCloseModal}>${transl('commands')}</button>
     
         ${this.isOpen ? html`
-          <div class="modal">
+        <div class="modal">
+          <div class="modal-content">
             <h2>${transl('commands')}</h2>
             ${Object.entries(commandsList).map(([key, values]) => html`
             <div class="block">
@@ -113,6 +137,7 @@ export class VarListElement extends LitElement {
             `)}
             <button class="back" @click=${this._openCloseModal}>← ${transl('back')}</button>
           </div>
+        </div>
           ` : ''}
         `;
       }

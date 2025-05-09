@@ -4,7 +4,7 @@ import { LangCode, transl } from '../general/language';
 import { sensors } from '../general/sensors';
 
 @customElement('device-parameters-element')
-export class VarListElement extends LitElement {
+export class DeviceParametresElement extends LitElement {
 
    @state()
        private isOpen: boolean = false;
@@ -33,6 +33,34 @@ export class VarListElement extends LitElement {
            overflow-y: auto;
            color": black;
          }
+
+        .modal-content {
+            background: white;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+
+            padding: 24px 5px;;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        @media (min-width: 425px) {
+            .modal-content {
+                min-width: 425px;
+                border-radius: 8px;
+                box-sizing: border-box;
+            }
+        }
+
+        @media (max-width: 425px) {
+            .modal-content {
+                width: 100%;
+            }
+        }
    
        button {
          border-radius: 8px;
@@ -101,7 +129,8 @@ export class VarListElement extends LitElement {
            <button @click=${this._openCloseModal}>${transl('parameters')}</button>
        
            ${this.isOpen ? html`
-             <div class="modal">
+           <div class="modal">
+             <div class="modal-content">
                <h2>${transl('parameters')}</h2>
                ${Object.entries(paramsList).map(([key, values]) => html`
                <div class="block">
@@ -113,6 +142,7 @@ export class VarListElement extends LitElement {
                `)}
                <button class="back" @click=${this._openCloseModal}>← ${transl('back')}</button>
              </div>
+            </div>
              ` : ''}
            `;
          }
@@ -124,6 +154,6 @@ export class VarListElement extends LitElement {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    'device-parameters-element': VarListElement
+    'device-parameters-element': DeviceParametresElement
   }
 }

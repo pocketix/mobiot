@@ -9,6 +9,7 @@ import './var-choose-element';
 import './new-val-element';
 import './cond-block-element';
 import '../icons/delete-icon';
+import { sensors } from '../general/sensors';
 
 
 @customElement('cond-edit-element')
@@ -51,7 +52,7 @@ export class CondEditElement extends LitElement {
   args: Argument[]=[];
   
   @property()
-  block: Argument={type: 'cond',value:'', args: this.args}
+  block: Argument={type: 'cond',value:'', args: []}
 
   @property()
   condEdit: VarObject={name: '', value: this.block}
@@ -119,6 +120,7 @@ export class CondEditElement extends LitElement {
       font-size: 1em;
       padding: 4px;
       border: none;
+      margin: 0 auto;
       background: linear-gradient(135deg, #4a90e2, #7da7d9);
       color: black;
     }
@@ -215,10 +217,11 @@ export class CondEditElement extends LitElement {
   `;
     
   render() {
+    
     const EMPTYBLOCK=html`<div class="empty"><div class="empty-header">${transl('addFirstVar')}</div><div class="empty-content" /></div>`
-    if(this.block.args.length===0 && this.args.length!==0){
-      this.block.args=this.args;
-    }
+    // if(this.block.args.length===0 && this.args.length!==0){
+    //   this.block.args=this.args;
+    // }
     let cond: TemplateResult=this._drawExistOptions();
     
     return html`
@@ -328,7 +331,13 @@ export class CondEditElement extends LitElement {
   }
 
   private _saveCheck(){
-    if(this.block.args.length===1 && !['num', 'str', 'bool', 'expr','variable'].includes(this.block.args[0].type) &&
+    let varType=true;
+    if(this.block.args.length===1 && this.block.args[0].type==='variable'){;
+      let varT=this.varList.filter(item=>this.block.args[0].value===item.name);
+      if(varT.length===0)varT=sensors.filter(item=>this.block.args[0].value===item.name);
+      if(varT.length===1 && varT[0].value.type!=='bool')varType=false;
+    }
+    if(this.block.args.length===1 && !['num', 'str', 'expr',].includes(this.block.args[0].type) && varType &&
       ((!['+','-','*','/'].includes(this.block.args[0].type) || this.exprMode)&&
       (!this.newMode || this.condEdit.name)))this.canSave=true;
     else this.canSave=false;

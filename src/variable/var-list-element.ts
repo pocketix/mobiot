@@ -85,6 +85,8 @@ export class VarListElement extends LitElement {
         @media (min-width: 425px) {
             .modal-content {
                 min-width: 425px;
+                border-radius: 8px;
+                box-sizing: border-box;
             }
         }
 
@@ -157,7 +159,9 @@ export class VarListElement extends LitElement {
                         <td>${transl(item.value.type)}</td>
                         <td>${item.name}</td>
                         ${item.value.type==='expr' ? html`<td>${CondText(item.value.args[0])}</td>` : 
-                            html`<td>${item.value.type==='bool'? transl(item.value.value) : item.value.value}</td>`}
+                            html`<td>${item.value.type==='bool'? transl(item.value.value) : (item.value.value.length > this._getMaxLength()
+                                ? item.value.value.slice(0, this._getMaxLength()) + '…' 
+                                : item.value.value)}</td>`}
                         <div class="menu">
                         ${this.selectedRow === item ? html`
                             <var-edit-element 
@@ -183,9 +187,16 @@ export class VarListElement extends LitElement {
         `;
       }
 
-      private _openCloseModal() {
+    private _getMaxLength(): number {
+        const width = window.innerWidth;
+        if (width <= 375) return 12;
+        if (width <= 425) return 17;
+        return 30;
+    }
+
+    private _openCloseModal() {
         this.isOpen = !this.isOpen;
-      }
+    }
 
     private _addVar(updatedVar: VarObject, originalVar: VarObject=this.varEdit) {
         this.table=this.table.filter(item => item != originalVar)

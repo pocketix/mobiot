@@ -2,9 +2,10 @@ import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { VarObject } from './general/interfaces';
 import { ExportText } from './general/export';
-import { LangCode, transl, setLang, getLang } from './general/language';
+import { LangCode, transl, setLang, getLang, translations } from './general/language';
 import './variable/device-commands-element';
-import'./variable/device-parameters-element';
+import './variable/device-parameters-element';
+import './variable/kpi-element'
 
 @customElement('setting-element')
 export class VarListElement extends LitElement {
@@ -51,7 +52,7 @@ export class VarListElement extends LitElement {
 
       max-width: 425px;
       box-sizing: border-box;
-      padding: 24px 0px;
+      padding: 16px 0px;
       border-radius: 8px;
     }
 
@@ -129,8 +130,9 @@ export class VarListElement extends LitElement {
             </div>
             <h2 class="border">${transl('chooseLanguage')}</h2>
             <select .value=${getLang()} @change=${this._changeLanguage}>
-              <option value="en" >English</option>
-              <option value="cs" >Čeština</option>
+              ${Object.keys(translations).map(lang => html`
+                <option value=${lang}>${lang}</option>
+              `)}
             </select>
             <h2 class="border">${transl('usersFactors')}</h2>
             <div>
@@ -142,6 +144,7 @@ export class VarListElement extends LitElement {
             <div>
               <device-commands-element .currentLang=${getLang()}></device-commands-element>
               <device-parameters-element .currentLang=${getLang()}></device-parameters-element>
+              <kpi-element .currentLang=${getLang()}></kpi-element>
             </div>
             <h2 class="border" @click=${()=>this.showHelp=!this.showHelp}>${transl('help')}${this.showHelp? '▲':'▼'}</h2>
             ${this.showHelp? html`<p>There will be some hepl text, which is general for whole app. </p>`:''}
@@ -153,6 +156,10 @@ export class VarListElement extends LitElement {
           ` : ''}
         `;
       }
+// <select .value=${getLang()} @change=${this._changeLanguage}>
+//               <option value="en" >English</option>
+//               <option value="cs" >Čeština</option>
+//             </select>
 
       private _openCloseModal() {
         this.isOpen = !this.isOpen;

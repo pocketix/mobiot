@@ -8,13 +8,13 @@ import { vpToText } from './convert/vp-to-text.ts';
 import { TextToVp } from './convert/text-to-vp.ts';
 import { UpdateVarList } from './convert/update-var-list.ts';
 import { TextSyntax } from './convert/text-syntax.ts';
-import { LangCode, getLang} from './general/language.ts';
+import { LangCode, getLang, translations, updateTranslations} from './general/language.ts';
 import './editor/vp-editor-element.ts';
 import './editor/text-editor-element.ts';
 import './variable/var-list-element.ts';
 import './options-element.ts';
 import './condition/cond-edit-element.ts'
-import './menu-element.ts'
+import './menu-element.ts';
 
 
 @customElement('main-element')
@@ -26,6 +26,26 @@ export class MainElement extends LitElement {
 
     @property({attribute: false})
     currentLang: LangCode = 'en';
+
+    @property({ type: Object })
+    get newTranslations(): typeof translations | undefined {
+      return translations;
+    }
+    set newTranslations(value: typeof translations) {
+      if (value) {
+        updateTranslations(value);
+      }
+    }
+
+    @property({ type: String})
+    get importProgram(): string {
+      return vpToText(this.program);
+    }
+    set importProgram(value: string) {
+      if (value) {
+        this._saveText(value);
+      }
+    }
 
     @provide({ context: detailGeneralExport})
     @property({attribute: false})
@@ -118,7 +138,7 @@ export class MainElement extends LitElement {
     return html`
       <div class="container">
         <div class="body ${this.view==='Text'?"text":''}">
-        <menu-element class="menu"
+        <menu-element class="menu" 
         .currentLang=${this.currentLang}
           .programText=${vpToText(this.program)} 
           @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}

@@ -1,9 +1,10 @@
 
 let currentLang: LangCode = 'en';
 
-export type LangCode = 'en' | 'cs';
+// export type LangCode = 'en' | 'cs';
+export type LangCode = keyof typeof translations;
 
-export const translations: Record<LangCode, Record<string, string>> = {
+export let translations = {//: Record<LangCode, Record<string, string>>
   en: {
     Graphical: 'Graphical',
     Both: 'Both', 
@@ -43,17 +44,17 @@ export const translations: Record<LangCode, Record<string, string>> = {
     expr: '🧮 expr',
     true: 'true',
     false: 'false',
-    enterNumber: 'Enter a number',
-    addVarVal: 'Add variable value...',
+    enterNumber: 'Enter number',
+    addVarVal: 'Variable value...',
     selectTypeOfVar: 'Select type of variable: ',
-    addVarName: 'Add variable name...',
+    addVarName: 'Variable name...',
 
     listOfConditions: 'List of conditions',
     newCondition: 'New condition',
     conditionEditor: '⚖️Condition Editor',
     fillNameOfNewCondition: 'Name of condition:',
-    addName: 'Add name ...',
-    addFirstVar: 'Add first variable or value to your condition',
+    addName: 'Conditionn name ...',
+    addFirstVar: 'Add first variable or value',// to your condition
     select: 'Select...',
     saveCondition: 'Save condition',
     group: 'Group',
@@ -68,15 +69,15 @@ export const translations: Record<LangCode, Record<string, string>> = {
     Compare: 'Compare',
     Logical: 'Logical',
     Numeric: 'Numeric',
-    insertBlock: 'Insert next block of your program',
-    insertFirstBlock: 'Insert first block of your program',
+    insertBlock: 'Insert next program block',//block of your program
+    insertFirstBlock: 'Insert first program block of your program',//of your program
     insertHere: 'Insert here',
     attentionIf: 'Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ',
     attentionIfDelete: 'Attention: All (else if) and (else) blocks connected with this (if) block will be deleted too. ',
-    invalidAction: 'Invalid drag and drop action. ',
+    invalidAction: 'Invalid drag and drop. ',//action
     attentionVar: 'Attention: If you delete used variable, it makes error in your program. ',
-    invalidName: 'Variable with this name already exist. ',
-    invalidImport: 'Import program cannot be used. There is some mistake in imported JSON. ',
+    invalidName: 'Name already used. ',
+    invalidImport: 'File not accepted: mistake in imported JSON. ',//Import program cannot be used. There is some mistake in imported JSON. 
     
     do: 'do', 
     Repeat: 'Repeat',
@@ -107,7 +108,15 @@ export const translations: Record<LangCode, Record<string, string>> = {
     dev: 'dev',
     others: 'others',
     cycle: 'cycle',
-    clickCreate: 'Create new expression'
+    clickCreate: 'Create new expression',
+
+    KPI: '📊 KPI',
+    leaking: 'Leaking',
+    turnedOn: 'Turned on',
+    deviceOnline: 'Devices online',
+    criticalBatery: 'Critical battery',
+    anomalyDetected: 'Anomaly detected',
+    sensorError: 'Sensor error',
 
   },
   cs: {
@@ -213,13 +222,27 @@ export const translations: Record<LangCode, Record<string, string>> = {
     dev: 'zařízení',
     others: 'jiné',
     cycle: 'cykly',
-    clickCreate: 'Vytvoření nového výrazu'
+    clickCreate: 'Vytvoření nového výrazu',
+
+    KPI: '📊 KPI',
+    leaking: 'Únik detekován',
+    turnedOn: 'Zapnutá zařízení',
+    deviceOnline: 'Zařízení online',
+    criticalBatery: 'Kritická baterie',
+    anomalyDetected: 'Zjištěna anomálie',
+    sensorError: 'Chyba senzoru',
 
   }
 };
 
+// export function transl(key: string): string {
+//   return translations[currentLang][key] || key;
+// }
+
+export type TranslationKey = keyof typeof translations[LangCode];
+
 export function transl(key: string): string {
-  return translations[currentLang][key] || key;
+  return translations[currentLang]?.[key as keyof typeof translations[typeof currentLang]] ?? key;
 }
 
 export function setLang(lang: LangCode) {
@@ -228,5 +251,10 @@ export function setLang(lang: LangCode) {
 
 export function getLang(): LangCode {
   return currentLang;
+}
+
+export function updateTranslations(newData: typeof translations) {
+  translations = newData;
+  // type LangCode = keyof typeof translations;
 }
   

@@ -84,6 +84,8 @@ export class CondListElement extends LitElement {
         @media (min-width: 425px) {
             .modal-content {
                 min-width: 425px;
+                border-radius: 8px;
+                box-sizing: border-box;
             }
         }
 
@@ -152,12 +154,15 @@ export class CondListElement extends LitElement {
                     ${this.table.map(item => html`
                         <tr @click=${(e: Event) => this._handleRowClick(e, item)}>
                         <td>⚖️${item.name}</td>
-                        <td>${CondText(item.value)}</td>
+                        <td>${CondText(item.value).length > this._getMaxLength()
+                                ? CondText(item.value).slice(0, this._getMaxLength()) + '…' 
+                                : CondText(item.value)}
+                        </td>
                         <div class="menu">
                         ${this.selectedRow === item ? (() => {
                             const original = structuredClone(item.value); return html`
                             <cond-edit-element 
-                                .newMode=${false} .args=${[item.value]} .selectedBlock=${item.value} .title=${'✎ Edit'} .currentLang=${this.currentLang}
+                                .newMode=${false} .block=${{type: 'cond',value:'', args: [item.value]}} .selectedBlock=${item.value} .title=${'✎ Edit'} .currentLang=${this.currentLang}
                                 @click=${(e: Event) => e.stopPropagation()}
                                 @cond-update=${(e: CustomEvent) => this._updateCond(e.detail.value, item)}
                                 @cond-clean=${() => this._updateCond(original, item)}>
@@ -182,6 +187,13 @@ export class CondListElement extends LitElement {
 
     private _openCloseModal() {
         this.isOpen = !this.isOpen;
+    }
+
+    private _getMaxLength(): number {
+        const width = window.innerWidth;
+        if (width <= 375) return 25;
+        if (width <= 425) return 30;
+        return 50;
     }
 
     private _addCond(newCond: VarObject){

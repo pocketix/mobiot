@@ -131,6 +131,7 @@ export class CondBlockElement extends LitElement {
         display: inline-block;
         cursor: pointer;
         user-select: none;
+        position: relative;
         display: flex;
         justify-content: flex-end;
     }
@@ -217,11 +218,11 @@ export class CondBlockElement extends LitElement {
     private _drawOperandWindow(): TemplateResult{
         let element: TemplateResult=html``;
         if(this.groupAction && this.selectedBlock === this.block){
-            element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operand-choose-element>`
+            element=html`<operand-choose-element .itemSum=${this.chooseArgs.length} @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operand-choose-element>`
         }
 
         if(this.changeOperand){
-            element=html`<operand-choose-element @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operand-choose-element>`
+            element=html`<operand-choose-element .itemSum=${this.block.args.length} @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operand-choose-element>`
         }
         return element;
     }
@@ -316,7 +317,7 @@ export class CondBlockElement extends LitElement {
     }
 
     private _deleteArgs(){
-        this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item))
+        this.block.args = this.block.args.filter(item => !this.chooseArgs.includes(item));
         this.chooseArgs=[];
         this.deleteAction=false;
         this.dispatchEvent(new CustomEvent('select-ended', {
@@ -336,7 +337,7 @@ export class CondBlockElement extends LitElement {
 
     private _updateList(updatedList: Argument[]) {
         this.chooseArgs = [ ...updatedList ];
-        this.canGroup = this.chooseArgs.length >= 2;
+        this.canGroup = this.chooseArgs.length >= 1;
 
         this.dispatchEvent(new CustomEvent('can-group', { 
             detail: this.canGroup, 

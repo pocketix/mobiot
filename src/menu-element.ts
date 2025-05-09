@@ -2,7 +2,7 @@ import { LitElement, css, html} from 'lit'
 import { customElement, property, state} from 'lit/decorators.js'
 import { VarObject} from './general/interfaces.ts'
 import { View } from './general/types.ts';
-import { transl, LangCode } from './general/language.ts';
+import { transl, LangCode} from './general/language.ts';
 import './variable/var-list-element.ts';
 import './options-element.ts';
 import './condition/cond-edit-element.ts'
@@ -21,7 +21,7 @@ export class MenuElement extends LitElement {
     programText: string=''
 
     @state()
-    private viewList: View[] = window.matchMedia('(max-width: 768px)').matches ?['Text','Graphical']:['Both','Text','Graphical'];
+    private viewList: View[] = window.matchMedia('(max-width: 768px)').matches ?['Graphical', 'Text']:['Both','Graphical','Text'];
 
     @property()
     view: View='Both'
@@ -89,7 +89,7 @@ export class MenuElement extends LitElement {
     }
 
     .view button{
-      background-color: gray;
+      background: none;
     }
 
     button.selected {
@@ -106,7 +106,7 @@ export class MenuElement extends LitElement {
       max-width: fit-content;
       border-radius: 12px;
       padding: 6px;
-      background: gray;
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
       margin: 2px;
       margin-right: auto;
     }

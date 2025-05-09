@@ -12,6 +12,9 @@ export class OperandChooseElement extends LitElement {
     @property({ type: Object })
     operand: TypeOption = 'note'
 
+    @property()
+    itemSum: number=2;
+
     @state()
     private operandTypes: string[]=['Compare', 'Logical', 'Numeric'];
 
@@ -61,11 +64,11 @@ export class OperandChooseElement extends LitElement {
     .menu-container {
       border-radius: 12px;
       padding: 2px 4px;
-      background: rgb(168, 168, 168);
+      background: linear-gradient(135deg, gray, rgb(170, 170, 170));
     }
 
     .menu {
-      background: rgb(168, 168, 168);
+      background: none;
       margin 0px;
     }
 
@@ -94,8 +97,12 @@ export class OperandChooseElement extends LitElement {
   render() {
     const listOperand: TemplateResult[]=[];
     let operandList: TypeOption[]=[];
-
-    if(this.selected==='Compare')operandList=['=','≠','>','<','>=','<='];
+    if(this.itemSum===1){
+      this.operandTypes=['Logical'];
+      this.selected='Logical';
+      operandList=['NOT'];
+    }
+    else if(this.selected==='Compare')operandList=['=','≠','>','<','>=','<='];
     else if(this.selected==='Logical')operandList=['AND','OR','NOT'];
     else operandList=['+','-','*','/'];
     

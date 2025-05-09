@@ -263,7 +263,7 @@ export class BlockElement extends LitElement {
 
       if(argType==='cond'){
         header=html`${header}<cond-edit-element .currentLang=${this.currentLang}
-          .newMode=${false} .args=${[item]} .selectedBlock=${item} .title=${CondText(item)}
+          .newMode=${false} .block=${{type: 'cond',value:'', args: [item]}} .args=${[item]} .selectedBlock=${item} .title=${CondText(item)}
           @cond-update=${(e: CustomEvent) => this._changeBlock(e.detail.value, index)}
           @cond-clean=${() => this._changeBlock(original.arguments[index], index)}></cond-edit-element>`
       }else{
