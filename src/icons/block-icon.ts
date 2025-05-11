@@ -1,5 +1,15 @@
 import { html, css, LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
+import ifIcon from'/img/if-icon.png';
+import elseIcon from'/img/else-icon.png';
+import elseifIcon from'/img/elseif-icon.png';
+import switchIcon from'/img/switch-icon.png';
+import caseIcon from'/img/case-icon.png';
+import whileIcon from'/img/while-icon.png';
+import repeatIcon from'/img/repeat-icon.png';
+import alertIcon from'/img/alert-icon.png';
+import setvarIcon from'/img/setvar-icon.png';
+import devIcon from'/img/dev-icon.png';
 
 export class BlockIcon extends LitElement {
     @property({ type: String }) type = '';
@@ -22,16 +32,16 @@ export class BlockIcon extends LitElement {
   }
 
   private imageMap: Record<string, string> = {
-    'if': this.getImageUrl('img/if-icon.png'),
-    'else': this.getImageUrl('img/else-icon.png'),
-    'elseif': this.getImageUrl('img/elseif-icon.png'),
-    'switch': this.getImageUrl('img/switch-icon.png'),
-    'case': this.getImageUrl('img/case-icon.png'),
-    'while': this.getImageUrl('img/while-icon.png'),
-    'repeat': this.getImageUrl('img/repeat-icon.png'),
-    'alert': this.getImageUrl('img/alert-icon.png'),
-    'setvar': this.getImageUrl('img/setvar-icon.png'),
-    'dev': this.getImageUrl('img/dev-icon.png'),
+    'if': this.getImageUrl(ifIcon),
+    'else': this.getImageUrl(elseIcon),
+    'elseif': this.getImageUrl(elseifIcon),
+    'switch': this.getImageUrl(switchIcon),
+    'case': this.getImageUrl(caseIcon),
+    'while': this.getImageUrl(whileIcon),
+    'repeat': this.getImageUrl(repeatIcon),
+    'alert': this.getImageUrl(alertIcon),
+    'setvar': this.getImageUrl(setvarIcon),
+    'dev': this.getImageUrl(devIcon),
   };
 
   render() {

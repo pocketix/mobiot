@@ -8,7 +8,7 @@ import './variable/device-parameters-element';
 import './variable/kpi-element'
 
 @customElement('setting-element')
-export class VarListElement extends LitElement {
+export class SettingElement extends LitElement {
 
     @state()
     private isOpen: boolean = false;
@@ -218,6 +218,6 @@ export class VarListElement extends LitElement {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    'setting-element': VarListElement
+    'setting-element': SettingElement
   }
 }

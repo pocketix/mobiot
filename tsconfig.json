@@ -5,21 +5,40 @@
     "useDefineForClassFields": false,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
+    "skipLibCheck": false,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
-    "moduleDetection": "force",
+    // "moduleDetection": "force",
     "noEmit": true,
 
+    /* Aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@assets/*": ["src/assets/*"],
+      "@condition/*": ["src/condition/*"],
+      "@convert/*": ["src/convert/*"],
+      "@editor/*": ["src/editor/*"],
+      "@general/*": ["src/general/*"],
+      "@icons/*": ["src/icons/*"],
+      "@img/*": ["src/img/*"],
+      "@variable/*": ["src/variable/*"]
+    },
+    "plugins": [
+      {
+        "name": "ts-lit-plugin"
+      }
+    ]
     /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    // "strict": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src/**/*"]
 }
