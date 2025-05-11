@@ -12,6 +12,9 @@ export class TextEditorElement extends LitElement {
   @state()
   private errorLines: number[]=[];
 
+  @state()
+  private updateErr: boolean=true;
+
   static styles = css`
     .text-container {
       border: 2px solid #ccc;
@@ -25,7 +28,9 @@ export class TextEditorElement extends LitElement {
       outline: none;
       resize: none;
       line-height: 1.4;
-    }
+      flex: 1;
+      }
+
     .highlight {
       color: rgb(156, 0, 0);
       background: rgb(255, 131, 131)
@@ -35,20 +40,54 @@ export class TextEditorElement extends LitElement {
       color: rgb(156, 0, 0);
       background: rgb(255, 178, 178)
     }
+
+    .wrapper {
+      display: flex;
+      align-items: flex-start;
+      margin: 4px;
+    }
+
+    .line-numbers {
+    padding: 11px 4px 11px 0;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    text-align: right;
+    font-size: 16px;
+    font-family: sans-serif;
+    line-height: 1.4;
+  }
+
+  .line-numbers p {
+    margin: 0;
+    height: 1.4em; 
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: gray;
+  }
   `;
   // width: 500px;
   // height: 500px;
 
   render() {
     const lines = this.value.split('\n');
+    if(this.updateErr){
+      this.errorLines=[];
+    }else this.updateErr=true;
 
     return html`
+    <div class="wrapper">
+      <div class="line-numbers">
+        ${lines.map((_, index) => html`<div class="line"><p>${this.errorLines.includes(index) ? '⚠️': index + 1}</p></div>`)}
+      </div>
       <div class="text-container" contenteditable @input=${this._handleInput}>
         ${lines.map(
         (line, index) => 
           html`<div style="white-space: pre-wrap;" class=${this._getLineClass(index)}>${line}</div>`
         )}
       </div>
+    </div>
     `;
   }
 
@@ -69,17 +108,29 @@ export class TextEditorElement extends LitElement {
   private _handleInput(event: InputEvent) {
     const container = event.currentTarget as HTMLElement;
     let newValue = ''
+    
+    const isDeleting = event.inputType==='deleteContentBackward';
 
     Array.from(container.childNodes)
       .filter(node => node.nodeType === Node.ELEMENT_NODE && (node as Element).tagName === 'DIV')
-      .map(divNode => {
-        newValue=newValue +  (divNode as HTMLElement).innerText + '\n';
-    });
+      .map((divNode) => {
+        
+        const divElement = divNode as HTMLElement;
+        const divText = divElement.innerText;
+
+        if (divText.trim()==='' && isDeleting) {
+          divElement.remove();
+        } else {
+          newValue = newValue + divText + '\n';
+        }
+      });
 
     const result=TextSyntax(newValue);
     if(result.program){
-      this.value='';
       let program = TextToVp(result.program);
+      this.value=newValue;
+      this.errorLines=[];
+      this.requestUpdate();
         this.dispatchEvent(new CustomEvent('value-changed', {
         detail: { value: program},
         bubbles: true,
@@ -88,6 +139,7 @@ export class TextEditorElement extends LitElement {
     }
     if(result.errorIndex){
       this.errorLines=[result.errorIndex-3, result.errorIndex-2, result.errorIndex-1]
+      this.updateErr=false;
     }
   }
 }

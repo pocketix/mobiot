@@ -55,7 +55,10 @@ export class ChangeValElement extends LitElement {
     }
 
     input {
+      padding: 8px 16px;
+      margin: 4px;
       background: linear-gradient(135deg, #4a90e2, #7da7d9);
+      border: none;
     }
 
     .save {
@@ -72,6 +75,7 @@ export class ChangeValElement extends LitElement {
 
     .but {
       margin: 0px 4px;
+      padding: 8px 10px;
       background: #ddd;
     }
 
@@ -158,11 +162,11 @@ export class ChangeValElement extends LitElement {
       ${this.isOpen ? html`
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
+            ${filteredList.length != 0 || filteredSensors.length!==0 ? html`${varBlock}` : ''}
             ${this.type!='variable' ? html`
             <h2>${transl('changeValue')}</h2>
             <div>${valueType} <button class="save" ?disabled=${!this.canSave} @click=${() => this._saveChanges()}>${transl('save')}</button></div>
             ` : ''}
-            ${filteredList.length != 0 || filteredSensors.length!==0 ? html`${varBlock}` : ''}
             <div><button class="cancel" @click=${this._openCloseModal}>X ${transl('cancel')}</button></div>
           </div>
         </div>

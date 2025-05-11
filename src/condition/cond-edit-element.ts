@@ -174,6 +174,7 @@ export class CondEditElement extends LitElement {
     }
 
     .block {
+      padding: 8px 10px;
       background: #ddd;
     }
       

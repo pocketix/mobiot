@@ -149,7 +149,7 @@ export class VarListElement extends LitElement {
             <h2 class="border" @click=${()=>this.showHelp=!this.showHelp}>${transl('help')}${this.showHelp? '▲':'▼'}</h2>
             ${this.showHelp? html`<p>There will be some hepl text, which is general for whole app. </p>`:''}
             <h2 class="border" @click=${()=>this.showAbout=!this.showAbout}>${transl('about')}${this.showAbout? '▲':'▼'}</h2>
-            ${this.showAbout? html`<p>I'm VPL project for Pocketix from David Skrabal</p>`:''}
+            ${this.showAbout? html`<p>${transl('aboutText')}<a href="https://github.com/pocketix/iot-vpl-editor" target="_blank">${transl('here')}</a></p>`:''}
             <button class="back" @click=${this._openCloseModal}>← ${transl('back')}</button>
           </div>
           </div>

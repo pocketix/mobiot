@@ -2,8 +2,9 @@ import { LitElement, css, html } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { LangCode, transl } from '../general/language';
 import { blockTypes } from '../general/blocks';
+
 @customElement('device-commands-element')
-export class VarListElement extends LitElement {
+export class DeviceCommandElement extends LitElement {
 
     @state()
     private isOpen: boolean = false;
@@ -149,6 +150,6 @@ export class VarListElement extends LitElement {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    'device-commands-element': VarListElement
+    'device-commands-element': DeviceCommandElement
   }
 }

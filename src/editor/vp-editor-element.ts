@@ -154,7 +154,7 @@ export class VPEditorElement extends LitElement {
 
   private _endIndex(index: number, ifBlock: boolean=false): boolean{
     if(ifBlock) index=this._ifElseBlock(index);
-    if(index>this.program.length-1)return true;
+    if(index>=this.program.length-1)return true;
     return false;
   }
 
@@ -170,7 +170,7 @@ export class VPEditorElement extends LitElement {
     let item=stackComplexName.pop();
     if(item){
       return html`<block-element .block=${item} .currentLang=${this.currentLang}
-        .startIndex=${this.program.indexOf(item)===0}.endIndex=${this._endIndex(endIndex, item.block.id==='if')}
+        .startIndex=${this.program.indexOf(item)===0} .endIndex=${this._endIndex(endIndex, item.block.id==='if')}
         @change-detail=${(e: CustomEvent)=>{e.stopPropagation();this._changeDetail(endIndex, item)}}
         @move-block=${(e: CustomEvent)=>{e.stopPropagation();this._moveBlock(e.detail.value, this.program.indexOf(item), endIndex)}}
         @show-zone=${(e: CustomEvent)=>{e.stopPropagation(); this.zoneAvailable=!this.zoneAvailable; this.dragItem===null ? this.dragItem=item : this.dragItem=null}}

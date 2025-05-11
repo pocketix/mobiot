@@ -433,7 +433,8 @@ export class OptionsElement extends LitElement {
 
         input {
             font-size: 1em;
-            padding: 4px;
+            margin: 0.3em;
+            padding: 0.6em 0.2em;
             border: none;
             background: linear-gradient(135deg, #4a90e2, #7da7d9);
             color: black;
@@ -441,11 +442,12 @@ export class OptionsElement extends LitElement {
 
         li {
             list-style-type: none;
+            display: flex;
             padding: 0;
         }
 
         .save {
-        margin: 12px 1px;
+        
         background: linear-gradient(135deg, rgb(106, 175, 108), rgb(79, 255, 108));
         border: none;
         }

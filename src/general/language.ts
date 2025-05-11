@@ -118,6 +118,9 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     anomalyDetected: 'Anomaly detected',
     sensorError: 'Sensor error',
 
+    aboutText: 'This is VPL editor for automatization of smart devices on mobile phones. It was developed for project Pocketix by David Škrabal. This editor uses a block and form based visual programming language. For more information click ',
+    here: 'here',
+
   },
   cs: {
     Graphical: 'Grafický',
@@ -231,6 +234,8 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     criticalBatery: 'Kritická baterie',
     anomalyDetected: 'Zjištěna anomálie',
     sensorError: 'Chyba senzoru',
+    aboutText: 'Toto je VPL editor pro automatizaci chytrých zařízení na mobilních telefonech. Byl vyvinut pro projekt Pocketix Davidem Škrabalem. Tento editor používá vizuální programovací jazyk založený na blocích a formulářích. Pro více informací klikněte ',
+    here: 'zde',
 
   }
 };
