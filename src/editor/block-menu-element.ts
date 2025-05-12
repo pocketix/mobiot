@@ -99,7 +99,7 @@ export class BlockMenuElement extends LitElement {
             ${this._availableMove()  ? html`<button @click=${()=>this._moveBlock(false)}>▽</button>` : ''}
           </div>
         </div>
-      `//buttons save as procedure function is not part of this thesis
+      `//Button save as procedure function is not part of this thesis
   }
     private _openCloseModal() {
         this.isOpen = !this.isOpen;

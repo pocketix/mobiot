@@ -8,7 +8,7 @@ import { vpToText } from './convert/vp-to-text.ts';
 import { TextToVp } from './convert/text-to-vp.ts';
 import { UpdateVarList } from './convert/update-var-list.ts';
 import { TextSyntax } from './convert/text-syntax.ts';
-import { LangCode, getLang, translations, updateTranslations} from './general/language.ts';
+import { LangCode, getLang, transl, translations, updateTranslations} from './general/language.ts';
 import './editor/vp-editor-element.ts';
 import './editor/text-editor-element.ts';
 import './variable/var-list-element.ts';
@@ -62,200 +62,28 @@ export class MainElement extends LitElement {
 
     @provide({ context: condListExport })
     @property({attribute: false})
-  conditions: VarObject[] = [
-    {name: 'cond_1', value: {type: '=', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}
-      ,{type: 'number', value: '8', args: []}]}},//x+5==8
-    {name: 'cond_2', value: {type: '≠', value:'', args: [{type: '*', value: '', args: [{type: 'variable', value: 'a', args: []}, {type: 'variable', value: 'b', args: []}]}
-      ,{type: 'number', value: '8', args: []}]}},//a*b!=8
-    {name: 'cond_3', value: {type: 'AND', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'variable', value: 'y', args: []}]}},//x AND y
-  ];
+  conditions: VarObject[] = [];
 
   @property()
-  program: ProgramBlock[]=[
-    {block: {name: "If", simple: false, id: "if", type: 'branch', argTypes: ['cond']}, 
-      arguments: [{type: '=', value: '', args: [{type: 'variable', value: 'x', args: []}, {type: 'number', value: '5', args: []}]}], hide: false},
-    {block: {name: "SendNotification", simple: true, id: 'alert', type: 'alert', argTypes: ['text']}, 
-      arguments: [{type: 'variable', value: 'name', args: []}], hide: false},
-    {block: {name: "EndOfBlock", simple: true, id: "end", type: 'end', argTypes: []}, arguments: [], hide: false},
-    // {block: {name: "Otherwise", simple: false, id: 'else', type: 'branch', argTypes: []}, arguments: [], hide: false}
-  ];
+  program: ProgramBlock[]=[];
 
   @provide({ context: varListExport })
   @property({attribute: false})
-    varList: VarObject[] = [
-            { name: 'name', value: {type: 'text',value: 'John', args: []}},
-            { name: 'age', value: {type: 'number',value: '40', args: []}},
-            { name: 'isAdmin', value: {type: 'bool',value: 'true', args: []}},
-            { name: 'fee', value: {type: 'expr',value: '', args: [{type: '=', value:'', args: [{type: '+', value: '', args: [{type: 'variable', value: 'a', args: []},
-             {type: 'number', value: 'b', args: []}]},{type: 'number', value: '6', args: []}]}]}}
-            ];
+    varList: VarObject[] = [];
   
-  // connectedCallback() {
-  //   super.connectedCallback();
-  //   window.addEventListener('beforeunload', this._handleUnload);
-  // }
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('beforeunload', this._handleUnload);
+  }
   
-  // disconnectedCallback() {
-  //   window.removeEventListener('beforeunload', this._handleUnload);
-  //   super.disconnectedCallback();
-  // }
+  disconnectedCallback() {
+    window.removeEventListener('beforeunload', this._handleUnload);
+    super.disconnectedCallback();
+  }
   
-  // private _handleUnload(event: BeforeUnloadEvent) {
-  //   event.preventDefault();
-  // }
-
-  render() {//TODO clean code
-    let editors: TemplateResult=html``;
-    if(this.view==='Both'){
-      editors=html`
-          <vp-editor-element class="editor" 
-            .currentLang=${this.currentLang}
-            .program=${this.program} 
-            @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
-            @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
-            @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
-            
-            @detail-index=${(e: CustomEvent) => {this._detailBlock(e.detail.value);this._changeDetail()}}
-            @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>
-          <text-editor-element class="editor" 
-            .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {this._updateProgram(e.detail.value)}}></text-editor-element>`
-    }
-    else if(this.view==='Graphical'){
-      editors=html`
-        <vp-editor-element class="editor"
-          .currentLang=${this.currentLang} 
-          .program=${this.program} 
-          @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
-          @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
-          @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
-          
-          @detail-index=${(e: CustomEvent) => {this._detailBlock(e.detail.value);this._changeDetail()}}
-          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>`
-    }else{
-      editors=html`
-        <text-editor-element class="editor" .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {this._updateProgram(e.detail.value)}}></text-editor-element>`
-    }
-    return html`
-      <div class="container">
-        <div class="body ${this.view==='Text'?"text":''}">
-        <menu-element class="menu" 
-        .currentLang=${this.currentLang}
-          .programText=${vpToText(this.program)} 
-          @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
-          .varList=${this.varList}
-          @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
-          .view=${this.view}
-          @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}
-          @cond-list-saved=${(e: CustomEvent) => this._condList(e.detail.value)}
-          @language-changed=${()=>this._updateLang()}></menu-element>
-        <div class="editor-container">
-          ${editors}
-        </div>
-        </div>
-          ${this.view==='Text'? '':html`
-          <options-element class="options" style="z-index: ${this.condOpen ? 100 : 10};"
-            .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex} .currentLang=${this.currentLang}
-            @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
-            @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}
-            @cond-open=${(e: CustomEvent) => this._condOpen(e.detail.value)}></options-element>
-      </div>
-
-          `}
-    `
+  private _handleUnload(event: BeforeUnloadEvent) {
+    event.preventDefault();
   }
-
-private _updateLang(){
-  this.currentLang=getLang();
-}
-
-private _varList(newVar: VarObject[]) {
-  this.varList = [ ...newVar] ;
-}
-
-private _updateView(newView: View) {
-  this.view = newView ;
-}
-
-private _condOpen(condOpen: boolean) {
-  this.condOpen = condOpen ;
-}
-
-private _updateProgram(updatedProgram: ProgramBlock[]) {
-  this.program = [ ...updatedProgram ];
-}
-
-private _detailBlock(indexes: number[]){
-  this.programStartIndex=indexes[1];
-  this.programIndex=indexes[0];
-  if(indexes[0]===this.program.length){
-    this.program=[...this.program, {block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false}]
-  }
-}
-
-private _changeDetail(){
-  this.detailGeneral=!this.detailGeneral;
-  if(!this.detailGeneral){
-    this.programIndex=-1;
-  }
-}
-
-private _saveText(newProgram: string) {
-  const result = TextSyntax(newProgram);
-  if(result.program){
-    if('header' in result.program){
-      this.varList=UpdateVarList(result.program.header);
-    }
-    if('block' in result.program){
-      this.program = TextToVp(result.program.block);
-    }
-  }else{
-    window.alert("Import program cannot be used. There is some mistake in imported JSON");
-  }
-}
-
-private _condList(newCond: VarObject[]){
-  this.conditions=[... newCond]
-}
-
-
-private _changeBlock(block: ProgramBlock){
-  this.program = this.program.map(b => 
-    b === block ? { ...block } : b
-  );
-}
-
-private _updateIndex(newIndex: number){
-  this.programIndex=newIndex;
-  if(this.programIndex===-1){
-    this.detailGeneral=false;
-  }
-}
-
-private _replaceBlock(block: ProgramBlock){
-  if(this.program.indexOf(block)<this.program.length-1){
-    this.programIndex=this.program.indexOf(block);
-  }
-}
-
-private _deleteBlock(block: ProgramBlock){
-  const index = this.program.indexOf(block);
-  let deepCounter=1;
-
-  if (index !== -1) {
-    if(block.block.simple){
-      this.program=this.program.filter(item=>item!=block);
-    }else{
-      let endIndex = index + 1;
-      while (endIndex < this.program.length && (deepCounter>0 || this.program[endIndex].block.id==='elseif' || this.program[endIndex].block.id==='else')) {
-        if(!this.program[endIndex].block.simple)deepCounter++;
-        if(this.program[endIndex].block.id==='end')deepCounter--;
-        endIndex++;
-      }
-
-      this.program = [...this.program.slice(0, index), ...this.program.slice(endIndex)];
-    }
-  }
-}
 
   static styles = css`
     :host {
@@ -351,6 +179,162 @@ private _deleteBlock(block: ProgramBlock){
 
  
   `
+
+  render() {
+    let editors: TemplateResult=html``;
+    if(this.view==='Both'){
+      editors=html`
+        <vp-editor-element class="editor" 
+          .currentLang=${this.currentLang}
+          .program=${this.program} 
+          @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
+          @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
+          @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
+          
+          @detail-index=${(e: CustomEvent) => {this._detailBlock(e.detail.value);this._changeDetail()}}
+          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>
+        <text-editor-element class="editor" 
+          .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {this._updateProgram(e.detail.value)}}></text-editor-element>`
+    }
+    else if(this.view==='Graphical'){
+      editors=html`
+        <vp-editor-element class="editor"
+          .currentLang=${this.currentLang} 
+          .program=${this.program} 
+          @change-block=${(e: CustomEvent) => this._changeBlock(e.detail.value)}
+          @delete-block=${(e: CustomEvent) => this._deleteBlock(e.detail.value)}
+          @replace-block=${(e: CustomEvent) => this._replaceBlock(e.detail.value)}
+          
+          @detail-index=${(e: CustomEvent) => {this._detailBlock(e.detail.value);this._changeDetail()}}
+          @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}></vp-editor-element>`
+    }else{
+      editors=html`
+        <text-editor-element class="editor" .value=${vpToText(this.program)} @value-changed=${(e: CustomEvent) => {this._updateProgram(e.detail.value)}}></text-editor-element>`
+    }
+    return html`
+      <div class="container">
+        <div class="body ${this.view==='Text'?"text":''}">
+        <menu-element class="menu" 
+        .currentLang=${this.currentLang}
+          .programText=${vpToText(this.program)} 
+          @program-saved=${(e: CustomEvent) => this._saveText(e.detail.value)}
+          .varList=${this.varList}
+          @list-saved=${(e: CustomEvent) => this._varList(e.detail.value)}
+          .view=${this.view}
+          @view-saved=${(e: CustomEvent) => this._updateView(e.detail.value)}
+          @cond-list-saved=${(e: CustomEvent) => this._condList(e.detail.value)}
+          @language-changed=${()=>this._updateLang()}></menu-element>
+        <div class="editor-container">
+          ${editors}
+        </div>
+        </div>
+          ${this.view==='Text'? '':html`
+          <options-element class="options" style="z-index: ${this.condOpen ? 100 : 10};"
+            .conditions=${this.conditions} .variables=${this.varList} .program=${this.program} .programStartIndex=${this.programStartIndex} .currentLang=${this.currentLang}
+            @block-saved=${(e: CustomEvent) => this._updateProgram(e.detail.value)}
+            @index-changed=${(e: CustomEvent) => this._updateIndex(e.detail.value)}
+            @cond-open=${(e: CustomEvent) => this._condOpen(e.detail.value)}></options-element>
+      </div>
+
+          `}
+    `
+  }
+
+private _updateLang(){
+  this.currentLang=getLang();
+}
+
+private _varList(newVar: VarObject[]) {
+  this.varList = [ ...newVar] ;
+}
+
+private _updateView(newView: View) {
+  this.view = newView ;
+}
+
+private _condOpen(condOpen: boolean) {
+  this.condOpen = condOpen ;
+}
+
+private _updateProgram(updatedProgram: ProgramBlock[]) {
+  this.program = [ ...updatedProgram ];
+}
+
+private _detailBlock(indexes: number[]){
+  this.programStartIndex=indexes[1];
+  this.programIndex=indexes[0];
+  if(indexes[0]===this.program.length){
+    this.program=[...this.program, {block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false}]
+  }
+}
+
+private _changeDetail(){
+  this.detailGeneral=!this.detailGeneral;
+  if(!this.detailGeneral){
+    this.programIndex=-1;
+    this.programStartIndex=-1;
+  }
+}
+
+private _saveText(newProgram: string) {
+  const result = TextSyntax(newProgram);
+  if(result.program){
+    if('header' in result.program){
+      this.varList=UpdateVarList(result.program.header);
+    }
+    if('block' in result.program){
+      this.program = TextToVp(result.program.block);
+    }
+  }else{
+    window.alert(transl('invalidImport'));
+  }
+}
+
+private _condList(newCond: VarObject[]){
+  this.conditions=[... newCond]
+}
+
+
+private _changeBlock(block: ProgramBlock){
+  this.program = this.program.map(b => 
+    b === block ? { ...block } : b
+  );
+}
+
+private _updateIndex(newIndex: number){
+  this.programIndex=newIndex;
+  if(this.programIndex===-1){
+    this.detailGeneral=false;
+    this.programStartIndex=-1;
+  }
+}
+
+private _replaceBlock(block: ProgramBlock){
+  if(this.program.indexOf(block)<this.program.length-1){
+    this.programIndex=this.program.indexOf(block);
+  }
+}
+
+private _deleteBlock(block: ProgramBlock){
+  const index = this.program.indexOf(block);
+  let deepCounter=1;
+
+  if (index !== -1) {
+    if(block.block.simple){
+      this.program=this.program.filter(item=>item!=block);
+    }else{
+      let endIndex = index + 1;
+      while (endIndex < this.program.length && (deepCounter>0 || this.program[endIndex].block.id==='elseif' || this.program[endIndex].block.id==='else')) {
+        if(!this.program[endIndex].block.simple)deepCounter++;
+        if(this.program[endIndex].block.id==='end')deepCounter--;
+        endIndex++;
+      }
+
+      this.program = [...this.program.slice(0, index), ...this.program.slice(endIndex)];
+    }
+  }
+}
+
 }
 
 declare global {

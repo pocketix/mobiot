@@ -130,6 +130,14 @@ export class BlockElement extends LitElement {
       border: 4px solid red;
     }
 
+    @media (min-width: 426px) {
+      .detail {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 105%;
+      }
+    }
+
     .hide {
       background: #e0e0e0;
       color: black;
@@ -182,7 +190,6 @@ export class BlockElement extends LitElement {
     }
     header=html`${header}${this._addText(this.block.block.id)}`;
 
-      
     if(!this.block.block.simple){
       if(this.block.hide){
         hide=html`<button class="hide" @click=${()=>this._changeBlock()}>▼ ${transl('showBlock')}</button>`

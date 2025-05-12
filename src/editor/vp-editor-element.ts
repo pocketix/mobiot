@@ -58,6 +58,7 @@ export class VPEditorElement extends LitElement {
     background-color: #e0e0e0;
     margin: 4px ;
   }
+
   .header {
     padding: 6px 2px;
     color: white;
@@ -189,13 +190,11 @@ export class VPEditorElement extends LitElement {
   }
 
   private _changeDetail(index: number, item: ProgramBlock){
-    if(!this.detailGeneral){
       this.dispatchEvent(new CustomEvent('detail-index', {
         detail: { value: [index, this.program.indexOf(item)] },
         bubbles: true,
         composed: true
       }));
-    }
   }
 
   private _handleDragStart(event: DragEvent, end: number) {

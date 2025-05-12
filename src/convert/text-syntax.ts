@@ -1,7 +1,9 @@
 
-export function TextSyntax(programText: string): { errorIndex: number | null, program: object | null } {//TODO syntax control 5th phase
+export function TextSyntax(programText: string): { errorIndex: number | null, program: object | null } {
     try {
       const program = JSON.parse(programText);
+      //On this place can be connected library for syntax check of JSON form of the program
+      //For now, it will just check if the program is valid JSON
       return {
         errorIndex: null,
         program: program

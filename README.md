@@ -1,10 +1,10 @@
-# **iot-vpl-ditor**
+# **mobiot**
 VPL editor for automatization of smart devices on mobile phones. 
 
 ## **Overview**
 It was developed for project Pocketix by David Škrabal. This editor uses a block and form based visual programming language **Pocketix**. VPL **Pocketix** is designed designed for automating IoT and smart home devices. This editor is implemented as a library and uses Lit library. 
 
-You can try this editor [here](https://david-mobile.iot.petr-john.cz/). 
+You can try this editor [here](https://mobiot.pocketix.org/). 
 
 ## **Features**
 ✅ Editor for automation of IoT devices  
@@ -22,7 +22,7 @@ You can try this editor [here](https://david-mobile.iot.petr-john.cz/).
 Building of the library locally for development purposes:
 
 ```sh
-git clone https://github.com/pocketix/iot-vpl-editor.git
+git clone https://github.com/pocketix/mobiot.git
 ```
 
 ```sh
@@ -49,14 +49,14 @@ npm run build
 
 ### Step 1: install library with npm install
 ```sh
-npm install git+https://github.com/pocketix/iot-vpl-editor.git
+npm install git+https://github.com/pocketix/mobiot.git
 ```
 
 ### Step 2: install library with npm install
 Create file main.js for importing library: 
 ```js
-import './node_modules/@pocketix/iot-vpl-editor/dist/iot-vpl-editor.js';
-import './node_modules/@pocketix/iot-vpl-editor/dist/iot-vpl-editor.css';
+import './node_modules/@pocketix/mobiot/dist/mobiot.js';
+import './node_modules/@pocketix/mobiot/dist/mobiot.css';
 ```
 
 ### Step 3: Add folder /img from /public to your project

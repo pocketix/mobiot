@@ -9,7 +9,7 @@ export * from '@condition/cond-block-element';
 export * from '@condition/cond-edit-element';
 export * from '@condition/cond-list-element';
 export * from '@condition/new-val-element';
-export * from '@condition/operand-choose-element';
+export * from '@condition/operation-choose-element';
 export * from '@condition/var-choose-element';
 
 export * from '@convert/add-args-text';

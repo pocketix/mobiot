@@ -22,8 +22,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'IoTVPLEditor',
-      fileName: 'iot-vpl-editor',
+      name: 'Mobiot',
+      fileName: 'mobiot',
     },
     rollupOptions: {
       output: {
@@ -43,7 +43,6 @@ export default defineConfig({
       '@editor': path.resolve(__dirname, './src/editor'),
       '@general': path.resolve(__dirname, './src/general'),
       '@icons': path.resolve(__dirname, './src/icons'),
-      '@img': path.resolve(__dirname, './src/icons/img'),
       '@variable': path.resolve(__dirname, './src/variable'),
     },
   },

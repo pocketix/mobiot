@@ -10,7 +10,7 @@ import { sensors } from './general/sensors.ts';
 import { LangCode, transl } from './general/language.ts';
 import './icons/block-icon.ts';
 
-@customElement('options-element')//TODO clean code 3rd phase
+@customElement('options-element')
 export class OptionsElement extends LitElement {
 
     private blocks = blockTypes;
@@ -51,7 +51,151 @@ export class OptionsElement extends LitElement {
     @state()
     private canSave: boolean = false;
 
+    static styles = css`
+        button {
+            border-radius: 8px;
+            border: 1px solid transparent;
+            margin: 0.3em;
+            padding: 0.6em 0.2em;
+            font-size: 1em;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: inherit;
+            background: linear-gradient(135deg, #4a90e2, #7da7d9);
+            border: none;
+            cursor: pointer;
+            transition: border-color 0.25s;
+        }
+
+        button.selected {
+            border: none;
+            color: white;
+            margin: 0px;
+            padding: 0.8em 1.6em;
+            border-radius: 0px;
+        }
+
+        .menu {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            background-color: gray;
+            width: 100%;
+
+        }
+
+        .menu-item {
+            padding: 0.6em 0.8em;
+            background: gray;
+            margin: 0px;
+        }
+
+        .content{
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        input {
+            font-size: 1em;
+            margin: 0.3em;
+            padding: 0.6em 0.2em;
+            border: none;
+            background: linear-gradient(135deg, #4a90e2, #7da7d9);
+            color: black;
+        }
+
+        li {
+            list-style-type: none;
+            display: flex;
+            padding: 0;
+        }
+
+        .save {
+            background: linear-gradient(135deg, rgb(106, 175, 108), rgb(79, 255, 108));
+            border: none;
+        }
+
+        button:disabled {
+            background-color: grey;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #c4c4c4, rgb(214, 214, 214));
+            color: #6e6e6e;
+        }
+
+        .branch {
+            background: linear-gradient(135deg, #7da7d9, #96b9e1);
+            border: none;
+        }
+        .cycle {
+            background: linear-gradient(135deg, rgb(106, 175, 108), rgb(136, 205, 138));
+            border: none;
+        }
+        .dev {
+            background: linear-gradient(135deg, #ff9800, #ffb733);
+            border: none;
+        }
+        .alert {
+            background: linear-gradient(135deg, rgb(255, 108, 108), rgb(255, 138, 138));
+            border: none;
+        }
+        .end {
+            background: linear-gradient(135deg, rgb(226, 192, 0), rgb(236, 206, 64));
+            border: none;
+        }
+        .set_var {
+            background: linear-gradient(135deg, #E2A7F0, #ebbef5);
+            border: none;
+        }
+
+        .branch_text {color:  #7da7d9;}
+        .cycle_text {color:  rgb(106, 175, 108);}
+        .dev_text {color:  #ff9800;}
+     `
+
     render() {
+        this._updateOptions();
+        let listOptions: TemplateResult[]=[];
+        if(!this.menuParams){
+            let filteredBlocks =this._syntaxFilter();
+            if (this.category ==='others'){
+                filteredBlocks=filteredBlocks.filter(item => item.type === 'alert' || item.type === 'end' || item.type === 'set_var')
+            }else if(this.category!='all'){
+                filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
+            }
+            filteredBlocks.forEach((block)=>{
+            listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}>
+                ${block.type==='dev' ? html`<block-icon type="dev"></block-icon>` : html`<block-icon type=${block.id}></block-icon>`} ${transl(block.name)}${this.addText(block.id)}</button>`);
+            });
+        }
+        else{
+            listOptions=this._filterParams();
+        }
+
+        let cathegoriesMenu: TemplateResult=html``;
+        if(!this.menuParams){
+            cathegoriesMenu=html`
+            <div class="menu">
+                ${this.categories.map(item=>html`
+                    <button class=${item === this.category ? `${item} selected` : `menu-item ${item}_text`} @click=${() => this._selectCategory(item)}>${transl(item)}</button>
+                `)}
+            </div>`
+        }
+
+        return html`
+            ${cathegoriesMenu}
+            <div class="content">
+                ${listOptions}
+            </div>
+        `       
+    }
+
+    private _updateOptions() {
         let block: ProgramBlock|undefined;
         if (this.programIndex >= 0 && this.programIndex < this.program.length) {
             block = this.program[this.programIndex];
@@ -64,38 +208,6 @@ export class OptionsElement extends LitElement {
             this.menuParams=false;
             this.paramType='note';
         }
-        
-        let listOptions: TemplateResult[]=[];
-        if(!this.menuParams){
-            let filteredBlocks =this._syntaxFilter();
-            if (this.category ==='others'){
-                filteredBlocks=filteredBlocks.filter(item => item.type === 'alert' || item.type === 'end' || item.type === 'set_var')
-            }else if(this.category!='all'){
-                filteredBlocks=filteredBlocks.filter(item => item.type === this.category)
-            }
-            filteredBlocks.forEach((block)=>{
-            listOptions.push(html`<button class=${block.type} @click=${() => this._addToProgram(block)}>
-                ${block.type==='dev' ? html`<block-icon type="dev"></block-icon>` : html`<block-icon type=${block.id}></block-icon>`} ${transl(block.name)}${this.addText(block.id)}</button>`);
-        });
-        }else{
-            listOptions=this._filterParams();
-        }
-
-        let cathegoriesMenu: TemplateResult=html``;
-        if(!this.menuParams){
-            cathegoriesMenu=html`
-            <div class="menu">
-                ${this.categories.map(item=>html`
-                <button class=${item === this.category ? `${item} selected` : `menu-item ${item}_text`} @click=${() => this._selectCategory(item)}>${transl(item)}</button>
-                `)}
-            </div>`
-        }
-        return html`
-            ${cathegoriesMenu}
-            <div class="content">
-                ${listOptions}
-            </div>`
-                
     }
 
     private addText(id: string):string{
@@ -115,22 +227,21 @@ export class OptionsElement extends LitElement {
             this.conditions.forEach((condition)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(condition)}>${condition.name}: ${CondText(condition.value)}</button>`);
             });
-            list.push(html`<cond-edit-element " class="button"
-                .newMode=${false}
-                .title=${transl('clickCreate')}
-                @click=${(e: Event) => e.stopPropagation()}
-                @cond-update=${(e: CustomEvent) => this._addParamsVar({name: '', value: e.detail.value})}>
-              </cond-edit-element>`)
-        }else if(this.paramType==='variable'){
+            list.push(html`<cond-edit-element " class="button" .newMode=${false} .title=${transl('clickCreate')}
+                @click=${(e: Event) => e.stopPropagation()} @cond-update=${(e: CustomEvent) => this._addParamsVar({name: '', value: e.detail.value})}>
+                </cond-edit-element>`)
+        }
+        else if(this.paramType==='variable'){
             this.variables.forEach((item)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : transl(item.value.value)}</button>`);
-            });//TODO clean code
-        }else{
+            });
+        }
+        else{
             let varList: VarObject[]=[];
             if(this.paramType!='note'){
                 this.variables.forEach(item => {
                     if(item.value.type===this.paramType)varList.push(item);
-                    else if(item.value.type==='expr'){
+                    else if(item.value.type==='expr'){//searching type of expression
                         if(['+','-','*','/'].includes(item.value.args[0].type)){
                             if(this.paramType==='number')varList.push(item);
                         }else{
@@ -138,30 +249,31 @@ export class OptionsElement extends LitElement {
                         }
                     }
                 })
-            }else{
-                varList=this.variables;
-            }
+            }else varList=this.variables;
+
             varList.forEach((item)=>{
-                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: 
-                    ${item.value.type==='expr' ? CondText(item.value.args[0]) : transl(item.value.value)}</button>`);
+                list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}: ${item.value.type==='expr' ? CondText(item.value.args[0]) : transl(item.value.value)}</button>`);
             });
+
             let sensorsList: VarObject[]=sensors.filter(item => item.value.type===this.paramType);
             sensorsList.forEach((item)=>{
                 list.push(html`<button @click=${() => this._addParamsVar(item)}>${item.name}</button>`);
             });
+
             if(this.paramType==='bool'){
                 list.push(html`<li><button @click=${() => this._addParamsVal('true')}>${transl('true')}</button></li>`);
                 list.push(html`<li><button @click=${() => this._addParamsVal('false')}>${transl('false')}</button></li>`);
-            }else if(this.paramType==='number'){
+            }
+            else if(this.paramType==='number'){
                 let paramInput: string='';
                 list.push(html`
                     <li>
                       <input type="number" inputmode="decimal" step="any" .value=${paramInput} 
                         @input=${(e: Event) => {paramInput = (e.target as HTMLInputElement).value;this._canSave(paramInput)}} placeholder=${transl('enterNumber')}>
                       <button class="save" ?disabled=${!this.canSave} @click=${() => this._addParamsVal(paramInput)}>${transl('useValue')}</button>
-                    </li>
-                  `);
-            }else{
+                    </li>`);
+            }
+            else{
                 let paramInput: string='';
                 list.push(html`
                     <li>
@@ -185,9 +297,11 @@ export class OptionsElement extends LitElement {
         let deepCounter=0;
         let filterEnd=true;
         let filterElse=true;
+
         if(this.variables.length===0){
             filteredBlocks=filteredBlocks.filter(item => item.id != 'setvar')
         }
+
         let endIndex: number=this.programIndex===-1 ? this.program.length-1 : this.programIndex-1;
         for (let i = endIndex; i >= 0; i--){
             if(this.program[i].block.id==='end'){
@@ -202,19 +316,21 @@ export class OptionsElement extends LitElement {
             if (deepCounter===0){
                 if(['if','elseif'].includes(this.program[i].block.id) && this.program[endIndex].block.id==='end'){
                     filterElse=false;
-                    // break;
                 }
                 if(this.program[i].block.id==='case'){
                     return filteredBlocks.filter(item => item.id === 'case'||item.id==='end');
                 }
-                if(this.program[i].block.id==='else')filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
+                if(this.program[i].block.id==='else'){
+                    filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
+                }
             }else if(deepCounter===-1){
                 if(this.program[endIndex].block.simple){
                     filterEnd=false;
                 }
             }
-            if(!filterElse && !filterEnd)break
+            if(!filterElse && !filterEnd) break
         };
+        //block filtering
         if(filterElse)filteredBlocks=filteredBlocks.filter(item => item.id != 'else' && item.id != 'elseif');
         if(filterEnd)filteredBlocks=filteredBlocks.filter(item => item.id != 'end');
         filteredBlocks=filteredBlocks.filter(item => item.id != 'case');
@@ -229,7 +345,7 @@ export class OptionsElement extends LitElement {
         if(this.programIndex===-1){
             this.program=[...this.program, {block: input, arguments: [], hide: false}]
         }
-        else{
+        else{//add block oncurrent index
             if (this.programIndex >= 0 && this.programIndex < this.program.length) {
                 if(input.id==='end'){
                     this.programIndex=this._endCheck();
@@ -248,8 +364,7 @@ export class OptionsElement extends LitElement {
                             { block: input, arguments: [], hide: false },
                             { block: {name: "End of block", simple: true, id: "end", argTypes: [], type: 'end'}, arguments: [], hide: false },
                             ...this.program.slice(this.programIndex)
-                        ];
-                        
+                        ];  
                     }else{
                         this.program = [
                             ...this.program.slice(0, this.programIndex),
@@ -290,15 +405,7 @@ export class OptionsElement extends LitElement {
     }
 
     private _addParamsVar(param: VarObject) {
-        let block: ProgramBlock|undefined;
-        if (this.programIndex >= 0 && this.programIndex < this.program.length) {
-            block = this.program.splice(this.programIndex, 1)[0]; 
-            if(!block.block.simple){
-                this.program.splice(this.programIndex+1, 1)[0];
-            }
-        } else {
-            block=this.program.pop();
-        }
+        let block=this._getBlock();
         if(block){
             let arg: Argument=param.value
             if(['number', 'text', 'bool', 'expr'].includes(param.value.type)){
@@ -308,17 +415,9 @@ export class OptionsElement extends LitElement {
         }
     }
 
-    private _addParamsVal(value: string) {//TODO clean code
+    private _addParamsVal(value: string) {
         if(value){
-            let block: ProgramBlock|undefined;
-            if (this.programIndex >= 0 && this.programIndex < this.program.length) {
-                block = this.program.splice(this.programIndex, 1)[0]; 
-                if(!block.block.simple){
-                    this.program.splice(this.programIndex+1, 1)[0];
-                }
-            } else {
-                block=this.program.pop();
-            }
+            let block=this._getBlock();
             if(block){
                 let arg: Argument = {type: this.paramType, value: value, args: []};
                 this._addParams(block, arg)
@@ -326,7 +425,20 @@ export class OptionsElement extends LitElement {
         }
     }
 
-    private _addParams(block: ProgramBlock, arg: Argument){//TODO clen code
+    private _getBlock(): ProgramBlock|undefined{
+        let block: ProgramBlock|undefined;
+        if (this.programIndex >= 0 && this.programIndex < this.program.length) {
+            block = this.program.splice(this.programIndex, 1)[0]; 
+                if(!block.block.simple){
+                    this.program.splice(this.programIndex+1, 1)[0];
+                }
+        }else{
+            block=this.program.pop();
+        }
+        return block
+    }
+
+    private _addParams(block: ProgramBlock, arg: Argument){
         const updatedBlock = { ...block, arguments: [...block.arguments, arg]};
         
         if(this.programIndex===-1){
@@ -381,113 +493,6 @@ export class OptionsElement extends LitElement {
         this.category=cat
         this.requestUpdate();
     }
-
-    static styles = css`
-        button {
-            border-radius: 8px;
-            border: 1px solid transparent;
-            margin: 0.3em;
-            padding: 0.6em 0.2em;
-            font-size: 1em;
-            font-weight: 500;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: inherit;
-            background: linear-gradient(135deg, #4a90e2, #7da7d9);
-            border: none;
-            cursor: pointer;
-            transition: border-color 0.25s;
-            }
-        button.selected {
-            border: none;
-            color: white;
-            margin: 0px;
-            padding: 0.8em 1.6em;
-            border-radius: 0px;
-        }
-
-        .menu {
-            position: sticky;
-            top: 0;
-            display: flex;
-            justify-content: center;
-            background-color: gray;
-            width: 100%;
-
-        }
-
-        .menu-item {
-            padding: 0.6em 0.8em;
-            background: gray;
-            margin: 0px;
-        }
-
-        .content{
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        input {
-            font-size: 1em;
-            margin: 0.3em;
-            padding: 0.6em 0.2em;
-            border: none;
-            background: linear-gradient(135deg, #4a90e2, #7da7d9);
-            color: black;
-        }
-
-        li {
-            list-style-type: none;
-            display: flex;
-            padding: 0;
-        }
-
-        .save {
-        
-        background: linear-gradient(135deg, rgb(106, 175, 108), rgb(79, 255, 108));
-        border: none;
-        }
-
-        button:disabled {
-            background-color: grey;
-            cursor: not-allowed;
-            background: linear-gradient(135deg, #c4c4c4, rgb(214, 214, 214));
-            color: #6e6e6e;
-        }
-
-        .branch {
-        background: linear-gradient(135deg, #7da7d9, #96b9e1);
-        border: none;
-        }
-        .cycle {
-        background: linear-gradient(135deg, rgb(106, 175, 108), rgb(136, 205, 138));
-        border: none;
-        }
-        .dev {
-        background: linear-gradient(135deg, #ff9800, #ffb733);
-        border: none;
-        }
-        .alert {
-        background: linear-gradient(135deg, rgb(255, 108, 108), rgb(255, 138, 138));
-        border: none;
-        }
-        .end {
-        background: linear-gradient(135deg, rgb(226, 192, 0), rgb(236, 206, 64));
-        border: none;
-        }
-        .set_var {
-        background: linear-gradient(135deg, #E2A7F0, #ebbef5);
-        border: none;
-        }
-
-        .branch_text {color:  #7da7d9;}
-        .cycle_text {color:  rgb(106, 175, 108);}
-        .dev_text {color:  #ff9800;}
-     `
 }
 
 declare global {

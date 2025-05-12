@@ -67,8 +67,6 @@ export class TextEditorElement extends LitElement {
     color: gray;
   }
   `;
-  // width: 500px;
-  // height: 500px;
 
   render() {
     const lines = this.value.split('\n');

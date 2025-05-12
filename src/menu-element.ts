@@ -28,7 +28,7 @@ export class MenuElement extends LitElement {
 
   render() {
     return html`
-        <div class="content">
+      <div class="content">
         <div class="view-container">
         <setting-element class="setting" .programText=${this.programText} .varList=${this.varList}></setting-element>
           <h2>${transl('chooseEditor')}</h2>
@@ -38,17 +38,17 @@ export class MenuElement extends LitElement {
             `)}
           </div>
         </div>
-        </div>
+      </div>
     `
-    }
+  }
 
     private _selectTypeInput(updated: View) {
-        this.view = updated;
-        this.dispatchEvent(new CustomEvent('view-saved', {
-            detail: { value: this.view },
-            bubbles: true,
-            composed: true
-        }));  
+      this.view = updated;
+      this.dispatchEvent(new CustomEvent('view-saved', {
+          detail: { value: this.view },
+          bubbles: true,
+          composed: true
+      }));  
     }
 
   static styles = css`
@@ -112,7 +112,6 @@ export class MenuElement extends LitElement {
     }
   `
 }
-
 
 declare global {
   interface HTMLElementTagNameMap {

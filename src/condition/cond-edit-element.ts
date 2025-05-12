@@ -178,51 +178,46 @@ export class CondEditElement extends LitElement {
       background: #ddd;
     }
       
-    
+    .modal {
+      position: fixed;
+      inset: 0;
+      height: 100vh;
+      overflow: hidden;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-      .modal {
-        position: fixed;
-        inset: 0;
-        height: 100vh;
-        overflow: hidden;
-        background-color: white;
+    .modal-content {
+        background: white;
+        height: 100%;
+        overflow-y: auto;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column;
+        gap: 16px;
+
+        padding: 24px 5px;;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+      @media (min-width: 425px) {
+          .modal-content {
+              min-width: 425px;
+          }
       }
 
-        .modal-content {
-            background: white;
-            height: 100%;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-
-            padding: 24px 5px;;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        @media (min-width: 425px) {
-            .modal-content {
-                min-width: 425px;
-            }
-        }
-
-        @media (max-width: 425px) {
-            .modal-content {
-                width: 100%;
-            }
-        }
+      @media (max-width: 425px) {
+          .modal-content {
+              width: 100%;
+          }
+      }
   `;
     
   render() {
     
     const EMPTYBLOCK=html`<div class="empty"><div class="empty-header">${transl('addFirstVar')}</div><div class="empty-content" /></div>`
-    // if(this.block.args.length===0 && this.args.length!==0){
-    //   this.block.args=this.args;
-    // }
     let cond: TemplateResult=this._drawExistOptions();
     
     return html`

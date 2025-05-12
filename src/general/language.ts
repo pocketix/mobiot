@@ -78,16 +78,16 @@ export let translations = {
     invalidName: 'Name already used. ',
     invalidImport: 'File not accepted: mistake in imported JSON. ',//Import program cannot be used. There is some mistake in imported JSON. 
     
-    do: 'do', 
+    do: 'Do', 
     Repeat: 'Repeat',
     While: 'While',
-    SendNotification: 'Send notification',
+    SendNotification: 'Send Notification',
     If: 'If',
     Else: 'Else',
     Otherwise: 'Otherwise',
     SwitchAccording: 'Switch According',
     Case: 'Case',
-    EndOfBlock: 'End of block',
+    EndOfBlock: 'End of Block',
     SetVariable: 'Set Variable',
 
     showBlock: 'Show block contend',

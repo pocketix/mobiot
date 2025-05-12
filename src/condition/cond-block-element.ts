@@ -213,14 +213,13 @@ export class CondBlockElement extends LitElement {
         element= this._drawBlock(element);
     }
     return element;
-  }
+    }
 
     private _drawOperandWindow(): TemplateResult{
         let element: TemplateResult=html``;
         if(this.groupAction && this.selectedBlock === this.block){
             element=html`<operation-choose-element .itemSum=${this.chooseArgs.length} @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operation-choose-element>`
         }
-
         if(this.changeOperand){
             element=html`<operation-choose-element .itemSum=${this.block.args.length} @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operation-choose-element>`
         }
@@ -351,4 +350,4 @@ declare global {
     interface HTMLElementTagNameMap {
       'cond-block-element': CondBlockElement;
     }
-  }
+}
