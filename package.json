@@ -1,5 +1,5 @@
 {
-  "name": "iot-vpl-edithor",
+  "name": "@pocketix/iot-vpl-editor",
   "private": true,
   "version": "1.0.0",
   "type": "module",

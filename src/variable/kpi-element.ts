@@ -116,7 +116,7 @@ export class KpiElement extends LitElement {
   .content {
     padding: 20px;
     border-radius: 0 0 4px 4px;
-    background:  #e0e0e0;
+    background: #e0e0e0;
   }
 
   h2{
@@ -126,6 +126,7 @@ export class KpiElement extends LitElement {
   .item{
     padding: 5px;
     border-radius: 6px;
+    background: linear-gradient(135deg, #4a90e2, #7da7d9);
   }
 
   .alert {
@@ -134,6 +135,10 @@ export class KpiElement extends LitElement {
 
   .info {
     background: linear-gradient(135deg, rgb(79, 255, 108), rgb(136, 205, 138));
+  }
+
+  .normal {
+    background: #e0e0e0;
   }
 
       `;
@@ -159,7 +164,7 @@ export class KpiElement extends LitElement {
             <div class="block">
               <div class="header">${transl(this.selected)}</div>
               <div class="content">
-                ${devs.map(dev => html`<div class="item ${dev.value ? kpiType:''}">${dev.value ? this._addIcon(kpiType):''}${dev.name}</div>`)}
+                ${devs.map(dev => html`<div class="item ${dev.value ? kpiType:'normal'}">${dev.value ? this._addIcon(kpiType):''}${dev.name}</div>`)}
               </div>
             </div>
 

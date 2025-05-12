@@ -1,10 +1,9 @@
 
 let currentLang: LangCode = 'en';
 
-// export type LangCode = 'en' | 'cs';
 export type LangCode = keyof typeof translations;
 
-export let translations = {//: Record<LangCode, Record<string, string>>
+export let translations = {
   en: {
     Graphical: 'Graphical',
     Both: 'Both', 
@@ -46,7 +45,7 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     false: 'false',
     enterNumber: 'Enter number',
     addVarVal: 'Variable value...',
-    selectTypeOfVar: 'Select type of variable: ',
+    selectTypeOfVar: 'Type of variable: ',
     addVarName: 'Variable name...',
 
     listOfConditions: 'List of conditions',
@@ -59,7 +58,7 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     saveCondition: 'Save condition',
     group: 'Group',
     useValue: 'Use value',
-    selectFromExist: 'Select one from exist',
+    selectFromExist: 'Choose from existing',
 
     User: 'User',
     Device: 'Device',
@@ -70,9 +69,9 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     Logical: 'Logical',
     Numeric: 'Numeric',
     insertBlock: 'Insert next program block',//block of your program
-    insertFirstBlock: 'Insert first program block of your program',//of your program
+    insertFirstBlock: 'Insert first program block',//of your program
     insertHere: 'Insert here',
-    attentionIf: 'Attention: All (else if) and (else) blocks connected with this (if) block will be moved too. ',
+    attentionIf: 'Attention: All (otherwise) and (else) blocks connected with this (if) block will be moved too. ',
     attentionIfDelete: 'Attention: All (else if) and (else) blocks connected with this (if) block will be deleted too. ',
     invalidAction: 'Invalid drag and drop. ',//action
     attentionVar: 'Attention: If you delete used variable, it makes error in your program. ',
@@ -120,6 +119,15 @@ export let translations = {//: Record<LangCode, Record<string, string>>
 
     aboutText: 'This is VPL editor for automatization of smart devices on mobile phones. It was developed for project Pocketix by David Škrabal. This editor uses a block and form based visual programming language. For more information click ',
     here: 'here',
+    helpText: 'The editor consists of three main parts: the menu, the program editor, and the offer section. The editor has two views: graphical and text. The view can be switched using the view button located in the menu.',
+    graphicalView: 'Graphical view',
+    graphicalViewText: 'The graphical view displays individual program blocks. Blocks can be moved using the drag-and-drop button located on the left side of each block. On desktop devices, it is necessary to click this button to reveal drop zones before dragging. Holding a block opens an action menu for that block. This menu includes options to delete, move, or replace the block. These actions are filtered based on context.',
+    textView: 'Text view',
+    textViewText: 'The text view displays the program in JSON format. Some changes can be made directly to the program here.',
+    offerSection: 'Offer section',
+    offerSectionText: 'Blocks are added to the program by clicking them in the offer section. This section includes a menu that filters available blocks by type.',
+    settingsHelp: 'Settings',
+    settingsText: 'There is also a button in the menu to open the settings window. In the settings, users can import/export programs, change the editor language, view variables and conditions, and access information about connected devices. Variables and conditions can be edited or deleted. To show the edit and delete buttons, click on the relevant item in the list. Expressions or conditions are created by adding operands, grouping them with the group button, and assigning an operation.',
 
   },
   cs: {
@@ -170,7 +178,7 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     conditionEditor: '⚖️Editor podmínek',
     fillNameOfNewCondition: 'Jméno podmínky:',
     addName: 'Vložte jméno ...',
-    addFirstVar: 'Vložte první proměnnou, nebo hodnotu do své podmínky',
+    addFirstVar: 'Vložte první proměnnou, nebo hodnotu',// do své podmínky
     select: 'Vybrat...',
     saveCondition: 'Uložit podmínku',
     group: 'Seskupit',
@@ -186,11 +194,11 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     Logical: 'Logické',
     Numeric: 'Číselné',
 
-    insertBlock: 'Vložte další blok svého programu ',
+    insertBlock: 'Vložte další blok ',//svého programu
     insertFirstBlock: 'Vložte první blok svého programu ',
     insertHere: 'Vložte zde',
-    attentionIf: 'Upozornění: Všechny (else if) a (else) blocky propojené s tímto (if) blokem budou také přesunuty. ',
-    attentionIfDelete: 'Upozornění: Všechny (else if) a (else) blocky propojené s tímto (if) blokem budou také smazány. ',
+    attentionIf: 'Upozornění: Všechny (jinak jestli) a (jinak) blocky propojené s tímto (pokud) blokem budou také přesunuty. ',
+    attentionIfDelete: 'Upozornění: Všechny (jinak jestli) a (jinak) blocky propojené s tímto (pokud) blokem budou také smazány. ',
     invalidAction: 'Chybná drag and drop akce. ',
     attentionVar: 'Upozornění: Pokud smažete používanou proměnnou, vznikne chyba v programu. ',
     invalidName: 'Proměnná s tímto jménem již existuje. ',
@@ -236,13 +244,17 @@ export let translations = {//: Record<LangCode, Record<string, string>>
     sensorError: 'Chyba senzoru',
     aboutText: 'Toto je VPL editor pro automatizaci chytrých zařízení na mobilních telefonech. Byl vyvinut pro projekt Pocketix Davidem Škrabalem. Tento editor používá vizuální programovací jazyk založený na blocích a formulářích. Pro více informací klikněte ',
     here: 'zde',
-
+    helpText: 'Editor se skládá ze tří hlavních částí: nabídky, samotného editoru a panelu s nabídkou bloků. Editor má dvě zobrazení: grafické a textové. Mezi těmito zobrazeními lze přepínat pomocí tlačítka v nabídce.',
+    graphicalView: 'Grafické zobrazení',
+    graphicalViewText: 'Grafické zobrazení obsahuje jednotlivé programové bloky. Bloky lze přesouvat pomocí tlačítka pro přetažení, které je umístěno na levé straně každého bloku. Na počítači je třeba na toto tlačítko nejprve kliknout, aby se zobrazila místa, kam lze blok přesunout. Podržením bloku se zobrazí nabídka akcí pro tento blok. Tato nabídka obsahuje možnosti pro smazání, přesun nebo nahrazení bloku. Dostupné akce jsou filtrovány podle kontextu.',
+    textView: 'Textové zobrazení',
+    textViewText: 'Textové zobrazení zobrazuje program ve formátu JSON. V tomto zobrazení lze provádět některé úpravy programu.',
+    offerSection: 'Nabídka bloků',
+    offerSectionText: 'Bloky se do programu přidávají kliknutím na ně v nabídce. Tato nabídka obsahuje filtr, který zobrazuje bloky podle typu.',
+    settingsHelp: 'Nastavení',
+    settingsText: 'V nabídce editoru je také tlačítko pro otevření okna nastavení. V nastavení je možné importovat/exportovat program, změnit jazyk editoru, zobrazit nebo upravit proměnné a podmínky a získat informace o připojených zařízeních. Proměnné a podmínky lze upravovat a mazat. Pro zobrazení tlačítek pro úpravu nebo mazání je třeba kliknout na příslužnou položku v seznamu. Výrazy nebo podmínky se vytvářejí přidáním operandů, jejich seskupením pomocí tlačítka pro seskupení a přiřazením operace.',
   }
 };
-
-// export function transl(key: string): string {
-//   return translations[currentLang][key] || key;
-// }
 
 export type TranslationKey = keyof typeof translations[LangCode];
 
@@ -260,6 +272,5 @@ export function getLang(): LangCode {
 
 export function updateTranslations(newData: typeof translations) {
   translations = newData;
-  // type LangCode = keyof typeof translations;
 }
   

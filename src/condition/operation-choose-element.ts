@@ -3,20 +3,17 @@ import { customElement, property, state} from 'lit/decorators.js';
 import { TypeOption} from '../general/types';
 import { LangCode, transl, getLang } from '../general/language';
 
-@customElement('operand-choose-element')
-export class OperandChooseElement extends LitElement {
+@customElement('operation-choose-element')
+export class OperationChooseElement extends LitElement {
 
     @property()
     isOpen: boolean = true;
-
-    @property({ type: Object })
-    operand: TypeOption = 'note'
 
     @property()
     itemSum: number=2;
 
     @state()
-    private operandTypes: string[]=['Compare', 'Logical', 'Numeric'];
+    private operationTypes: string[]=['Compare', 'Logical', 'Numeric'];
 
     @state()
     private selected: string='Compare';
@@ -95,19 +92,19 @@ export class OperandChooseElement extends LitElement {
   `;
 
   render() {
-    const listOperand: TemplateResult[]=[];
-    let operandList: TypeOption[]=[];
+    const listOperation: TemplateResult[]=[];
+    let operationList: TypeOption[]=[];
     if(this.itemSum===1){
-      this.operandTypes=['Logical'];
+      this.operationTypes=['Logical'];
       this.selected='Logical';
-      operandList=['NOT'];
+      operationList=['NOT'];
     }
-    else if(this.selected==='Compare')operandList=['=','≠','>','<','>=','<='];
-    else if(this.selected==='Logical')operandList=['AND','OR','NOT'];
-    else operandList=['+','-','*','/'];
+    else if(this.selected==='Compare')operationList=['=','≠','>','<','>=','<='];
+    else if(this.selected==='Logical')operationList=['AND','OR','NOT'];
+    else operationList=['+','-','*','/'];
     
-    operandList.forEach((item)=>{
-      listOperand.push(html`<button @click=${() => this._addArg(item)}>${item}</button>`);
+    operationList.forEach((item)=>{
+      listOperation.push(html`<button @click=${() => this._addArg(item)}>${item}</button>`);
     });
     
     return html`
@@ -115,12 +112,12 @@ export class OperandChooseElement extends LitElement {
         <div class="overlay" @click=${this._openCloseModal}>
           <div class="modal" @click=${(e: Event) => e.stopPropagation()}>
             <div class="menu-container">
-              ${this.operandTypes.map(item=>html`
+              ${this.operationTypes.map(item=>html`
               <button class=${item === this.selected ? 'selected' : 'menu'} @click=${() => this._selectType(item)}>${transl(item)}</button>
               `)}
             </div>
             <div >
-              ${listOperand}
+              ${listOperation}
             </div>
             <button class="cancel" @click=${this._openCloseModal}>X ${transl('cancel')}</button>
           </div>
@@ -149,6 +146,6 @@ export class OperandChooseElement extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'operand-choose-element': OperandChooseElement
+    'operation-choose-element': OperationChooseElement
   }
 }

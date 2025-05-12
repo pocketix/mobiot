@@ -102,6 +102,14 @@ export class SettingElement extends LitElement {
     option {
       color: black;
     }
+
+    h3{
+      margin: 0;
+    }
+
+    p{
+      margin: 0 2px 16px 2px;
+    }
       `;
     
       render() {
@@ -147,7 +155,18 @@ export class SettingElement extends LitElement {
               <kpi-element .currentLang=${getLang()}></kpi-element>
             </div>
             <h2 class="border" @click=${()=>this.showHelp=!this.showHelp}>${transl('help')}${this.showHelp? '▲':'▼'}</h2>
-            ${this.showHelp? html`<p>There will be some hepl text, which is general for whole app. </p>`:''}
+            
+            ${this.showHelp ? html`
+              <p>${transl('helpText')}</p>
+              <h3>${transl('graphicalView')}</h3>
+              <p>${transl('graphicalViewText')}</p>
+              <h3>${transl('textView')}</h3>
+              <p>${transl('textViewText')}</p>
+              <h3>${transl('offerSection')}</h3>
+              <p>${transl('offerSectionText')}</p>
+              <h3>${transl('settingsHelp')}</h3>
+              <p>${transl('settingsText')}</p>
+            ` : ''}
             <h2 class="border" @click=${()=>this.showAbout=!this.showAbout}>${transl('about')}${this.showAbout? '▲':'▼'}</h2>
             ${this.showAbout? html`<p>${transl('aboutText')}<a href="https://github.com/pocketix/iot-vpl-editor" target="_blank">${transl('here')}</a></p>`:''}
             <button class="back" @click=${this._openCloseModal}>← ${transl('back')}</button>

@@ -2,7 +2,7 @@ import { LitElement, html, TemplateResult, css } from 'lit';
 import { customElement, property, state} from 'lit/decorators.js';
 import { Argument} from '../general/interfaces'
 import { TypeOption } from '../general/types';
-import './operand-choose-element'
+import './operation-choose-element'
 
 @customElement('cond-block-element')
 export class CondBlockElement extends LitElement {
@@ -218,11 +218,11 @@ export class CondBlockElement extends LitElement {
     private _drawOperandWindow(): TemplateResult{
         let element: TemplateResult=html``;
         if(this.groupAction && this.selectedBlock === this.block){
-            element=html`<operand-choose-element .itemSum=${this.chooseArgs.length} @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operand-choose-element>`
+            element=html`<operation-choose-element .itemSum=${this.chooseArgs.length} @oper-choose=${(e: CustomEvent) => this._groupArgs(e.detail.value)}></operation-choose-element>`
         }
 
         if(this.changeOperand){
-            element=html`<operand-choose-element .itemSum=${this.block.args.length} @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operand-choose-element>`
+            element=html`<operation-choose-element .itemSum=${this.block.args.length} @oper-choose=${(e: CustomEvent) => this._changeOper(e.detail.value)}></operation-choose-element>`
         }
         return element;
     }
