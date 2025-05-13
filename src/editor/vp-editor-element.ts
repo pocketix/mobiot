@@ -177,7 +177,7 @@ export class VPEditorElement extends LitElement {
         @show-zone=${(e: CustomEvent)=>{e.stopPropagation(); this.zoneAvailable=!this.zoneAvailable; this.dragItem===null ? this.dragItem=item : this.dragItem=null}}
         @dragstart=${(e: DragEvent) => { e.stopPropagation();this._setZone(item);this._handleDragStart(e, endIndex); }} 
         @touch-start=${(e: CustomEvent) => {e.stopPropagation();this.dragItem=item;this._setZone(item);this._handleTouchStart(e);}} 
-        @touchmove=${(e: TouchEvent) => { e.stopPropagation();e.preventDefault(); this._handleTouchMove(e); }} 
+        @touchmove=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchMove(e); }} 
         @touchend=${(e: TouchEvent) => { e.stopPropagation(); this._handleTouchEnd(e, this.program.indexOf(item), endIndex); }}>
         ${item.hide ? '' : html`${item===this.dragItem? '':html`
         ${(this.zoneAvailable && this._zoneFilter(item, -1, true))? this._dropZone(this.program.indexOf(item)+1) : ''}`}
