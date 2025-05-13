@@ -1,5 +1,5 @@
 {
-  "name": "@pocketix/mobiot",
+  "name": "mobiot",
   "private": true,
   "version": "1.0.0",
   "type": "module",
