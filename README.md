@@ -26,7 +26,7 @@ git clone https://github.com/pocketix/mobiot.git
 ```
 
 ```sh
-cd iot-vpl-editor
+cd mobiot
 ```
 
 ```sh
